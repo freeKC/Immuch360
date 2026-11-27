@@ -37,10 +37,12 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('SpatialViewer');
 
-/// What to say where the Spatial 2.5D player does not run: on a computer it comes in a later version of Immuch360
-/// Desktop, so the phone text ("not available on this device") would read as final there
-String _unavailableMessage(Translations t) =>
-    CurrentPlatform.isDesktop ? t.desktop_spatial_unavailable : t.spatial_unavailable;
+/// What to say where the Spatial 2.5D player does not run: on Linux 3D videos come in a later version of Immuch360
+/// Desktop, so the phone text ("not available on this device") would read as final there; on Windows and macOS it
+/// runs unless libmpv did not load, and the phone text is then the true one
+@visibleForTesting
+String spatialUnavailableMessage(Translations t) =>
+    CurrentPlatform.isLinux ? t.desktop_spatial_unavailable : t.spatial_unavailable;
 
 /// Plays [asset], a video, full screen in the Spatial 2.5D player, from where and as the viewer plays it.
 ///
@@ -86,7 +88,7 @@ Future<void> openSpatialVideo(BuildContext context, WidgetRef ref, BaseAsset ass
     ...videoBufferingLabels(context.t),
     ...videoSourceLabels(context.t),
   };
-  final unavailableMessage = _unavailableMessage(context.t);
+  final unavailableMessage = spatialUnavailableMessage(context.t);
   final errorMessage = context.t.spatial_open_failed;
 
   final layoutKey = spatialLayoutKey(asset);
@@ -229,7 +231,7 @@ Future<bool> openSpatialVideoUrl(
     ...audioTrackLabels(context.t, Localizations.localeOf(context)),
     ...videoBufferingLabels(context.t),
   };
-  final unavailableMessage = _unavailableMessage(context.t);
+  final unavailableMessage = spatialUnavailableMessage(context.t);
   final errorMessage = context.t.spatial_open_failed;
 
   final SpatialCapabilities capabilities;

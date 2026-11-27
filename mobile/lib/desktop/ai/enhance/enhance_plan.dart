@@ -17,9 +17,23 @@
 //  - those needs were measured up to 12 MP; above, the buffers of the app grow with the photo (the float sums of the
 //    blend, the colour fix, the copies between isolates: about 40 bytes a pixel), so each need takes 40 bytes for
 //    every pixel above 12 MP, 1.5 GB more at 50 MP (enhanceExtraMemoryOf);
-//  - on a Mac, Natural runs on an Apple chip; Sharpen and Rebuild details wait for the Metal build of stable-diffusion.cpp
-//    (a later lot): the sd-cli the app ships has no Mac build, and x4plus on a processor took 8.3 minutes for 3 MP. An
-//    Intel Mac has ONNX Runtime 1.23.2, on which VOSR was never run: not offered there.
+//  - an Intel Mac: Sharpen and Rebuild details need the Metal build of stable-diffusion.cpp, made for Apple chips only,
+//    and its ONNX Runtime 1.23.2 never ran VOSR: nothing is offered there;
+//  - a Mac with an Apple chip (release 53; not tried on a Mac yet, see below): the GPU shares the memory of the
+//    computer (unified memory), so the needs of the card and of the computer add up, and macOS gives no figure of the
+//    memory free (memory_probe.dart). The gates read the physical memory and what Metal says of the GPU
+//    (metal_probe.dart):
+//      - Sharpen on any Apple chip: x4plus took 559 MiB on the card and 1.5 GB beside it on the PC, 2 to 3 GB in all,
+//        which every Apple silicon Mac (8 GB or more) holds beside macOS and the app; Metal must advise at least the
+//        1 GB the queue asks of a card ([sharpenFreeGraphicsMemory]);
+//      - Rebuild details from 16 GB: the weights of SeedVR2 (3.96 GB) and the buffers sd-cli took on the card (3.7 to
+//        3.9 GB in all) sit in the same memory as the 3 GB it needed free on the computer, about 7 to 8 GB for the
+//        job, with macOS and the app beside it (4 to 6 GB): an 8 GB Mac is refused, as the plan's floor says (16 GB
+//        minimum, lot L35); and an Apple GPU of family 7 (every Apple chip: M1 and later), which the int8 weights of
+//        SeedVR2 need on Metal, so that a virtual Mac without it is refused rather than run on the processor;
+//      - Natural from 16 GB as on the other systems, through Core ML (natural_backend.dart).
+//    Two jobs of the two lanes run side by side on a Mac only when the memory, less 6 GB for macOS and the app, holds
+//    both whole ([enhanceFitsBesideOnUnifiedMemory]): on 16 GB Rebuild details or Natural run alone.
 //
 // Times (wall time of the whole run, loading included):
 //  - Sharpen: 28.3 s for 3 MP, 110.5 s for 12 MP, so 2 s and 9.1 s per megapixel;
@@ -32,9 +46,12 @@
 
 import 'dart:math' as math;
 
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
+import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show aiEnhanceMacRebuildOffered;
 
 const _mib = 1024 * 1024;
 const _gib = 1024 * _mib;
@@ -64,6 +81,9 @@ const naturalJobMemory = 10 * _gib;
 /// A run longer than this is said to be long
 const enhanceLongRun = Duration(minutes: 20);
 
+/// On a Mac, what macOS and the app keep of the memory beside the jobs (see the top of this file)
+const unifiedSystemReserve = 6 * _gib;
+
 /// The graphics card the levels of the card would run on
 class EnhanceCard {
   const EnhanceCard({required this.name, required this.dedicated, required this.localMemory, this.freeMemory});
@@ -78,7 +98,14 @@ class EnhanceCard {
 
 /// What the gates read of this computer
 class EnhanceMachine {
-  const EnhanceMachine({required this.platform, this.physicalMemory, this.freeMemory, this.processors = 8, this.card});
+  const EnhanceMachine({
+    required this.platform,
+    this.physicalMemory,
+    this.freeMemory,
+    this.processors = 8,
+    this.card,
+    this.metal,
+  });
 
   /// Null for a system or a processor the AI features do not run on
   final AiPlatform? platform;
@@ -90,6 +117,9 @@ class EnhanceMachine {
 
   /// The card the levels of the card would take, null when there is none (no Vulkan, no answer of the probe)
   final EnhanceCard? card;
+
+  /// The GPU of a Mac as Metal tells it, null elsewhere or when Metal gave nothing
+  final MetalFacts? metal;
 }
 
 /// Why a level is not offered for a photo on this computer
@@ -97,11 +127,18 @@ enum EnhanceRefusal {
   /// Not on this system (a phone, the headset, an unknown processor)
   notOnThisSystem,
 
-  /// Sharpen and Rebuild details on a Mac: the Metal build of the engine is a later lot
-  macNotYet,
+  /// Sharpen and Rebuild details on an Intel Mac: their engine is built for Apple chips only
+  appleChipNeeded,
 
   /// Natural on an Intel Mac, whose ONNX Runtime never ran the model
   intelMacNotChecked,
+
+  /// Rebuild details on a Mac while it has not run on a real Apple chip (aiEnhanceMacRebuildOffered)
+  macRebuildNotYet,
+
+  /// Sharpen and Rebuild details on a Mac whose graphics Metal does not give, or for Rebuild details not of the Apple
+  /// family 7 its int8 weights need
+  macGraphicsUnusable,
 
   /// No graphics card the engine can use (Vulkan)
   noGraphicsCard,
@@ -112,7 +149,7 @@ enum EnhanceRefusal {
   /// A card with less memory than the level needs
   graphicsCardTooSmall,
 
-  /// Natural on a computer of less than 16 GB
+  /// Natural on a computer of less than 16 GB, Rebuild details on a Mac of less than 16 GB
   memoryTooSmall,
 
   /// A photo of more than 50 megapixels
@@ -176,6 +213,16 @@ int enhanceJobMemoryOf(EnhanceLevel level, {int? pixels}) =>
       EnhanceLevel.natural => naturalJobMemory,
     };
 
+/// What a job of [level] may take of the memory of a Mac, whose GPU shares it: its need on the computer and its need on
+/// the card added up (see the top of this file)
+int enhanceUnifiedJobMemoryOf(EnhanceLevel level, {int? pixels}) =>
+    enhanceJobMemoryOf(level, pixels: pixels) + (enhanceFreeGraphicsMemoryOf(level) ?? 0);
+
+/// Whether a job that may take [need] of the memory of a Mac runs beside one that may take [besideNeed], on a Mac of
+/// [physical] bytes: both whole, macOS and the app apart ([unifiedSystemReserve]); never when the memory is not known
+bool enhanceFitsBesideOnUnifiedMemory(int need, int besideNeed, int? physical) =>
+    physical != null && physical - unifiedSystemReserve >= need + besideNeed;
+
 /// The memory free on the card [level] needs when its run starts; null for Natural, which runs on the processor
 int? enhanceFreeGraphicsMemoryOf(EnhanceLevel level) => switch (level) {
   EnhanceLevel.sharpen => sharpenFreeGraphicsMemory,
@@ -183,26 +230,49 @@ int? enhanceFreeGraphicsMemoryOf(EnhanceLevel level) => switch (level) {
   EnhanceLevel.natural => null,
 };
 
-/// The verdict of [level] for a photo of [width] x [height] on [machine] (see the top of this file)
-EnhanceVerdict enhanceVerdict(EnhanceLevel level, EnhanceMachine machine, {required int width, required int height}) {
+/// The verdict of [level] for a photo of [width] x [height] laid out as [layout] on [machine] (see the top of this
+/// file): the memory it needs counts every pixel the model works on (enhanceWorkPixels), the seam copy and the faces of
+/// the poles of a 360° photo with its own
+/// [macRebuildOffered]: aiEnhanceMacRebuildOffered, given by the tests of the gates of a Mac
+EnhanceVerdict enhanceVerdict(
+  EnhanceLevel level,
+  EnhanceMachine machine, {
+  required int width,
+  required int height,
+  bool macRebuildOffered = aiEnhanceMacRebuildOffered,
+  EnhanceLayout layout = EnhanceLayout.flat,
+}) {
   EnhanceVerdict refused(EnhanceRefusal reason) => EnhanceVerdict(level, refusal: reason);
   final platform = machine.platform;
-  final mac = platform == AiPlatform.macosArm64 || platform == AiPlatform.macosX64;
   if (platform == null || platform == AiPlatform.questArm64) {
     return refused(EnhanceRefusal.notOnThisSystem);
   }
-  if (mac && level.onGraphicsCard) {
-    return refused(EnhanceRefusal.macNotYet);
-  }
   if (platform == AiPlatform.macosX64) {
-    return refused(EnhanceRefusal.intelMacNotChecked);
+    return refused(level.onGraphicsCard ? EnhanceRefusal.appleChipNeeded : EnhanceRefusal.intelMacNotChecked);
   }
   if (width * height > enhanceMaxPixels) {
     return refused(EnhanceRefusal.tooLarge);
   }
   final warnings = <EnhanceWarning>[];
   final card = machine.card;
-  if (level.onGraphicsCard) {
+  if (platform == AiPlatform.macosArm64) {
+    if (level == EnhanceLevel.rebuild && !macRebuildOffered) {
+      return refused(EnhanceRefusal.macRebuildNotYet);
+    }
+    final physical = machine.physicalMemory;
+    if (level != EnhanceLevel.sharpen && physical != null && physical < naturalPhysicalMemory) {
+      return refused(EnhanceRefusal.memoryTooSmall);
+    }
+    if (level.onGraphicsCard) {
+      final metal = machine.metal;
+      if (metal == null || (level == EnhanceLevel.rebuild && !metal.apple7)) {
+        return refused(EnhanceRefusal.macGraphicsUnusable);
+      }
+      if (metal.workingSet < enhanceFreeGraphicsMemoryOf(level)!) {
+        return refused(EnhanceRefusal.graphicsCardTooSmall);
+      }
+    }
+  } else if (level.onGraphicsCard) {
     if (card == null) {
       return refused(EnhanceRefusal.noGraphicsCard);
     }
@@ -223,7 +293,7 @@ EnhanceVerdict enhanceVerdict(EnhanceLevel level, EnhanceMachine machine, {requi
       return refused(EnhanceRefusal.memoryTooSmall);
     }
   }
-  final need = enhanceFreeMemoryOf(level, pixels: width * height);
+  final need = enhanceFreeMemoryOf(level, pixels: enhanceWorkPixels(width, height, layout));
   final free = machine.freeMemory;
   if (free != null && free < need) {
     warnings.add(EnhanceWarning.closeOtherPrograms);
@@ -245,6 +315,16 @@ Duration enhanceEstimate(EnhanceLevel level, int width, int height, {int process
     EnhanceLevel.natural => 9 + tiles * 16.0 * 22 / math.max(1, processors - 2),
   };
   return Duration(milliseconds: (seconds * 1000).round());
+}
+
+/// How long [level] takes for a photo of [width] x [height] laid out as [layout]: the model runs once per piece
+/// (enhancePiecesOf), each eye of a 3D photo, and the seam and the poles of a 360° one apart
+Duration enhanceLayoutEstimate(EnhanceLevel level, int width, int height, EnhanceLayout layout, {int processors = 24}) {
+  var total = Duration.zero;
+  for (final piece in enhancePiecesOf(width, height, layout)) {
+    total += enhanceEstimate(level, piece.width, piece.height, processors: processors);
+  }
+  return total;
 }
 
 /// The time of a batch of photos of [sizes] (width, height) at [level], the refused ones apart

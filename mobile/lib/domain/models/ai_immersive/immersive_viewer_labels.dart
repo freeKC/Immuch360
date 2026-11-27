@@ -77,7 +77,8 @@ Map<String, String> flat3dViewerLabels(Translations t) => {
 /// (Sharper flat screens, experimental), what previous and next say on a video opened with View on a big screen, and
 /// what a 3D photo says when it is not brought nearer past its comfort bound, the controller mapping of the photos of
 /// a flat screen, which browse, the button that keeps their size and place for the next ones, what their slideshow
-/// says, and what passes once when their frosted background first shows, experimental (issue 19)
+/// says, what passes once when their frosted background first shows, and the buttons of their background and of
+/// their transition (issue 19)
 Map<String, String> flatScreenViewerLabels(Translations t) => {
   'sharpScreensNotice': t.immersive_sharp_screens_notice,
   'bigScreenNoNavigation': t.immersive_big_screen_no_navigation,
@@ -90,7 +91,16 @@ Map<String, String> flatScreenViewerLabels(Translations t) => {
   'slideshowPaused': t.immersive_slideshow_paused,
   'slideshowEnd': t.immersive_slideshow_end,
   'slideshowTooWarm': t.immersive_slideshow_too_warm,
-  'frostedNotice': t.immersive_frosted_notice,
+  // The buttons of the background and of the transition of the photos (issue 19), the name of the choice where
+  // {choice} is (SlideshowLook.kt)
+  'slideshowBackgroundInfo': t.immersive_slideshow_background_info(choice: '{choice}'),
+  'slideshowBackground_black': t.immersive_slideshow_background_black,
+  'slideshowBackground_blurred': t.immersive_slideshow_background_blurred,
+  'slideshowBackground_passthrough': t.immersive_slideshow_background_passthrough,
+  'slideshowTransitionInfo': t.immersive_slideshow_transition_info(choice: '{choice}'),
+  'slideshowTransition_none': t.immersive_slideshow_transition_none,
+  'slideshowTransition_crossFade': t.immersive_slideshow_transition_cross_fade,
+  'slideshowTransition_slide': t.immersive_slideshow_transition_slide,
 };
 
 /// Translated labels of a Gaussian splat file of another tool in the immersive viewer (lot S5), under the keys

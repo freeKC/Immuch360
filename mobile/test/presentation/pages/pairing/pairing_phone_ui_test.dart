@@ -392,8 +392,10 @@ void main() {
       PairingConfirmChoice? choice;
       await open(tester, (value) => choice = value);
       final link = find.byKey(const Key('pairing_confirm_link'));
-      expect(find.text('Also let this phone play films on it'), findsOneWidget);
-      expect(find.text('Then Play on, from a film of a Plex server'), findsOneWidget);
+      expect(find.text('Also let this phone play films, photos and videos on it'), findsOneWidget);
+      // Release 53: photos and videos go too, not only the films of a Plex server
+      expect(find.text('Then Play on, from a photo, a video or a film'), findsOneWidget);
+      expect(find.textContaining('Plex'), findsNothing);
       expect(tester.widget<SwitchListTile>(link).value, isTrue, reason: 'on by default, the lab rule');
       await tester.ensureVisible(find.byKey(const Key('pairing_confirm_button')));
       await tester.tap(find.byKey(const Key('pairing_confirm_button')));

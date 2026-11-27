@@ -194,17 +194,25 @@ void main() {
         'deviceFolder',
         'ipCamera',
         'jellyfin',
+        'phoneRelay',
       ]);
       expect(NetworkSourceType.values.where((type) => type.inLegacyList), [
         NetworkSourceType.smb,
         NetworkSourceType.webdav,
         NetworkSourceType.dlna,
       ]);
-      // A folder picked on the DJI drone page, and a folder of the device, live in memory only
+      // A folder picked on the DJI drone page, a folder of the device, and on a big screen the item a phone sends from
+      // its relay (release 53) live in memory only
       expect(NetworkSourceType.values.where((type) => !type.isStored), [
         NetworkSourceType.documentTree,
         NetworkSourceType.deviceFolder,
+        NetworkSourceType.phoneRelay,
       ]);
+      expect(
+        NetworkSource.fromJson({'id': 'x', 'type': 'phoneRelay', 'name': 'Pixel', 'host': '192.168.1.42'}),
+        isNull,
+        reason: 'never read back from a stored list',
+      );
     });
 
     test('a folder of the device found in a stored list is dropped, never read back', () {

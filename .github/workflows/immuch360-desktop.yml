@@ -377,6 +377,10 @@ jobs:
       - name: The tiny models of ONNX Runtime are what their script writes
         run: python3 .github/desktop/ai/make_tiny_models.py --check
 
+      # The four tiny graphs that stand for those of VOSR 2.0 in the tests of Natural of Enhance (AI) (release 53)
+      - name: The tiny graphs of VOSR are what their script writes
+        run: python3 .github/desktop/ai/make_tiny_vosr.py --check
+
       # The synthetic room of the splat scenes (lot SP0): 24 views of two cameras around three boxes, ray cast in pure
       # Python, with their exact poses for the measures of lots SP1 and SP4; the same pixels on every system
       - name: The synthetic dataset of the splat scenes is what its script writes
@@ -442,7 +446,7 @@ jobs:
         run: |
           mise exec -- dart format --output=none --set-exit-if-changed lib/desktop lib/main_desktop.dart \
             test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows \
-            packages/immuch_sbs_codec
+            packages/immuch_sbs_codec packages/immuch_head_tracker/lib packages/immuch_head_tracker/hook
 
       # The Rust JPEG codec of the AI features (mobile/packages/immuch_sbs_codec), in release as its build hook makes
       # it: round trip, ICC profile, quality, subsampling, segments, a panic turned into a status, the C functions.
@@ -509,6 +513,47 @@ jobs:
           IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
         run: mise exec -- flutter test
 
+      # The head tracker of Spatial 2.5D (mobile/packages/immuch_head_tracker) built with gcc with -Wall -Wextra -Werror,
+      # V4L2 for the webcams (none here) and both builds of libfacedetection: its native tests (the box filter, the face
+      # states, the eye midpoint, the face followed, the far switch, the One Euro filter against the phones' values,
+      # the prediction, the fake cameras, the recorded clip frame by frame and through the y4m fake camera, the plain and
+      # AVX2 builds giving the same faces), then the Dart side on that library: the native filter against the Kotlin
+      # values, ht_predict against the Dart prediction, the recorded landmark track through the fake camera, and the
+      # clip through the raw frame entry point. The clip is decoded by the pinned FFmpeg of the step above
+      - name: The head tracker on Linux (native tests and the Dart tests on its library)
+        working-directory: mobile
+        env:
+          IMMUCH360_REQUIRE_HEAD_TRACKER: '1'
+        run: |
+          work="$RUNNER_TEMP/head-tracker"
+          mkdir -p "$work/ffmpeg"
+          curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/Immuch360-ffmpeg-9.0.2-2-linux-x64.zip
+          echo "6a3102ce743507395370c1d4aacb67ea153d065cb05636806af436ca6d2e13f4  $work/ffmpeg.zip" | sha256sum -c -
+          (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
+          export PATH="$work/ffmpeg/bin:$PATH"
+          bash packages/immuch_head_tracker/test_native/run.sh "$work/build" "$work/painted-head-12s.track"
+          # The fixture is what the tracker writes from the clip today: the same frames with a face, the same numbers
+          # within 0.002 (another compiler may round the detector's last digits otherwise)
+          python3 - test/fixtures/spatial/painted-head-12s.track "$work/painted-head-12s.track" <<'PY'
+          import sys
+          def lines(path):
+              return [line.split() for line in open(path) if line.strip() and not line.startswith('#')]
+          fixture, made = lines(sys.argv[1]), lines(sys.argv[2])
+          if len(fixture) != len(made):
+              sys.exit(f'::error::the track has {len(made)} lines, the fixture {len(fixture)}')
+          for number, (a, b) in enumerate(zip(fixture, made), 1):
+              if len(a) != len(b) or a[0] != b[0] or a[1:2] != b[1:2]:
+                  sys.exit(f'::error::line {number} of the track differs: {b} for {a}')
+              if any(abs(float(x) - float(y)) > 0.002 for x, y in zip(a[2:], b[2:])):
+                  sys.exit(f'::error::line {number} of the track differs by more than 0.002: {b} for {a}')
+          print(f'the track of the clip matches the fixture, {len(made)} lines')
+          PY
+          ls -l "$work/build"/libimmuch_head_tracker*.so
+          IMMUCH360_HEAD_TRACKER_LIBRARY="$work/build/libimmuch_head_tracker.so" mise exec -- flutter test \
+            test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/head_tracker_windows_test.dart \
+            test/desktop/spatial/spatial_photo_head_native_test.dart --reporter expanded
+
       # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
       # installs, and of 1.23.2, the last release for Intel Macs (the proof that the table of API 23 holds), one run each
       # since a process keeps the first ONNX Runtime it loads: the depth model, the tiny models of several inputs and
@@ -540,7 +585,8 @@ jobs:
             IMMUCH360_ORT_LIB="$ort/onnxruntime-linux-x64-$version/lib/libonnxruntime.so.$version" \
               IMMUCH360_SCENE_OUT="$RUNNER_TEMP/scenes-$version" \
               mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene \
-                test/desktop/ai/panorama/panorama_engine_ort_test.dart test/desktop/ai/video3d
+                test/desktop/ai/panorama/panorama_engine_ort_test.dart test/desktop/ai/video3d \
+                test/desktop/ai/enhance/natural_ort_test.dart
           done
 
       # A whole 3D video (release 49) with the real FFmpeg program of immuch360/libmpv-builds, checked by its SHA-256,
@@ -797,6 +843,28 @@ jobs:
           grep -qxF /opt/immuch360/lib/libimmuch_sbs_codec.so "$RUNNER_TEMP/rpm.txt" \
             || { echo "::error::no libimmuch_sbs_codec.so in the .rpm"; exit 1; }
           echo "libimmuch_sbs_codec.so: $(stat -c %s "$codec") bytes, in the bundle, the .deb and the .rpm"
+
+      # The head tracker of Spatial 2.5D (FFI plugin mobile/packages/immuch_head_tracker, built by CMake with the app's
+      # -Wall -Werror): the tracker and both builds of libfacedetection in lib/ of the bundle and of both packages, the
+      # tracker linking no camera library (V4L2 is the kernel's interface, no libv4l)
+      - name: The head tracker in the bundle and the packages
+        run: |
+          lib=mobile/build/linux/x64/release/bundle/lib
+          for name in libimmuch_head_tracker.so libimmuch_head_tracker_detect.so libimmuch_head_tracker_detect_avx2.so; do
+            if [ ! -f "$lib/$name" ]; then
+              echo "::error::no $name in the bundle"
+              ls "$lib"
+              exit 1
+            fi
+            grep -qxF "./opt/immuch360/lib/$name" "$RUNNER_TEMP/deb.txt" || { echo "::error::no $name in the .deb"; exit 1; }
+            grep -qxF "/opt/immuch360/lib/$name" "$RUNNER_TEMP/rpm.txt" || { echo "::error::no $name in the .rpm"; exit 1; }
+            echo "$name: $(stat -c %s "$lib/$name") bytes, sha256 $(sha256sum "$lib/$name" | cut -c1-64)"
+          done
+          objdump -p "$lib/libimmuch_head_tracker.so" | awk '/NEEDED/ {print $2}' | tee "$RUNNER_TEMP/ht-needed.txt"
+          if grep -qiE 'v4l|camera|pipewire' "$RUNNER_TEMP/ht-needed.txt"; then
+            echo "::error::the head tracker links a camera library"
+            exit 1
+          fi
 
       # The AppImage (issue 22, release 52): the bundle staged as for the packages, laid out as an AppDir whose AppRun
       # looks for the libraries of the system before the start and says which packages to install, with the command
@@ -1515,6 +1583,44 @@ jobs:
           print(f'immuch_sbs_codec.dll: {info.file_size} bytes in the ZIP')
           PY
 
+      # The head tracker of Spatial 2.5D (immuch_head_tracker): its DLL, the two builds of the face detector, and the
+      # licence of libfacedetection (BSD-3-Clause) that the detector builds carry; windows_bundle.py has checked that
+      # the tracker does not import Media Foundation (loaded at run time, for the Windows N editions)
+      - name: The head tracker and the licence of its face detector in the ZIP
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+        run: |
+          python - "$ZIP" mobile/packages/immuch_head_tracker/third_party/libfacedetection/LICENSE <<'PY'
+          import hashlib, pathlib, sys, zipfile
+          archive, licence = sys.argv[1], pathlib.Path(sys.argv[2])
+          top = 'Immuch360 Desktop/'
+          dlls = ('immuch_head_tracker.dll', 'immuch_head_tracker_detect.dll', 'immuch_head_tracker_detect_avx2.dll')
+          wanted = [top + name for name in dlls] + [top + 'licenses/libfacedetection/LICENSE']
+          with zipfile.ZipFile(archive) as bundle:
+              # The listing of what sits next to immuch360.exe, for the record of the run
+              for info in sorted(bundle.infolist(), key=lambda i: i.filename.lower()):
+                  rest = info.filename[len(top):]
+                  if info.filename.startswith(top) and '/' not in rest and rest.lower().endswith(('.exe', '.dll')):
+                      print(f'  {rest}: {info.file_size} bytes')
+              missing = [name for name in wanted if name not in bundle.namelist()]
+              if missing:
+                  sys.exit('::error::not in the ZIP: ' + ', '.join(missing))
+              for name in dlls:
+                  data = bundle.read(top + name)
+                  print(f'{name}: {len(data)} bytes, sha256 {hashlib.sha256(data).hexdigest()}')
+                  # The face model of libfacedetection is compiled into each detector build (no file to download)
+                  if name != 'immuch_head_tracker.dll' and len(data) < 200_000:
+                      sys.exit(f'::error::{name} is {len(data)} bytes: too small to hold the face model')
+              tracker = bundle.read(top + 'immuch_head_tracker.dll')
+              for symbol in (b'ht_api_version', b'ht_list_cameras', b'ht_open_camera', b'ht_predict'):
+                  if symbol not in tracker:
+                      sys.exit(f'::error::immuch_head_tracker.dll of the ZIP does not export {symbol.decode()}')
+              packed = bundle.read(top + 'licenses/libfacedetection/LICENSE')
+          if packed.replace(b'\r\n', b'\n') != licence.read_bytes().replace(b'\r\n', b'\n'):
+              sys.exit('::error::licenses/libfacedetection/LICENSE in the ZIP is not the vendored LICENSE')
+          print('the ZIP holds the head tracker, both face detector builds and the licence of libfacedetection')
+          PY
+
       # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
       # user of the PC, "Open with" for the types of .github/desktop/file-associations.json, an uninstaller
       - name: Installer
@@ -1577,15 +1683,76 @@ jobs:
       # companion (the fake) with its duration and its seeks (av2_libmpv_test), the frames of a splat scene taken from
       # a video filmed upright (video_frames_libmpv_test). The tests that need a GPU's video decoder or mpv drawing
       # into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
-      - name: Desktop tests on the build (libmpv, ANGLE)
+      # The head tracker's test opens a recorded clip through Media Foundation, the same reader as a webcam. Windows
+      # Server has Media Foundation as a feature the runner image may not install: added here, without the restart it
+      # asks for; the test says so if the clip still does not open.
+      - name: Media Foundation for the head tracker test
+        shell: pwsh
+        run: |
+          $files = 'mfplat.dll', 'mfreadwrite.dll', 'mf.dll', 'msmpeg2vdec.dll'
+          $missing = $files | Where-Object { -not (Test-Path (Join-Path $env:SystemRoot "System32\$_")) }
+          if ($missing) {
+            Write-Host "Not in System32: $($missing -join ', '); adding the Server-Media-Foundation feature"
+            try {
+              $result = Install-WindowsFeature Server-Media-Foundation
+              Write-Host "Success: $($result.Success), restart needed: $($result.RestartNeeded), exit code: $($result.ExitCode)"
+            } catch {
+              Write-Host "::warning::Server-Media-Foundation could not be added: $_"
+            }
+          }
+          foreach ($file in $files) {
+            Write-Host "$file in System32: $(Test-Path (Join-Path $env:SystemRoot "System32\$file"))"
+          }
+
+      # With the head tracker of the build (Spatial 2.5D): the recorded clip through the Media Foundation file reader
+      # and through the camera path ("file:"), both builds of the detector, the raw frame entry point
+      # (head_tracker_windows_test), and the native filter against the phones' values, the prediction, the recorded
+      # landmark track through the fake camera (head_tracker_native_test). No webcam: the runners have none.
+      - name: Desktop tests on the build (libmpv, ANGLE, head tracker)
         working-directory: mobile
         env:
           IMMUCH360_BUILD_DIR: build/windows/x64/runner/Release
           IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
+          IMMUCH360_REQUIRE_HEAD_TRACKER: '1'
         run: |
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
             test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/av2/av2_libmpv_test.dart \
-            test/desktop/ai/splat/video_frames_libmpv_test.dart
+            test/desktop/ai/splat/video_frames_libmpv_test.dart test/desktop/spatial/head_tracker_windows_test.dart \
+            test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/spatial_photo_head_native_test.dart
+
+      # The head tracker as the ZIP ships it, not as the build folder holds it: the ZIP unpacked in a folder of its own,
+      # then the same tests on its DLLs (the clip through Media Foundation and both detector builds, whose face model is
+      # compiled in; the recorded track through the fake camera; the 2.5D photo page following that track). A ZIP
+      # without the tracker, or with DLLs that do not load or do not find faces, fails here.
+      - name: The head tracker of the ZIP itself
+        working-directory: mobile
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+          IMMUCH360_REQUIRE_HEAD_TRACKER: '1'
+        shell: bash
+        run: |
+          unpacked="$RUNNER_TEMP/zip-head-tracker"
+          python - "$GITHUB_WORKSPACE/$ZIP" "$unpacked" <<'PY'
+          import pathlib, sys, zipfile
+          target = pathlib.Path(sys.argv[2])
+          target.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile(sys.argv[1]) as bundle:
+              bundle.extractall(target)
+          for dll in sorted((target / 'Immuch360 Desktop').glob('immuch_head_tracker*.dll')):
+              print(f'{dll.name}: {dll.stat().st_size} bytes, unpacked from the ZIP')
+          PY
+          IMMUCH360_BUILD_DIR="$unpacked/Immuch360 Desktop" flutter test test/desktop/spatial/head_tracker_windows_test.dart \
+            test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/spatial_photo_head_native_test.dart \
+            --reporter expanded
+
+      # The Spatial 2.5D passes of the video plugin in a built app (media_kit_360 patch 17, renderer C, here on WARP):
+      # a side by side clip of random dots with a nearer square, played then paused, its views at three viewpoints,
+      # the disparity map and a VR180 eye read through SpatialStats and its probe. flutter test builds the test as a
+      # debug app and runs it in a window
+      - name: The Spatial passes on a stereo clip in a built app (WARP)
+        working-directory: mobile
+        timeout-minutes: 20
+        run: flutter test integration_test/desktop_spatial_video_test.dart -d windows --reporter expanded
 
       # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
       # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
@@ -1711,6 +1878,10 @@ jobs:
           echo "2a50a63e7f41f8d4d551d3ee47248df3864f6540109fce8ad520ca3b51af4b70  $ort/libonnxruntime.1.31.0.dylib" | shasum -a 256 -c -
           IMMUCH360_ORT_LIB="$ort/libonnxruntime.1.31.0.dylib" IMMUCH360_ORT_COREML=1 \
             mise exec -- flutter test test/desktop/ai/ort/depth_provider_test.dart --reporter expanded
+          # Natural of Enhance (AI) through Core ML (release 53): the backend of the app on the tiny graphs of VOSR
+          # (make_tiny_vosr.py), every graph opened with Core ML, the picture the processor gives
+          IMMUCH360_ORT_LIB="$ort/libonnxruntime.1.31.0.dylib" IMMUCH360_ORT_COREML=1 \
+            mise exec -- flutter test test/desktop/ai/enhance/natural_ort_test.dart --reporter expanded
 
       - name: ZIP and DMG
         id: app
@@ -1772,6 +1943,43 @@ jobs:
           [ -n "$notices" ] || { echo "::error::no NOTICES.md of the video libraries in the app"; exit 1; }
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
+
+      # The head tracker of Spatial 2.5D (the code asset of mobile/packages/immuch_head_tracker/hook/build.dart):
+      # Flutter's framework of it in the app with both slices, AVFoundation linked, no path of the build machine; the
+      # camera's usage text in the app's Info.plist (macOS ends an app that opens a camera without it) and the camera
+      # entitlement in the signature of the app (lot S7). No camera is opened: the runner has none.
+      - name: The head tracker and the camera permission in the app
+        run: |
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          tracker="$app/Contents/Frameworks/immuch_head_tracker.framework/immuch_head_tracker"
+          if [ ! -f "$tracker" ]; then
+            echo "::error::no immuch_head_tracker.framework in the app"
+            ls "$app/Contents/Frameworks"
+            exit 1
+          fi
+          archs=$(lipo -archs "$tracker")
+          echo "immuch_head_tracker: $archs, $(stat -L -f %z "$tracker") bytes, sha256 $(shasum -a 256 "$tracker" | cut -c1-64)"
+          case "$archs" in *arm64*x86_64*|*x86_64*arm64*) ;; *) echo "::error::the tracker lacks a slice: $archs"; exit 1;; esac
+          otool -L "$tracker" | tee "$RUNNER_TEMP/tracker-links.txt"
+          grep -q 'AVFoundation.framework' "$RUNNER_TEMP/tracker-links.txt" || { echo "::error::AVFoundation not linked"; exit 1; }
+          if grep -E '^[[:space:]]+/(nix|Users|private|tmp)/' "$RUNNER_TEMP/tracker-links.txt"; then
+            echo "::error::the tracker names a library by a path of the build machine"
+            exit 1
+          fi
+          nm -gU "$tracker" | grep -E ' _ht_(api_version|open_camera|predict|recenter)$'
+          usage=$(/usr/libexec/PlistBuddy -c 'Print :NSCameraUsageDescription' "$app/Contents/Info.plist")
+          [ -n "$usage" ] || { echo "::error::no NSCameraUsageDescription in the app"; exit 1; }
+          echo "NSCameraUsageDescription: $usage"
+          codesign -d --entitlements - --xml "$app" 2>/dev/null > "$RUNNER_TEMP/entitlements.plist" || true
+          if grep -q 'com.apple.security.device.camera' "$RUNNER_TEMP/entitlements.plist"; then
+            echo "the camera entitlement is in the signature of the app"
+          elif grep -q '<key>' "$RUNNER_TEMP/entitlements.plist"; then
+            echo "::error::the signature of the app carries entitlements, the camera's not among them"
+            cat "$RUNNER_TEMP/entitlements.plist"
+            exit 1
+          else
+            echo "::warning::the ad hoc signature of this build carries no entitlements; Release.entitlements has the camera (macos_camera_permission_test)"
+          fi
 
       # immuch360-run in Contents/MacOS, beside the executable (lot L10, the build phase of mobile/macos/Runner.xcodeproj):
       # both slices, its ad hoc signature valid, and the checks of check_launcher.sh on it, the stand-in for the app
@@ -2063,6 +2271,16 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      # The Spatial 2.5D passes of the video plugin in a built app (media_kit_360 patch 18, in Metal, here on the
+      # runner's paravirtual device): the checks of the Windows job, through the plugin's macOS code with mpv's real
+      # frames. Last of the job: its debug app has the bundle id of the app, which Launch Services must not pick for
+      # the first start above
+      - name: The Spatial passes on a stereo clip in a built app (Metal)
+        if: success()
+        working-directory: mobile
+        timeout-minutes: 25
+        run: mise exec -- flutter test integration_test/desktop_spatial_video_test.dart -d macos --reporter expanded
+
   # The desktop tests on macOS (lots L04 and L05 of the desktop parity plan, 21 November 2026), beside the build: until
   # release 51 they never ran on a Mac, the build job only compiled the app and started it. test/desktop on this arm64
   # runner with the fakes of the AI features compiled here, then ONNX Runtime by FFI on the library the app installs on
@@ -2141,6 +2359,9 @@ jobs:
           IMMUCH360_SPLAT_SCENE_PROBE: ${{ steps.fakes.outputs.dir }}/splat-probe
           IMMUCH360_FAKE_AV2: ${{ steps.fakes.outputs.dir }}/fake-av2
           IMMUCH360_RUN_LAUNCHER: ${{ steps.fakes.outputs.dir }}/immuch360-run
+          # The head tracker's library, built by its hook for this run: the recorded track through the fake camera,
+          # the clip through AVFoundation's camera path (head_tracker_native_test.dart)
+          IMMUCH360_REQUIRE_HEAD_TRACKER: '1'
         run: mise exec -- flutter test test/desktop
 
       # For the record, not a check: macOS refused the test authority of tls_contract_test.dart and of the downloader
@@ -2634,6 +2855,184 @@ jobs:
           archive: false
           retention-days: 14
           if-no-files-found: error
+
+  # The same stable-diffusion.cpp on Metal for Apple silicon (release 53, store/m2/release-53/enhance-mac-2026-11-25.md):
+  # the engine of Sharpen and Rebuild details on a Mac, at the commits of sd_cpp_seedvr2.lock.json with its macos-arm64
+  # options (SD_METAL, the Metal shaders embedded, everything static: one program sd-cli, signed ad hoc, no Developer
+  # ID yet), its --help compared with the same fixture. Then what this virtual Mac can prove, its GPU being "Apple
+  # Paravirtual device": the devices ggml lists, Sharpen through the backend of the app on Real-ESRGAN x4plus (the
+  # asset of ai-components-3, checked by its SHA-256), and, not blocking, one tile of Rebuild details on SeedVR2 3B
+  # (the assets of ai-components-7), which either runs on the GPU or stops and says the GPU was not used. Not the speed
+  # nor the memory of a real Mac. Its artifact Immuch360-AI-sdcpp-0d71f96-1-macos-arm64.zip is for ai-components-7;
+  # nothing here publishes it.
+  sdcpp-seedvr2-macos:
+    name: stable-diffusion.cpp of Enhance (AI) for Apple silicon (Metal)
+    runs-on: macos-15
+    needs: codegen
+    if: ${{ inputs.sdcpp_seedvr2 || needs.codegen.outputs.sdcpp_seedvr2_lock_changed == 'true' }}
+    timeout-minutes: 120
+    env:
+      LOCK: .github/desktop/ai/sd_cpp_seedvr2.lock.json
+      HELP: mobile/test/fixtures/ai_immersive/sd_cli_seedvr2_help.txt
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" lock --system macos-arm64 --github-output
+
+      - name: Sources of stable-diffusion.cpp and ggml at the commits of the lock
+        run: python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" sources --dir "$RUNNER_TEMP/sdcpp"
+
+      - name: Build
+        run: |
+          uname -m
+          xcrun clang --version | head -1
+          sw_vers
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" build --system macos-arm64 \
+            --source "$RUNNER_TEMP/sdcpp" --build "$RUNNER_TEMP/sdcpp-build"
+
+      - name: sd-cli --help as the fixture says
+        run: |
+          "$RUNNER_TEMP/sdcpp-build/bin/sd-cli" --help > "$RUNNER_TEMP/sd-cli-help.txt"
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" help --output "$RUNNER_TEMP/sd-cli-help.txt" \
+            --fixture "$HELP"
+
+      - name: The archive
+        id: archive
+        run: |
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" pack --system macos-arm64 \
+            --source "$RUNNER_TEMP/sdcpp" --bin "$RUNNER_TEMP/sdcpp-build/bin" --out dist
+          unpacked="$RUNNER_TEMP/unpacked"
+          mkdir -p "$unpacked"
+          python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$unpacked"
+          chmod +x "$unpacked/sd-cli"
+          otool -L "$unpacked/sd-cli"
+          vtool -show-build "$unpacked/sd-cli" || true
+          codesign --verify --strict --verbose=2 "$unpacked/sd-cli"
+          echo "sdcli=$unpacked/sd-cli" >> "$GITHUB_OUTPUT"
+          mkdir -p "$RUNNER_TEMP/metal-out"
+          "$unpacked/sd-cli" --list-devices 2>&1 | tee "$RUNNER_TEMP/metal-out/list-devices.txt" \
+            || echo "no device listed"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install Flutter
+        run: cd mobile && mise install
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Flutter dependencies
+        working-directory: mobile
+        run: |
+          tar -xf generated-dart.tar
+          mise exec -- flutter pub get --enforce-lockfile
+
+      # Real-ESRGAN x4plus as the app installs it (upscalerComponent, ai-components-3), then Sharpen of a picture of
+      # 320 x 240 through SdCppSharpenBackend and SdCppUpscaler on sdCppMetalDevice: no --backend, sd-cli takes the GPU
+      - name: Sharpen on the GPU of this Mac through the backend of the app
+        working-directory: mobile
+        env:
+          SD_CLI: ${{ steps.archive.outputs.sdcli }}
+        run: |
+          models="$RUNNER_TEMP/models"
+          mkdir -p "$models"
+          curl -sSfL --retry 3 -o "$models/RealESRGAN_x4plus.pth" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-3/RealESRGAN_x4plus.pth
+          echo "4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1  $models/RealESRGAN_x4plus.pth" \
+            | shasum -a 256 -c -
+          export IMMUCH360_ENHANCE_METAL="{\"sdCli\":\"$SD_CLI\",\"upscaler\":\"$models/RealESRGAN_x4plus.pth\",\"out\":\"$RUNNER_TEMP/metal-out/sharpen\"}"
+          mise exec -- flutter test test/desktop/ai/enhance/enhance_metal_integration_test.dart --reporter expanded \
+            --plain-name Sharpen
+
+      # SeedVR2 3B int8 convrot and its VAE as the app installs them (ai-components-7: the DiT in two parts, put end to
+      # end and checked by the SHA-256 of the whole file), then one tile of 512 px through SdCppRebuildBackend. Not
+      # blocking: the virtual GPU of the runner and its 7 GB of memory may refuse it, which the outcome says
+      - name: One tile of Rebuild details on the GPU of this Mac (information)
+        id: rebuild
+        if: ${{ !cancelled() && steps.archive.outcome == 'success' }}
+        continue-on-error: true
+        timeout-minutes: 45
+        working-directory: mobile
+        env:
+          SD_CLI: ${{ steps.archive.outputs.sdcli }}
+        run: |
+          models="$RUNNER_TEMP/models"
+          base=https://github.com/freeKC/Immuch360/releases/download/ai-components-7
+          { curl -sSfL --retry 3 "$base/seedvr2_3b_int8_convrot.safetensors.001"
+            curl -sSfL --retry 3 "$base/seedvr2_3b_int8_convrot.safetensors.002"; } \
+            > "$models/seedvr2_3b_int8_convrot.safetensors"
+          echo "c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157  $models/seedvr2_3b_int8_convrot.safetensors" \
+            | shasum -a 256 -c -
+          curl -sSfL --retry 3 -o "$models/seedvr2_ema_vae_fp16.safetensors" "$base/seedvr2_ema_vae_fp16.safetensors"
+          echo "20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1  $models/seedvr2_ema_vae_fp16.safetensors" \
+            | shasum -a 256 -c -
+          sysctl hw.memsize
+          df -h "$RUNNER_TEMP"
+          export IMMUCH360_ENHANCE_METAL="{\"sdCli\":\"$SD_CLI\",\"upscaler\":\"\",\"dit\":\"$models/seedvr2_3b_int8_convrot.safetensors\",\"vae\":\"$models/seedvr2_ema_vae_fp16.safetensors\",\"out\":\"$RUNNER_TEMP/metal-out/rebuild\"}"
+          mise exec -- flutter test test/desktop/ai/enhance/enhance_metal_integration_test.dart --reporter expanded \
+            --plain-name "Rebuild details"
+
+      # The same program again through sd-cli alone, past the line that made the app stop it, to see how far the
+      # virtual GPU goes: its exit code and the tiles it wrote (information only, the app never does this)
+      - name: The program of Rebuild details through sd-cli alone (information)
+        if: ${{ !cancelled() && steps.rebuild.outcome != 'skipped' }}
+        continue-on-error: true
+        timeout-minutes: 30
+        env:
+          SD_CLI: ${{ steps.archive.outputs.sdcli }}
+        run: |
+          work="$RUNNER_TEMP/metal-out/rebuild/work"
+          ls -l "$work" "$work/tiles" || true
+          [ -f "$work/rebuild.dgl" ] || { echo "no program kept"; exit 0; }
+          set +e
+          "$SD_CLI" -M dgl --script "$work/rebuild.dgl" --max-vram 6 -t 3 -v > "$RUNNER_TEMP/metal-out/rebuild/alone.log" 2>&1
+          echo "sd-cli ended with $?" | tee -a "$RUNNER_TEMP/metal-out/rebuild/alone.log"
+          grep -E 'error|\[E\]|\[W\]|item [0-9]+/|auto-fit|params ->|budget' "$RUNNER_TEMP/metal-out/rebuild/alone.log" | head -40
+          tail -5 "$RUNNER_TEMP/metal-out/rebuild/alone.log"
+          ls -l "$work/tiles"
+
+      - name: What this Mac said
+        if: ${{ !cancelled() }}
+        run: |
+          out="$RUNNER_TEMP/metal-out"
+          {
+            echo "### sd-cli on Metal, ${{ steps.lock.outputs.artifact }}"
+            echo '```'
+            cat "$out/list-devices.txt" 2>/dev/null || true
+            for part in sharpen rebuild; do
+              echo "--- $part"
+              cat "$out/$part/outcome.json" 2>/dev/null || echo "no outcome"
+              grep -h -i -E 'ggml_metal|MTL|auto-fit|fall|error' "$out/$part/sd-cli.log" 2>/dev/null | head -40 || true
+            done
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload what this Mac said
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: enhance-metal-logs-macos-arm64
+          path: ${{ runner.temp }}/metal-out
+          retention-days: 14
+          if-no-files-found: ignore
 
   # COLMAP 4.2.1 on the processor, without its GPL parts, which places the photos of the splat scenes (lot SP1 of the
   # splat maker, plan of 2026-11-01, section 3): built from the commit of .github/desktop/ai/colmap.lock.json with the

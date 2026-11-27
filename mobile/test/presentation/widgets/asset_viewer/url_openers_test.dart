@@ -182,7 +182,8 @@ class _ImmersiveApi extends ImmersiveApi {
     int watchMinDurationMs = -1,
     String? startNotice,
     int slideshowSeconds = 0,
-    bool frostedBackground = true,
+    String slideshowBackground = 'blurred',
+    String slideshowTransition = 'crossFade',
   }) async {
     openingIds.add(openingId);
     final failure = this.failure;

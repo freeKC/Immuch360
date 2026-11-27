@@ -67,6 +67,10 @@ abstract class PhotoViewControllerBase<T extends PhotoViewControllerValue> {
   double? get initialScale;
   ScaleBoundaries? scaleBoundaries;
 
+  /// Immuch360 Desktop: the smallest and largest scale of a pinch, those of the wheel (desktop_photo_zoom.dart), read
+  /// only by a view of desktopZoom; null: the scale boundaries alone
+  ({double min, double max})? Function()? desktopScaleLimits;
+
   /// Nevermind this method :D, look away
   void setScaleInvisibly(double? scale);
 
@@ -148,6 +152,9 @@ class PhotoViewController implements PhotoViewControllerBase<PhotoViewController
 
   @override
   ScaleBoundaries? scaleBoundaries;
+
+  @override
+  ({double min, double max})? Function()? desktopScaleLimits;
 
   late Future<void> Function(Offset)? _animatePosition;
   late Future<void> Function(double)? _animateScale;

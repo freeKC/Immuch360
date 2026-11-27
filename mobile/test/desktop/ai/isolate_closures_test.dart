@@ -159,15 +159,41 @@ final provider = Provider((ref) => Isolate.run(() => 3));
     expect(isolateCallsInClasses(codeOnly(source)), ['5: class Engine', '12: extension on']);
   });
 
-  test('no closure is sent to an isolate from inside a class in the AI features', () {
-    final folder = Directory(p.join('lib', 'desktop', 'ai'));
+  // The folders whose isolates the rule holds: the AI features (issue 23), and those of release 53 that start isolates
+  // of their own or may: the depth of Spatial 2.5D (spatial_photo_render.dart) and the relay of "Play on…" on both
+  // ends. Older folders still send closures built in methods that hold no queue nor store (the share clients, the
+  // thumbnail caches); they are left out until they are moved.
+  const guarded = [
+    ['lib', 'desktop', 'ai'],
+    ['lib', 'desktop', 'spatial'],
+    ['lib', 'infrastructure', 'network', 'play_on_screen'],
+    ['lib', 'providers', 'play_on_screen'],
+  ];
+
+  test('every guarded folder exists and holds Dart files, so that the rule cannot become vacuous', () {
+    for (final parts in guarded) {
+      final folder = Directory(p.joinAll(parts));
+      expect(folder.existsSync(), isTrue, reason: folder.path);
+      expect(
+        folder.listSync(recursive: true).whereType<File>().where((file) => file.path.endsWith('.dart')),
+        isNotEmpty,
+      );
+    }
+    // The isolate of Spatial 2.5D is among what the rule reads
+    final render = File(p.join('lib', 'desktop', 'spatial', 'spatial_photo_render.dart')).readAsStringSync();
+    expect(render, contains('Isolate.run('));
+  });
+
+  test('no closure is sent to an isolate from inside a class in the AI features, Spatial 2.5D and the relay', () {
     final offending = <String>[];
-    for (final file in folder.listSync(recursive: true).whereType<File>()) {
-      if (!file.path.endsWith('.dart')) {
-        continue;
-      }
-      for (final call in isolateCallsInClasses(codeOnly(file.readAsStringSync()))) {
-        offending.add('${file.path}:$call');
+    for (final parts in guarded) {
+      for (final file in Directory(p.joinAll(parts)).listSync(recursive: true).whereType<File>()) {
+        if (!file.path.endsWith('.dart')) {
+          continue;
+        }
+        for (final call in isolateCallsInClasses(codeOnly(file.readAsStringSync()))) {
+          offending.add('${file.path}:$call');
+        }
       }
     }
     expect(

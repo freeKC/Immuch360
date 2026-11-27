@@ -42,7 +42,7 @@ typedef OriginalFetcher = Future<http.StreamedResponse> Function(Uri url);
 var _copies = 0;
 
 /// A photo of the Immich server, copied before its conversion
-class ServerOriginalSource implements DownloadableOriginal {
+class ServerOriginalSource implements DownloadableOriginal, RecopiableOriginal {
   ServerOriginalSource({
     required this.name,
     required this.remoteId,
@@ -78,6 +78,18 @@ class ServerOriginalSource implements DownloadableOriginal {
 
   /// The address of the original, never an edit
   Uri get url => Uri.parse('$endpoint/assets/$remoteId/original');
+
+  @override
+  ServerOriginalSource recopy() => ServerOriginalSource(
+    name: name,
+    remoteId: remoteId,
+    endpoint: endpoint,
+    fetch: _fetch,
+    fetchRange: _fetchRange,
+    exif: exif,
+    copiesFolder: _copiesFolder,
+    hash: _hash,
+  );
 
   @override
   Future<ImmersiveSource> prepare(NativeCancelFlag cancel) async {

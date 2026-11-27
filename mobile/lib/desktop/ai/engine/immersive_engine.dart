@@ -24,6 +24,7 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -715,6 +716,7 @@ final class EnhanceJob extends ImmersiveJobSpec {
     required this.level,
     required this.strength,
     this.seed = 42,
+    this.layout = EnhanceLayout.flat,
     super.quarterTurns = 0,
     super.exif = const ImmersiveExif(),
   });
@@ -723,6 +725,9 @@ final class EnhanceJob extends ImmersiveJobSpec {
   final EnhanceLevel level;
   final int strength;
   final int seed;
+
+  /// A 360° photo, a 3D photo, or a flat one (enhance_layout.dart, release 53)
+  final EnhanceLayout layout;
 
   @override
   ImmersiveKind get kind => ImmersiveKind.enhancedPhoto;

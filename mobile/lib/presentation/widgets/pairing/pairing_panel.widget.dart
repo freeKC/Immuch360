@@ -395,13 +395,20 @@ class PairingPanelContent extends StatelessWidget {
   };
 }
 
+/// What [AppScreenSignInActions] reads and invalidates providers with: the read of a widget's ref or a provider's
+typedef ScreenSignInRead = T Function<T>(ProviderListenable<T> provider);
+
 /// The app's side of a sign in from the pairing panel: the settings, the stores and the server of the app
 class AppScreenSignInActions implements ScreenSignInActions {
-  AppScreenSignInActions(this._ref);
+  AppScreenSignInActions(WidgetRef ref) : _read = ref.read, _invalidate = ref.invalidate;
 
-  final WidgetRef _ref;
+  /// The same from a provider: "Sign (screen) in" of a phone through "Play from a phone" (release 53)
+  AppScreenSignInActions.of(Ref ref) : _read = ref.read, _invalidate = ref.invalidate;
 
-  ApiService get _api => _ref.read(apiServiceProvider);
+  final ScreenSignInRead _read;
+  final void Function(ProviderOrFamily provider) _invalidate;
+
+  ApiService get _api => _read(apiServiceProvider);
 
   @override
   Future<ScreenSignInSnapshot> snapshot() async => ScreenSignInSnapshot(
@@ -417,7 +424,7 @@ class AppScreenSignInActions implements ScreenSignInActions {
     // longer hold it
     await Store.delete(StoreKey.accessToken);
     // The home screen widget got the token with the sign in
-    await _ref.read(widgetServiceProvider).clearCredentials();
+    await _read(widgetServiceProvider).clearCredentials();
     await SettingsRepository.instance.write(.networkCustomHeaders, snapshot.headers);
     Future<void> put(StoreKey<String> key, String? value) => value == null ? Store.delete(key) : Store.put(key, value);
     await put(StoreKey.pairingScreenLabel, snapshot.label);
@@ -474,16 +481,16 @@ class AppScreenSignInActions implements ScreenSignInActions {
 
   @override
   Future<bool> useToken(String token) async {
-    invalidateAllApiRepositoryProviders(_ref);
+    invalidateApiRepositoryProviders(_invalidate);
     // The token goes in the cookie jar of the native clients (or the computers' stack), as a sign in sets it
     await NetworkRepository.setHeaders(ApiService.getNativeHeaders(), ApiService.getServerUrls(), token: token);
-    return _ref.read(authProvider.notifier).saveAuthInfo(accessToken: token);
+    return _read(authProvider.notifier).saveAuthInfo(accessToken: token);
   }
 
   @override
   Future<({bool passwordLogin, String? oauthProvider})> loginOptions() async {
-    await _ref.read(serverInfoProvider.notifier).getServerInfo();
-    final info = _ref.read(serverInfoProvider);
+    await _read(serverInfoProvider.notifier).getServerInfo();
+    final info = _read(serverInfoProvider);
     final label = info.serverConfig.oauthButtonText;
     return (
       passwordLogin: info.serverFeatures.passwordLogin,
@@ -493,9 +500,9 @@ class AppScreenSignInActions implements ScreenSignInActions {
 
   @override
   Future<PasswordSignInOutcome> login(String email, String password) async {
-    invalidateAllApiRepositoryProviders(_ref);
+    invalidateApiRepositoryProviders(_invalidate);
     try {
-      await _ref.read(authProvider.notifier).login(email, password);
+      await _read(authProvider.notifier).login(email, password);
       return PasswordSignInOutcome.signedIn;
     } on ApiException catch (error) {
       return error.code == 401 || error.code == 400
@@ -517,7 +524,7 @@ class AppScreenSignInActions implements ScreenSignInActions {
 
   @override
   String? userName() {
-    final name = _ref.read(authProvider).name;
+    final name = _read(authProvider).name;
     return name.isEmpty ? null : name;
   }
 }

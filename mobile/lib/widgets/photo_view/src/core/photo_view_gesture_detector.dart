@@ -22,6 +22,7 @@ class PhotoViewGestureDetector extends StatelessWidget {
     this.onTapDown,
     this.behavior,
     this.disableScaleGestures = false,
+    this.desktopZoom = false,
   });
 
   final GestureDoubleTapCallback? onDoubleTap;
@@ -46,6 +47,12 @@ class PhotoViewGestureDetector extends StatelessWidget {
   final HitTestBehavior? behavior;
 
   final bool disableScaleGestures;
+
+  /// See PhotoView.desktopZoom: the mouse pans and zooms through the desktop zoom, the pinch and the pan of this
+  /// recognizer stay for the touch screens and the trackpads. A mouse drag was taken here by the vertical drag of the
+  /// asset viewer (one logical pixel of slop for a mouse, against a fifth of the touch slop for this recognizer), so a
+  /// zoomed photo never moved under the mouse (release 52).
+  final bool desktopZoom;
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +100,7 @@ class PhotoViewGestureDetector extends StatelessWidget {
         debugOwner: this,
         validateAxis: axis,
         touchSlopFactor: touchSlopFactor,
+        supportedDevices: desktopZoom ? _allButMouse : null,
       ),
       (PhotoViewGestureRecognizer instance) {
         instance
@@ -115,6 +123,9 @@ class PhotoViewGestureDetector extends StatelessWidget {
   }
 }
 
+/// Every kind of pointer but a mouse
+final _allButMouse = PointerDeviceKind.values.where((kind) => kind != PointerDeviceKind.mouse).toSet();
+
 class PhotoViewGestureRecognizer extends ScaleGestureRecognizer {
   PhotoViewGestureRecognizer({
     this.hitDetector,
@@ -122,7 +133,8 @@ class PhotoViewGestureRecognizer extends ScaleGestureRecognizer {
     this.validateAxis,
     this.touchSlopFactor = 1,
     this.disableScaleGestures = false,
-  }) : super(supportedDevices: null);
+    super.supportedDevices,
+  });
   final HitCornersDetector? hitDetector;
   final Axis? validateAxis;
   final double touchSlopFactor;

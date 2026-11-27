@@ -118,7 +118,8 @@ class DiscoveredServer {
             NetworkSourceType.tapo ||
             NetworkSourceType.ipCamera ||
             NetworkSourceType.documentTree ||
-            NetworkSourceType.deviceFolder => '',
+            NetworkSourceType.deviceFolder ||
+            NetworkSourceType.phoneRelay => '',
           },
         );
 

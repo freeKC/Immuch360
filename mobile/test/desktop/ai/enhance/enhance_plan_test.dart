@@ -1,7 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
+import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show aiEnhanceMacRebuildOffered;
 
 const _gib = 1024 * 1024 * 1024;
 
@@ -23,7 +26,115 @@ EnhanceMachine _with({
 }) =>
     EnhanceMachine(platform: platform, physicalMemory: physical, freeMemory: free, processors: processors, card: card);
 
+/// A Mac with an Apple chip of [gigabytes] of unified memory, its GPU as Metal tells it: about two thirds of the memory
+/// advised as the working set of a process, the family of the M1 and later unless [apple7] is false
+EnhanceMachine _mac(int gigabytes, {bool apple7 = true, bool metal = true, int? workingSet}) => EnhanceMachine(
+  platform: AiPlatform.macosArm64,
+  physicalMemory: gigabytes * _gib,
+  processors: 10,
+  metal: metal
+      ? MetalFacts(
+          name: 'Apple M2 Pro',
+          workingSet: workingSet ?? gigabytes * _gib * 2 ~/ 3,
+          unifiedMemory: true,
+          apple7: apple7,
+        )
+      : null,
+);
+
 void main() {
+  group('a Mac with an Apple chip (release 53, not tried on a Mac yet)', () {
+    test('8 GB: Sharpen only, Rebuild details and Natural need 16 GB', () {
+      final mac = _mac(8);
+      expect(
+        enhanceVerdict(EnhanceLevel.sharpen, mac, width: 4000, height: 3000, macRebuildOffered: true).refusal,
+        isNull,
+      );
+      expect(
+        enhanceVerdict(EnhanceLevel.rebuild, mac, width: 4000, height: 3000, macRebuildOffered: true).refusal,
+        EnhanceRefusal.memoryTooSmall,
+      );
+      expect(
+        enhanceVerdict(EnhanceLevel.natural, mac, width: 4000, height: 3000, macRebuildOffered: true).refusal,
+        EnhanceRefusal.memoryTooSmall,
+      );
+    });
+
+    test('the graphics: none from Metal, not of the Apple family 7, too small a working set', () {
+      for (final level in [EnhanceLevel.sharpen, EnhanceLevel.rebuild]) {
+        expect(
+          enhanceVerdict(level, _mac(16, metal: false), width: 100, height: 100, macRebuildOffered: true).refusal,
+          EnhanceRefusal.macGraphicsUnusable,
+          reason: level.name,
+        );
+      }
+      // A virtual Mac without the family of the Apple chips: Sharpen runs, Rebuild details and its int8 weights not
+      final virtual = _mac(16, apple7: false);
+      expect(
+        enhanceVerdict(EnhanceLevel.sharpen, virtual, width: 100, height: 100, macRebuildOffered: true).refusal,
+        isNull,
+      );
+      expect(
+        enhanceVerdict(EnhanceLevel.rebuild, virtual, width: 100, height: 100, macRebuildOffered: true).refusal,
+        EnhanceRefusal.macGraphicsUnusable,
+      );
+      // Natural needs no graphics
+      expect(
+        enhanceVerdict(
+          EnhanceLevel.natural,
+          _mac(16, metal: false),
+          width: 100,
+          height: 100,
+          macRebuildOffered: true,
+        ).refusal,
+        isNull,
+      );
+      expect(
+        enhanceVerdict(
+          EnhanceLevel.rebuild,
+          _mac(32, workingSet: 4 * _gib),
+          width: 100,
+          height: 100,
+          macRebuildOffered: true,
+        ).refusal,
+        EnhanceRefusal.graphicsCardTooSmall,
+      );
+      expect(
+        enhanceVerdict(EnhanceLevel.rebuild, _mac(24), width: 100, height: 100, macRebuildOffered: true).refusal,
+        isNull,
+      );
+    });
+
+    test('Rebuild details is held on every Mac until it has run on a real Apple chip; Sharpen and Natural are not', () {
+      expect(aiEnhanceMacRebuildOffered, isFalse);
+      for (final mac in [_mac(16), _mac(64)]) {
+        expect(
+          enhanceVerdict(EnhanceLevel.rebuild, mac, width: 4000, height: 3000).refusal,
+          EnhanceRefusal.macRebuildNotYet,
+        );
+        expect(enhanceVerdict(EnhanceLevel.sharpen, mac, width: 4000, height: 3000).refusal, isNull);
+        expect(enhanceVerdict(EnhanceLevel.natural, mac, width: 4000, height: 3000).refusal, isNull);
+      }
+      // Windows and Linux never wait for it
+      expect(enhanceVerdict(EnhanceLevel.rebuild, _laptop, width: 4000, height: 3000).refusal, isNull);
+    });
+
+    test('two jobs side by side only when the memory holds both whole, macOS and the app apart', () {
+      expect(enhanceUnifiedJobMemoryOf(EnhanceLevel.rebuild), rebuildJobMemory + rebuildFreeGraphicsMemory);
+      expect(enhanceUnifiedJobMemoryOf(EnhanceLevel.sharpen), sharpenJobMemory + sharpenFreeGraphicsMemory);
+      expect(enhanceUnifiedJobMemoryOf(EnhanceLevel.natural), naturalJobMemory);
+      final rebuild = enhanceUnifiedJobMemoryOf(EnhanceLevel.rebuild);
+      final natural = enhanceUnifiedJobMemoryOf(EnhanceLevel.natural);
+      expect(enhanceFitsBesideOnUnifiedMemory(rebuild, natural, 16 * _gib), isFalse);
+      expect(enhanceFitsBesideOnUnifiedMemory(rebuild, natural, 32 * _gib), isTrue);
+      expect(
+        enhanceFitsBesideOnUnifiedMemory(enhanceUnifiedJobMemoryOf(EnhanceLevel.sharpen), 2 * _gib, 16 * _gib),
+        isTrue,
+      );
+      expect(enhanceFitsBesideOnUnifiedMemory(1, 1, null), isFalse);
+    });
+  });
+
   group('the three levels on the laptop of the probe', () {
     test('each runs, with the times the probe measured', () {
       for (final level in EnhanceLevel.values) {
@@ -82,15 +193,27 @@ void main() {
       expect(enhanceVerdict(EnhanceLevel.natural, _with(card: null), width: 100, height: 100).refusal, isNull);
     });
 
-    test('on a Mac: Natural on an Apple chip, the levels of the graphics card not yet', () {
-      final mac = _with(platform: AiPlatform.macosArm64, card: null);
-      expect(enhanceVerdict(EnhanceLevel.natural, mac, width: 100, height: 100).refusal, isNull);
-      expect(enhanceVerdict(EnhanceLevel.sharpen, mac, width: 100, height: 100).refusal, EnhanceRefusal.macNotYet);
-      expect(enhanceVerdict(EnhanceLevel.rebuild, mac, width: 100, height: 100).refusal, EnhanceRefusal.macNotYet);
+    test('on a Mac: every level on an Apple chip of 16 GB, none on an Intel Mac', () {
+      final mac = _mac(16);
+      for (final level in EnhanceLevel.values) {
+        final verdict = enhanceVerdict(level, mac, width: 4000, height: 3000, macRebuildOffered: true);
+        expect(verdict.refusal, isNull, reason: level.name);
+        // macOS gives no figure of the memory free: no warning made up
+        expect(verdict.warnings, isNot(contains(EnhanceWarning.closeOtherPrograms)), reason: level.name);
+        expect(verdict.estimate, isNotNull);
+      }
       final intel = _with(platform: AiPlatform.macosX64, card: null);
       expect(
         enhanceVerdict(EnhanceLevel.natural, intel, width: 100, height: 100).refusal,
         EnhanceRefusal.intelMacNotChecked,
+      );
+      expect(
+        enhanceVerdict(EnhanceLevel.sharpen, intel, width: 100, height: 100).refusal,
+        EnhanceRefusal.appleChipNeeded,
+      );
+      expect(
+        enhanceVerdict(EnhanceLevel.rebuild, intel, width: 100, height: 100).refusal,
+        EnhanceRefusal.appleChipNeeded,
       );
       expect(
         enhanceVerdict(EnhanceLevel.natural, _with(platform: AiPlatform.questArm64), width: 1, height: 1).refusal,
@@ -140,6 +263,19 @@ void main() {
     final large = enhanceVerdict(EnhanceLevel.rebuild, free, width: 8000, height: 6000);
     expect(large.warnings, contains(EnhanceWarning.closeOtherPrograms));
     expect(large.memoryNeeded, rebuildFreeMemory + 40 * 36000000);
+  });
+
+  test('a 360 photo needs the memory of all its work pixels: the seam copy and the faces of the poles', () {
+    const sphere = EnhanceLayout(sphere: true);
+    final work = enhanceWorkPixels(9600, 4800, sphere);
+    expect(work, greaterThan(9600 * 4800 * 13 ~/ 10));
+    final flat = enhanceVerdict(EnhanceLevel.sharpen, _laptop, width: 9600, height: 4800);
+    final round = enhanceVerdict(EnhanceLevel.sharpen, _laptop, width: 9600, height: 4800, layout: sphere);
+    expect(flat.memoryNeeded, enhanceFreeMemoryOf(EnhanceLevel.sharpen, pixels: 9600 * 4800));
+    expect(round.memoryNeeded, enhanceFreeMemoryOf(EnhanceLevel.sharpen, pixels: work));
+    // A 3D photo side by side works on its own pixels only
+    const stereo = EnhanceLayout(eyes: EnhanceEyes.sideBySide);
+    expect(enhanceWorkPixels(8000, 4000, stereo), 8000 * 4000);
   });
 
   test('the time of a batch is the sum of its photos', () {

@@ -41,15 +41,26 @@ class _NoOverrides extends HttpOverrides {}
 
 /// An open session with a screen
 class PlayLinkConnection {
-  PlayLinkConnection._(this._client, this.screen, this._base, this._channel);
+  PlayLinkConnection._(this._client, this.screen, this._base, this._channel) : _relayKeys = [_channel.keys.relay];
 
   final PlayLinkClient _client;
   final LinkedPeer screen;
   final Uri _base;
   PlayLinkChannel _channel;
 
+  /// The K_relay of the sessions this connection opened, the newest last, [maxRelayKeys] at most (release 53)
+  final List<Uint8List> _relayKeys;
+
+  /// How many sessions' K_relay a lease of the relay takes: the one a play was sealed in, and the one the connection
+  /// opened again when the screen had forgotten it, while the play went
+  static const maxRelayKeys = 3;
+
   /// The address the session talks to
   String get address => '${_base.host}:${_base.port}';
+
+  /// The K_relay a request of the screen to this phone's relay may be made with: those of the sessions of this
+  /// connection
+  List<List<int>> get relayKeys => List.unmodifiable(_relayKeys);
 
   /// Sends [message] sealed and gives the sealed answer, opened. A session the screen no longer has (it restarted) is
   /// opened again once.
@@ -64,6 +75,10 @@ class PlayLinkConnection {
       );
       if (answer.status == HttpStatus.gone && attempt == 0) {
         _channel = await _client._open(_base, screen);
+        _relayKeys.add(_channel.keys.relay);
+        if (_relayKeys.length > maxRelayKeys) {
+          _relayKeys.removeAt(0);
+        }
         continue;
       }
       if (answer.status != HttpStatus.ok) {
@@ -245,19 +260,26 @@ class _Answer {
 /// The phone's side of "Add (server) to (screen)", inside [connection]: the fresh hello, then the check number for
 /// the user, then the server and its token sealed under the keys of that hello
 class PhoneHandover {
-  PhoneHandover._(this._connection, this._handover);
+  PhoneHandover._(this._connection, this._handover, this.screenOs);
 
   final PlayLinkConnection _connection;
   final PlayHandover _handover;
 
+  /// The system the screen said it runs in its answer to a sign in hello ("Android", "Windows", "Linux" or "macOS",
+  /// as in "Sign in with your phone"), for the name of its session in Immich; null when it said none
+  final String? screenOs;
+
   /// The six digits the screen shows too
   String get check => _handover.check;
 
-  /// Starts the handover of [serverName]: the screen shows its question with the check number. Throws
-  /// [PlayLinkException]; [PlayLinkFailure.invalid] also when the screen is busy with another one.
+  /// Starts the handover of [serverName]: the screen shows its question with the check number. With [signInAs], the
+  /// name of this phone's account, it signs the screen in to that Immich server ([sendSignIn]) rather than hand a
+  /// Plex server over. Throws [PlayLinkException]; [PlayLinkFailure.invalid] also when the screen is busy with
+  /// another one; [PlayHandoverRefused] when the screen is signed in already.
   static Future<PhoneHandover> start(
     PlayLinkConnection connection, {
     required String serverName,
+    String? signInAs,
     Random? random,
   }) async {
     final own = PairingKeyPair.generate(random);
@@ -265,7 +287,11 @@ class PhoneHandover {
       'type': 'handoverHello',
       'pk': pairingBase64(own.publicKey),
       'serverName': serverName,
+      if (signInAs != null) ...{'purpose': playHandoverSignIn, 'user': signInAs},
     });
+    if (answer['status'] == HandoverResult.alreadySignedIn.wire) {
+      throw const PlayHandoverRefused(HandoverResult.alreadySignedIn);
+    }
     final screenKey = pairingDecodeBase64(answer['pk']);
     if (answer['status'] != 'ok' || screenKey == null) {
       throw const PlayLinkException(PlayLinkFailure.invalid);
@@ -274,7 +300,8 @@ class PhoneHandover {
     if (handover == null) {
       throw const PlayLinkException(PlayLinkFailure.invalid);
     }
-    return PhoneHandover._(connection, handover);
+    final os = answer['os'];
+    return PhoneHandover._(connection, handover, os is String && os.length <= 16 ? os : null);
   }
 
   /// The user of the phone cancelled: the question goes from the screen. Never throws.
@@ -286,6 +313,17 @@ class PhoneHandover {
     }
   }
 
+  /// The user of the phone accepted "Sign (screen) in": the Immich [session] this phone made for the screen goes
+  /// (what "Sign in with your phone" sends), and the answer comes once the user of the screen answered and the screen
+  /// signed in with it
+  Future<HandoverResult> sendSignIn(Map<String, Object?> session) async {
+    final answer = await _connection.send({
+      'type': 'handoverServer',
+      'h': _handover.channel(isPhone: true).seal({'immich': session}),
+    }, timeout: ScreenPlayerSession.handoverLifetime + const Duration(seconds: 30));
+    return HandoverResult.fromWire(answer['status']);
+  }
+
   /// The user of the phone accepted: [server] and [token] go, and the answer comes once the user of the screen
   /// answered and the screen checked the server
   Future<HandoverResult> send(HandedPlexServer server, String token) async {
@@ -295,4 +333,14 @@ class PhoneHandover {
     }, timeout: ScreenPlayerSession.handoverLifetime + const Duration(seconds: 30));
     return HandoverResult.fromWire(answer['status']);
   }
+}
+
+/// The screen refused a handover before any question: [result] says why
+class PlayHandoverRefused implements Exception {
+  const PlayHandoverRefused(this.result);
+
+  final HandoverResult result;
+
+  @override
+  String toString() => 'PlayHandoverRefused(${result.wire})';
 }

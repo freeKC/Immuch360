@@ -14,6 +14,7 @@ import 'package:immich_mobile/desktop/library/desktop_file_media_repository.dart
 import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
+import 'package:immich_mobile/desktop/platform/desktop_spatial_video_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart';
 import 'package:immich_mobile/desktop/splat/desktop_splat_computer.dart';
 import 'package:immich_mobile/desktop/splat/desktop_splat_viewer_host.dart';
@@ -51,6 +52,10 @@ List<Override> desktopOverrides() => [
   // The 360° player is a route of the window: open pushes it on the router's navigator
   sphericalVideoApiProvider.overrideWith(
     (ref) => DesktopSphericalVideoApi(navigator: () => ref.read(appRouterProvider).navigatorKey),
+  ),
+  // So is the Spatial 2.5D player of 3D videos (Windows and macOS)
+  spatialVideoApiProvider.overrideWith(
+    (ref) => DesktopSpatialVideoApi(navigator: () => ref.read(appRouterProvider).navigatorKey),
   ),
   // home_widget has no computer implementation and throws at each call; the sign in writes the credentials of the
   // home screen widget, so it failed every time

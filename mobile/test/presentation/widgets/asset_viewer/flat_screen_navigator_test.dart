@@ -14,6 +14,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
@@ -44,9 +45,9 @@ typedef _Shown = ({String url, String? stereoPair});
 class _RecordingImmersiveApi extends ImmersiveApi {
   final shown = <_Shown>[];
 
-  /// The slideshow duration and the frosted background each opening was given
+  /// The slideshow duration and the background and transition of the photos each opening was given
   final slideshowSeconds = <int>[];
-  final frosted = <bool>[];
+  final looks = <String>[];
 
   @override
   Future<void> open(
@@ -71,10 +72,11 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     int watchMinDurationMs = -1,
     String? startNotice,
     int slideshowSeconds = 0,
-    bool frostedBackground = true,
+    String slideshowBackground = 'blurred',
+    String slideshowTransition = 'crossFade',
   }) async {
     this.slideshowSeconds.add(slideshowSeconds);
-    frosted.add(frostedBackground);
+    looks.add('$slideshowBackground $slideshowTransition');
   }
 
   @override
@@ -449,7 +451,7 @@ void main() {
     });
   });
 
-  test('the opening tells the viewer the slideshow duration of the app and the frosted background setting', () async {
+  test('the opening tells the viewer the slideshow duration, the background and the transition of the app', () async {
     final api = _RecordingImmersiveApi();
     final request = ImmersiveRequest(
       url: 'photo',
@@ -464,11 +466,17 @@ void main() {
       stereoLabels: const {},
       openingId: 1,
       slideshowSeconds: 8,
-      frostedBackground: false,
+      headsetLook: const HeadsetSlideshowLook(
+        background: SlideshowBackground.passthrough,
+        transition: SlideshowTransition.slide,
+      ),
     );
     await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 2);
     expect(api.slideshowSeconds, [8, 0], reason: '0 for the 5 s of the viewer');
-    expect(api.frosted, [false, true], reason: 'on by default');
+    expect(api.looks, [
+      'passthrough slide',
+      'blurred crossFade',
+    ], reason: 'the blurred photo and a cross fade by default');
   });
 
   test('every choice but a skip has its request of the stereo quad', () {

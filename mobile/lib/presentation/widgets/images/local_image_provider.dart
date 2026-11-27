@@ -96,6 +96,10 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
   /// A TIFF on a device without TIFF decoder (see photoDecodePath): decoded in Dart from its file
   final bool decodeInDart;
 
+  /// Immuch360 Desktop: the original after all, the picture zoomed in past the preview (desktop_photo_zoom.dart) while
+  /// "Load original image" is off. The picture on screen stays while it comes, and stays if it does not come.
+  final bool zoomOriginal;
+
   const LocalFullImageProvider({
     required this.id,
     required this.assetType,
@@ -105,6 +109,7 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
     this.height,
     this.checksum,
     this.decodeInDart = false,
+    this.zoomOriginal = false,
   });
 
   Size _previewTarget(double dpr, bool previewIsFinal) =>
@@ -146,6 +151,19 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
           DiagnosticsProperty<String>('Id', key.id),
           DiagnosticsProperty<Size>('Size', key.size),
           DiagnosticsProperty<bool>('isAnimated', key.isAnimated),
+        ],
+        onLastListenerRemoved: loader.cancel,
+      );
+    }
+
+    if (key.zoomOriginal) {
+      return OneFramePlaceholderImageStreamCompleter(
+        _zoomCodec(loader, key, decode),
+        // What showed before, the preview, from the cache
+        initialImage: loader.getInitialImage(key._shown),
+        informationCollector: () => <DiagnosticsNode>[
+          DiagnosticsProperty<ImageProvider>('Image provider', this),
+          DiagnosticsProperty<String>('Id', key.id),
         ],
         onLastListenerRemoved: loader.cancel,
       );
@@ -209,6 +227,28 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
     yield* loader.loadRequest(originalRequest, decode, isFinal: true);
   }
 
+  /// The provider of the same picture without [zoomOriginal]: the one the viewer showed until the zoom
+  LocalFullImageProvider get _shown => LocalFullImageProvider(
+    id: id,
+    assetType: assetType,
+    size: size,
+    isAnimated: isAnimated,
+    width: width,
+    height: height,
+    checksum: checksum,
+    decodeInDart: decodeInDart,
+  );
+
+  /// The picture shown, then the original; not final, so that a failure leaves the picture shown on screen
+  Stream<ImageInfo> _zoomCodec(ImageLoader loader, LocalFullImageProvider key, ImageDecoderCallback decode) async* {
+    yield* loader.initialImageStream();
+    if (loader.isCancelled) {
+      return;
+    }
+    final originalRequest = loader.request = _originalRequest(key);
+    yield* loader.loadRequest(originalRequest, decode, isFinal: false, onDecodeFailure: (_) {});
+  }
+
   Stream<Object> _animatedCodec(ImageLoader loader, LocalFullImageProvider key, ImageDecoderCallback decode) async* {
     yield* loader.initialImageStream();
 
@@ -256,11 +296,12 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
           width == other.width &&
           height == other.height &&
           checksum == other.checksum &&
-          decodeInDart == other.decodeInDart;
+          decodeInDart == other.decodeInDart &&
+          zoomOriginal == other.zoomOriginal;
     }
     return false;
   }
 
   @override
-  int get hashCode => Object.hash(id, size, isAnimated, width, height, checksum, decodeInDart);
+  int get hashCode => Object.hash(id, size, isAnimated, width, height, checksum, decodeInDart, zoomOriginal);
 }

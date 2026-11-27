@@ -1,0 +1,28 @@
+name: immuch_head_tracker
+description: The webcam head tracker of Spatial 2.5D for Immuch360 Desktop (Media Foundation, V4L2 or AVFoundation, and libfacedetection, through dart:ffi).
+publish_to: 'none'
+version: 1.1.0
+
+environment:
+  sdk: '>=3.12.0 <4.0.0'
+
+# hooks, code_assets and native_toolchain_c: the build hook of the macOS library (hook/build.dart), the versions the
+# app's lock already holds
+dependencies:
+  code_assets: ^1.2.1
+  ffi: ^2.2.0
+  flutter:
+    sdk: flutter
+  hooks: ^2.2.0
+  native_toolchain_c: ^0.19.1
+
+# The computers only: the phone builds never list it among their plugins, and the hook builds nothing for them. FFI
+# plugins on Windows and Linux (Flutter builds and bundles the libraries with CMake, nothing is registered with the
+# engine); on macOS the library comes from the build hook.
+flutter:
+  plugin:
+    platforms:
+      linux:
+        ffiPlugin: true
+      windows:
+        ffiPlugin: true

@@ -1,15 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart' show ConversionKind;
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart'
+    show aiFeaturesEnabledProvider, offeredConversionKindsProvider;
+import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart' show shareConversionOpenerProvider;
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart' show aiSplatScenesOnProvider, shareSplatOpenerProvider;
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_client.dart';
+import 'package:immich_mobile/presentation/pages/network/film_ai_actions.dart';
 import 'package:immich_mobile/presentation/pages/network/film_page_actions.dart';
 import 'package:immich_mobile/presentation/pages/network/film_page_download_action.dart';
 import 'package:immich_mobile/presentation/pages/network/film_page_play_on.dart';
@@ -125,8 +132,51 @@ void main() {
     return asked;
   }
 
-  test('the row after Play takes Download (lot B), then Play on (lot C)', () {
-    expect(filmPageActions, [filmPageDownloadAction, playOnFilmAction]);
+  test('the row after Play takes Download (lot B), then Play on (lot C), then the AI of a computer (release 53)', () {
+    expect(filmPageActions, [filmPageDownloadAction, playOnFilmAction, filmPageAiAction]);
+  });
+
+  testWidgets('on a computer, "Make 3D (AI)" and "Make a splat scene (AI)" open with the file of the film', (
+    tester,
+  ) async {
+    final made3d = <List<String>>[];
+    final splats = <List<String>>[];
+    List<Override> ai({required bool on}) => [
+      aiFeaturesEnabledProvider.overrideWith((ref) => on),
+      offeredConversionKindsProvider.overrideWith((ref) => on ? const [ConversionKind.stereoVideo] : const []),
+      aiSplatScenesOnProvider.overrideWith((ref) => on),
+      shareConversionOpenerProvider.overrideWithValue((context, entries) async {
+        made3d.add([for (final entry in entries) entry.path]);
+        return true;
+      }),
+      shareSplatOpenerProvider.overrideWithValue((context, entries) async {
+        splats.add([for (final entry in entries) entry.path]);
+        return true;
+      }),
+    ];
+    // A phone: nothing of the AI, even with it on
+    await pumpPage(tester, extra: ai(on: true));
+    expect(find.byKey(const Key('film_ai_make_3d')), findsNothing);
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    try {
+      await pumpPage(tester, extra: ai(on: false));
+      expect(find.byKey(const Key('film_ai_make_3d')), findsNothing);
+      await pumpPage(tester, extra: ai(on: true), size: const Size(1600, 2400));
+      await tester.ensureVisible(find.byKey(const Key('film_ai_make_3d')));
+      await tester.tap(find.byKey(const Key('film_ai_make_3d')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('film_ai_make_splat')));
+      await tester.tap(find.byKey(const Key('film_ai_make_splat')));
+      await tester.pumpAndSettle();
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+    expect(made3d, [
+      ['/Movies/A Made Up Film (2001).mkv'],
+    ]);
+    expect(splats, [
+      ['/Movies/A Made Up Film (2001).mkv'],
+    ]);
   });
 
   testWidgets('shows what Plex holds of the film, and Resume where a Plex app stopped', (tester) async {

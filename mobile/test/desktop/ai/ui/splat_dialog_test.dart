@@ -25,6 +25,7 @@ import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -33,6 +34,7 @@ import 'package:immich_mobile/desktop/ai/power_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
+import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
@@ -40,6 +42,7 @@ import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -950,6 +953,69 @@ void main() {
     expect([for (final member in launch.members) member.asset.name], ['Salon tour.mp4']);
     expect(launch.target.fileName, 'Salon tour_splat.spz');
     expect(launch.label, 'Salon tour.mp4');
+  });
+
+  testWidgets('a video of a share: planned from its listing, read by its job, the scene to the folder of my choice', (
+    tester,
+  ) async {
+    const entry = NetworkEntry(
+      sourceId: 'nas',
+      path: '/2024/Salon tour.mp4',
+      isDirectory: false,
+      size: 400000000,
+      width: 1920,
+      height: 1080,
+      durationMs: 111000,
+    );
+    final extra = [
+      shareConversionSourceProvider.overrideWithValue(
+        (entry) => ShareFileSource(
+          entry: entry,
+          url: () async => Uri.parse('http://127.0.0.1/token/nas${entry.path}'),
+          fetch: (url, {abort}) async => throw StateError('nothing is copied while the dialog plans'),
+        ),
+      ),
+    ];
+    tester.view.physicalSize = const Size(1600, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpConsumerWidget(
+      Scaffold(
+        body: Builder(
+          builder: (context) => TextButton(
+            key: const Key('open'),
+            onPressed: () => unawaited(openShareSplatDialog(context, [entry])),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+      overrides: [...overrides(), ...extra],
+    );
+    await tester.tap(find.byKey(const Key('open')));
+    await settle(tester, until: () => dialogSettled(tester));
+
+    expect(
+      find.text('1 video, 1 min 51 s: about 150 frames will be taken, the sharpest of each moment'),
+      findsOneWidget,
+    );
+    expect(find.textContaining(chosen), findsWidgets, reason: 'a scene is never written into a share');
+    await tapIn(tester, start());
+    await settle(tester);
+    final launch = launches.single;
+    expect(launch.fromVideo, isTrue);
+    expect(launch.members.single.source, isA<ShareFileSource>());
+    expect(launch.target.folder, chosen);
+    expect(launch.target.fileName, 'Salon tour_splat.spz');
+  });
+
+  test('a video of a share is 360° by its frame, its name or its camera', () {
+    NetworkEntry video(String name, {int? width, int? height}) =>
+        NetworkEntry(sourceId: 'nas', path: '/$name', isDirectory: false, width: width, height: height);
+    expect(shareVideoLooks360(video('tour.mp4', width: 1920, height: 1080)), isFalse);
+    expect(shareVideoLooks360(video('tour.mp4', width: 5760, height: 2880)), isTrue);
+    expect(shareVideoLooks360(video('tour_360.mp4')), isTrue);
+    expect(shareVideoLooks360(video('VID_20261125.insv')), isTrue);
+    expect(shareVideoLooks360(video('trip_vr180.mp4')), isTrue);
   });
 
   testWidgets('a video on a laptop of 8 processors before its first scene: COLMAP half as long again (lot SPF2)', (

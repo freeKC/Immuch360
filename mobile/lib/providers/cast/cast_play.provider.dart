@@ -305,6 +305,8 @@ final castEnvironmentProvider = Provider<CastEnvironment>((ref) {
       PlayKind.immich => readImmichCastInfo(ref.read(castImmichEnvironmentProvider), request),
       PlayKind.plex => _readFilmInfo(ref, request),
       PlayKind.share || PlayKind.mediaServer => Future.value(castShareInfoOf(request)),
+      // What the phone sends a linked screen from its relay never goes to a Cast device (release 53)
+      PlayKind.relay => Future.value(null),
     },
     bridgeUrl: (sourceId, path) async {
       await ref.read(mediaBridgeProvider).start();

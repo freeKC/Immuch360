@@ -210,7 +210,9 @@ final networkSourceProvider = Provider.family<NetworkSource?, String>((ref, id) 
 /// The folders picked on the DJI drone page (a drone, a controller or a card plugged in), as sources of type
 /// [NetworkSourceType.documentTree], and the folders of the device chosen in On this device, of type
 /// [NetworkSourceType.deviceFolder]: in memory only, by id, never stored and never listed with the shares. Their
-/// connections open, register on the media bridge and close like those of the shares (see NetworkConnections).
+/// connections open, register on the media bridge and close like those of the shares (see NetworkConnections). On a
+/// big screen, the item a linked phone sends from its relay too ([NetworkSourceType.phoneRelay], release 53), whose
+/// connection is handed over open (NetworkConnections.adopt).
 class ImportSourcesNotifier extends Notifier<Map<String, NetworkSource>> {
   @override
   Map<String, NetworkSource> build() => const {};
@@ -222,7 +224,9 @@ class ImportSourcesNotifier extends Notifier<Map<String, NetworkSource>> {
   /// Adds [source], or replaces the one with its id
   void put(NetworkSource source) {
     assert(
-      (source.type == NetworkSourceType.documentTree || source.type == NetworkSourceType.deviceFolder) &&
+      (source.type == NetworkSourceType.documentTree ||
+              source.type == NetworkSourceType.deviceFolder ||
+              source.type == NetworkSourceType.phoneRelay) &&
           source.id.startsWith(NetworkEntry.importSourcePrefix),
     );
     state = Map.unmodifiable({...state, source.id: source});

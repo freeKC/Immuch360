@@ -16,12 +16,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
@@ -31,12 +35,14 @@ import 'package:immich_mobile/domain/services/network_video_thumbnail.service.da
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:path/path.dart' as p;
@@ -104,6 +110,9 @@ void main() {
   late int memory;
   late List<ConversionKind> kinds;
   late List<List<String>> opened;
+  late List<List<String>> enhanced;
+  late List<List<String>> splats;
+  late bool splatOn;
   late bool launches;
   HttpOverrides? previousOverrides;
 
@@ -135,6 +144,9 @@ void main() {
     memory = 16 * _gib;
     kinds = [ConversionKind.sbsFromPhoto, ConversionKind.stereoPanoramaFromPanorama];
     opened = [];
+    enhanced = [];
+    splats = [];
+    splatOn = false;
     launches = true;
   });
 
@@ -163,6 +175,8 @@ void main() {
         (_) => NetworkVideoThumbnailService(api: FakeVideoThumbnailHost(), retryDelay: Duration.zero),
       ),
       aiFeaturesEnabledProvider.overrideWith((ref) => enabled),
+      // Spatial 2.5D off: a plain photo would get its button too (spatial_plain_photo_test.dart), which reads it
+      appConfigProvider.overrideWithValue(const AppConfig(viewer: ViewerConfig(spatial25d: false))),
       offeredConversionKindsProvider.overrideWith((ref) => kinds),
       aiComponentsServiceProvider.overrideWithValue(service),
       desktopAiGateProvider.overrideWithValue(
@@ -179,6 +193,15 @@ void main() {
         opened.add([for (final entry in entries) entry.path]);
         return launches;
       }),
+      shareEnhanceOpenerProvider.overrideWithValue((context, entries) async {
+        enhanced.add([for (final entry in entries) entry.path]);
+        return launches;
+      }),
+      shareSplatOpenerProvider.overrideWithValue((context, entries) async {
+        splats.add([for (final entry in entries) entry.path]);
+        return launches;
+      }),
+      aiSplatScenesOnProvider.overrideWith((ref) => splatOn),
     ];
   }
 
@@ -267,12 +290,31 @@ void main() {
       });
     });
 
+    testWidgets('offers Enhance (AI) on a computer, a 360° photo too, which opens its dialog on that photo', (
+      tester,
+    ) async {
+      await onComputer(() async {
+        await pumpPhoto(tester, '/pano.jpg', read: shows360Button);
+        await openMenu(tester);
+
+        expect(find.text('Enhance (AI)'), findsOneWidget);
+        await tester.tap(find.text('Enhance (AI)'));
+        await tester.pumpAndSettle();
+
+        expect(enhanced, [
+          ['/pano.jpg'],
+        ]);
+        await endRealIo(tester);
+      });
+    });
+
     testWidgets('is absent while the AI features are off, and on a phone', (tester) async {
       enabled = false;
       await onComputer(() async {
         await pumpPhoto(tester, '/flat.jpg');
         await openMenu(tester);
         expect(find.text('Make 3D (AI)'), findsNothing);
+        expect(find.text('Enhance (AI)'), findsNothing);
         await endRealIo(tester);
       });
 
@@ -281,8 +323,46 @@ void main() {
       await openMenu(tester);
       expect(find.text(t.view_as_360), findsOneWidget);
       expect(find.text('Make 3D (AI)'), findsNothing, reason: 'a phone');
+      expect(find.text('Enhance (AI)'), findsNothing, reason: 'a phone');
       await endRealIo(tester);
     });
+  });
+
+  testWidgets('a photo a phone sends from its relay is shown only: no Make 3D (AI) nor Enhance (AI) (release 53)', (
+    tester,
+  ) async {
+    const relay = NetworkSource(
+      id: 'tree:relay-00112233445566778899aabbccddeeff',
+      type: NetworkSourceType.phoneRelay,
+      name: 'Pixel',
+      host: '192.168.1.20',
+    );
+    expect(isPlayRelaySource(relay.id), isTrue);
+    // Real IO out of the fake clock of the widget test
+    await tester.runAsync(() async {
+      await server.close();
+      share = MemoryShare(relay, files: {'/IMG_0001.jpg': fakePhoto()});
+      server = await TestMediaServer.start(share);
+    });
+    await onComputer(() async {
+      await pumpNetworkRouter(
+        tester,
+        home: NetworkPhotoPage(sourceId: relay.id, path: '/IMG_0001.jpg'),
+        settle: false,
+        overrides: overrides(),
+      );
+      await settle(tester);
+      expect(find.byType(NetworkPhotoPage), findsOneWidget);
+      if (find.byTooltip(t.more).evaluate().isNotEmpty) {
+        await openMenu(tester);
+      }
+      expect(find.text('Enhance (AI)'), findsNothing);
+      expect(find.text('Make 3D (AI)'), findsNothing);
+      expect(find.text(t.network_upload_action), findsNothing);
+      await endRealIo(tester);
+    });
+    expect(enhanced, isEmpty);
+    expect(opened, isEmpty);
   });
 
   test('the types that take a photo of a share follow the rule of the plan, with what its page read of it', () {
@@ -349,6 +429,34 @@ void main() {
           ['/cuisine.jpg', '/flat.jpg'],
         ]);
         expect(find.text('Make 3D (AI)'), findsNothing, reason: 'the selection ends once the photos are in the queue');
+        await endRealIo(tester);
+      });
+    });
+
+    testWidgets('has Enhance (AI) and Make a splat scene (AI) after it, each on the files picked', (tester) async {
+      splatOn = true;
+      await onComputer(() async {
+        await pumpBrowser(tester);
+        await tester.longPress(tileOf('flat.jpg'));
+        await tester.pump();
+        await tester.tap(tileOf('clip.mp4'));
+        await tester.pump();
+
+        expect(find.text('Enhance (AI)'), findsOneWidget);
+        expect(find.text('Make a splat scene (AI)'), findsOneWidget);
+        await tester.tap(find.text('Make a splat scene (AI)'));
+        await tester.pumpAndSettle();
+        expect(splats, [
+          ['/clip.mp4', '/flat.jpg'],
+        ]);
+
+        await tester.longPress(tileOf('cuisine.jpg'));
+        await tester.pump();
+        await tester.tap(find.text('Enhance (AI)'));
+        await tester.pumpAndSettle();
+        expect(enhanced, [
+          ['/cuisine.jpg'],
+        ]);
         await endRealIo(tester);
       });
     });

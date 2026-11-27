@@ -51,6 +51,36 @@ void main() {
     expect(answers, [true, false]);
   });
 
+  testWidgets('Sign (screen) in: who it is signed in as, the number to check, the warning of the sign in', (
+    tester,
+  ) async {
+    final answers = <bool>[];
+    playOnPhoneScreen(tester);
+    await pumpPlayOn(
+      tester,
+      playOnOpener(
+        (context) async => answers.add(
+          await showPlaySignInSheet(
+            context,
+            screen: 'Living room TV',
+            server: 'photos.example.org',
+            user: 'Fred',
+            check: '048213',
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sign Living room TV in?'), findsOneWidget);
+    expect(find.text('Living room TV will be signed in to photos.example.org as Fred.'), findsOneWidget);
+    expect(find.text('048 213'), findsOneWidget);
+    expect(find.textContaining('It stays signed in while this phone is.'), findsOneWidget);
+    await tester.tap(find.text('Sign in'));
+    await tester.pumpAndSettle();
+    expect(answers, [true]);
+  });
+
   testWidgets('a sheet dragged away is no answer: false', (tester) async {
     final answers = <bool>[];
     await open(tester, answers.add);

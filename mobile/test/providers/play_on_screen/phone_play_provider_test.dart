@@ -13,12 +13,16 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
+import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
+import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_client.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_server.dart';
+import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 
 const _screenId = '0123456789abcdef';
 const _phoneId = 'fedcba9876543210';
@@ -96,12 +100,27 @@ class _FakeActions implements ScreenPlayerActions {
     set(_state.next(phase: ScreenPlayPhase.idle));
   }
 
+  /// "Sign (screen) in": whether this screen is signed out, what its sign in ends in, the sessions it got
+  bool signedOut = true;
+  HandoverResult signInResult = HandoverResult.added;
+  final signedInWith = <Map<String, Object?>>[];
+
+  @override
+  Future<bool> canBeSignedIn() async => signedOut;
+
+  @override
+  Future<HandoverResult> signIn(LinkedPeer from, Map<String, Object?> payload) async {
+    signedInWith.add(payload);
+    return signInResult;
+  }
+
   @override
   Future<bool> askHandover({
     required LinkedPeer from,
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   }) async {
     this.check = check;
     if (waitForCancel) {
@@ -117,6 +136,43 @@ class _FakeActions implements ScreenPlayerActions {
     added.add((server, token));
     return HandoverResult.added;
   }
+}
+
+/// The sessions of the phone's account on its server
+class _Sessions implements PairingSessions {
+  final created = <String>[];
+  final oses = <String>[];
+  final deleted = <String>[];
+  PairingSessionsFailure? failure;
+
+  @override
+  Future<({String id, String token})> create({required String deviceType, required String deviceOS}) async {
+    if (failure case final failure?) {
+      throw PairingSessionsException(failure);
+    }
+    created.add(deviceType);
+    oses.add(deviceOS);
+    return (id: 'session-${created.length}', token: 'screen-token-${created.length}');
+  }
+
+  @override
+  Future<void> delete(String id) async => deleted.add(id);
+
+  @override
+  Future<List<({String id, DateTime? updatedAt})>> list() async => const [];
+}
+
+/// The screens this phone signed in, without the store
+class _PairedScreens extends PairedScreensNotifier {
+  @override
+  List<PairedScreen> build() => const [];
+
+  @override
+  Future<void> add(PairedScreen screen) async => state = [screen, ...state];
+
+  @override
+  Future<void> remove(String sessionId) async =>
+      state = state.where((screen) => screen.sessionId != sessionId).toList();
 }
 
 LinkedPeer _peer(String id, {String name = 'Peer'}) => LinkedPeer(
@@ -166,6 +222,7 @@ void main() {
   late PlayLinkServer server;
   late ProviderContainer container;
   late PlayScreenAddress address;
+  late _Sessions sessions;
   final screen = _peer(_screenId, name: 'Living room TV');
 
   setUp(() async {
@@ -178,8 +235,22 @@ void main() {
     );
     server = PlayLinkServer(session: session, preferredPort: 0, requestTimeout: const Duration(seconds: 2));
     address = (host: '192.168.1.20', port: await server.start());
+    sessions = _Sessions();
     container = ProviderContainer(
       overrides: [
+        pairingSessionsProvider.overrideWithValue(sessions),
+        playHostResolverProvider.overrideWithValue((host) async => host == 'nas.local' ? '192.168.1.10' : null),
+        pairedScreensProvider.overrideWith(_PairedScreens.new),
+        phonePairingAccountProvider.overrideWithValue(
+          () async => const PhonePairingAccount(
+            server: 'https://photos.example.org',
+            endpoints: ['http://192.168.1.10:2283', 'https://photos.example.org'],
+            headers: {'X-Proxy-Secret': 'never-sent'},
+            userName: 'Fred',
+            userEmail: 'fred@example.org',
+            phoneName: 'Galaxy S24+',
+          ),
+        ),
         phonePlayEnvironmentProvider.overrideWithValue(
           PhonePlayEnvironment(
             client: () async => PlayLinkClient(
@@ -435,6 +506,127 @@ void main() {
     });
   });
 
+  test('the debug address of the linked screens: a private IPv4 with a port only', () {
+    expect(playOnDebugScreen('10.0.2.2:18363'), (host: '10.0.2.2', port: 18363));
+    expect(playOnDebugScreen(''), isNull);
+    expect(playOnDebugScreen('10.0.2.2'), isNull);
+    expect(playOnDebugScreen('8.8.8.8:8363'), isNull);
+    expect(playOnDebugScreen('tv.local:8363'), isNull);
+  });
+
+  group('Sign (screen) in', () {
+    test(
+      'both users accept: a new session of the account goes to the screen, listed among the screens signed in',
+      () async {
+        container.read(screensSignedOutProvider.notifier).state = {_screenId};
+        String? shown;
+        PhonePairingAccount? account;
+        final result = await controller().signInScreen(
+          screen,
+          address,
+          confirm: (check, of) async {
+            shown = check;
+            account = of;
+            return true;
+          },
+        );
+        expect(result, ScreenSignInOutcome.signedIn);
+        expect(actions.check, shown, reason: 'the screen shows the number the phone shows');
+        expect(account?.userName, 'Fred');
+        expect(sessions.created, ['Immuch360 on Living room TV']);
+        expect(sessions.oses, ['Android'], reason: 'a TV that says no system is an Android TV');
+        expect(sessions.deleted, isEmpty);
+        final payload = actions.signedInWith.single;
+        expect(payload['token'], 'screen-token-1');
+        expect(payload['sessionId'], 'session-1');
+        expect(payload['endpoints'], ['http://192.168.1.10:2283', 'https://photos.example.org']);
+        expect(payload.containsKey('headers'), isFalse, reason: 'the custom headers of the phone never go this way');
+        expect(container.read(pairedScreensProvider).single.sessionId, 'session-1');
+        expect(container.read(screensSignedOutProvider), isEmpty);
+      },
+    );
+
+    test('a computer is named in Immich after the system it says, as "Sign in with your phone" does', () async {
+      await server.stop();
+      session.close();
+      session = ScreenPlayerSession(
+        screenId: _screenId,
+        phones: () => [_peer(_phoneId, name: 'Galaxy S24+')],
+        actions: actions,
+        os: 'Windows',
+        random: Random(6),
+      );
+      server = PlayLinkServer(session: session, preferredPort: 0, requestTimeout: const Duration(seconds: 2));
+      final computer = (host: '192.168.1.20', port: await server.start());
+      final desk = LinkedPeer(
+        id: _screenId,
+        name: 'Desk PC',
+        key: screen.key,
+        linkedAt: screen.linkedAt,
+        kind: PairingScreenKind.computer,
+      );
+      container.read(screensSignedOutProvider.notifier).state = {_screenId};
+      expect(
+        await controller().signInScreen(desk, computer, confirm: (_, _) async => true),
+        ScreenSignInOutcome.signedIn,
+      );
+      expect(sessions.oses, ['Windows']);
+      expect(container.read(pairedScreensProvider).single.os, 'Windows');
+    });
+
+    test('the screen says Not now, or cannot reach the server: its session is deleted at once', () async {
+      actions.acceptHandover = false;
+      expect(
+        await controller().signInScreen(screen, address, confirm: (_, _) async => true),
+        ScreenSignInOutcome.declined,
+      );
+      expect(sessions.deleted, ['session-1']);
+      expect(actions.signedInWith, isEmpty);
+      actions.acceptHandover = true;
+      actions.signInResult = HandoverResult.unreachable;
+      expect(
+        await controller().signInScreen(screen, address, confirm: (_, _) async => true),
+        ScreenSignInOutcome.serverUnreachable,
+      );
+      expect(sessions.deleted, ['session-1', 'session-2']);
+      expect(container.read(pairedScreensProvider), isEmpty);
+    });
+
+    test('cancelled on the phone: no session is made', () async {
+      actions.waitForCancel = true;
+      expect(await controller().signInScreen(screen, address, confirm: (_, _) async => false), isNull);
+      await _until(() => actions.cancelled);
+      expect(sessions.created, isEmpty);
+    });
+
+    test('a screen signed in already: nothing asked, no session made', () async {
+      actions.signedOut = false;
+      var asked = false;
+      expect(
+        await controller().signInScreen(
+          screen,
+          address,
+          confirm: (_, _) async {
+            asked = true;
+            return true;
+          },
+        ),
+        ScreenSignInOutcome.alreadySignedIn,
+      );
+      expect(asked, isFalse);
+      expect(sessions.created, isEmpty);
+    });
+
+    test('a server too old to make a session for another device', () async {
+      sessions.failure = PairingSessionsFailure.serverTooOld;
+      expect(
+        await controller().signInScreen(screen, address, confirm: (_, _) async => true),
+        ScreenSignInOutcome.serverTooOld,
+      );
+      expect(actions.signedInWith, isEmpty);
+    });
+  });
+
   group('Immich', () {
     const asset = '3F2504E0-4F89-11D3-9A0C-0305E82C3301';
     const user = 'a1b2c3d4-0000-4000-8000-00000000abcd';
@@ -512,6 +704,19 @@ void main() {
       expect(playback()?.ended, isFalse);
     });
 
+    test('a 360° photo carries its projection to the screen, for the screen\'s 360° viewer', () async {
+      final pano = PlayOnRequest.ofAsset(
+        remote(),
+        userId: user,
+        endpoints: const [],
+        serverName: 'x',
+        projection: PlayProjection.equirect,
+      )!;
+      expect(await controller().play(screen, address, pano), PlayOnOutcome.playing);
+      expect(actions.played!.target.projection, PlayProjection.equirect);
+      expect(pano.immich!.projection, PlayProjection.equirect);
+    });
+
     test('the next photo sent while the screen shows one takes its place, the controller stays', () async {
       expect(await controller().play(screen, address, request(remote())), PlayOnOutcome.playing);
       final next = PlayOnRequest.ofAsset(
@@ -585,6 +790,26 @@ void main() {
       discoveryId: discoveryId,
       jellyfin: jellyfin,
     );
+
+    test('a share known by a host name goes with the address this phone finds for it', () async {
+      final byName = PlayOnRequest.ofShareFile(source: source(NetworkSourceType.smb), path: '/a.mp4', photo: false)!;
+      expect(await controller().play(screen, address, byName), PlayOnOutcome.playing);
+      expect((actions.played!.target as SharePlayTarget).hostAddresses, ['192.168.1.10']);
+      final byAddress = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.smb, host: '192.168.1.11'),
+        path: '/a.mp4',
+        photo: false,
+      )!;
+      expect(await controller().play(screen, address, byAddress), PlayOnOutcome.playing);
+      expect((actions.played!.target as SharePlayTarget).hostAddresses, isEmpty, reason: 'the address is the host');
+      final unknown = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.webdav, host: 'nowhere.local'),
+        path: '/a.mp4',
+        photo: false,
+      )!;
+      expect(await controller().play(screen, address, unknown), PlayOnOutcome.playing);
+      expect((actions.played!.target as SharePlayTarget).hostAddresses, isEmpty);
+    });
 
     test('a file of a share names the share and the path, never its user or password', () {
       final request = PlayOnRequest.ofShareFile(

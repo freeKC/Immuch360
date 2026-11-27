@@ -91,6 +91,9 @@ enum HandoverResult {
 
   /// The address answers with another server or another certificate
   otherServer('otherServer'),
+
+  /// "Sign (screen) in": the screen is signed in to a server already, nothing changed (release 53)
+  alreadySignedIn('alreadySignedIn'),
   failed('failed');
 
   const HandoverResult(this.wire);
@@ -117,17 +120,32 @@ abstract interface class ScreenPlayerActions {
   Future<void> track(PlayTrackKind kind, String? id);
   Future<void> stop();
 
-  /// Shows "Add (server) from (phone)?" with [check]; true once its user accepted, false on Not now. Ends with false
-  /// when [cancel] completes first.
+  /// Shows "Add (server) from (phone)?" with [check], or "Sign in to (server) with (phone)?" for the account
+  /// [signInAs]; true once its user accepted, false on Not now. Ends with false when [cancel] completes first.
   Future<bool> askHandover({
     required LinkedPeer from,
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   });
 
   /// Checks [server] with [token] (pinning, identity, libraries) and keeps it as a Plex source of this screen
   Future<HandoverResult> addServer(HandedPlexServer server, String token);
+
+  /// Whether this screen is signed in to no Immich server at all: only then may a phone sign it in (release 53)
+  Future<bool> canBeSignedIn();
+
+  /// Signs this screen in with the Immich session [payload] [from] made for it, as "Sign in with your phone" does
+  /// (ScreenSignIn.withSession): [HandoverResult.added] once signed in
+  Future<HandoverResult> signIn(LinkedPeer from, Map<String, Object?> payload);
+}
+
+/// The private IPv4 address of a request's [address] (an IPv4 mapped in IPv6 included), null for anything else
+String? playRelayClientIPv4(String address) {
+  final lower = address.toLowerCase();
+  final ipv4 = lower.startsWith('::ffff:') ? lower.substring(7) : lower;
+  return isPrivatePairingIPv4(ipv4) ? ipv4 : null;
 }
 
 /// An answer of the listener: an HTTP status and its JSON body
@@ -143,12 +161,15 @@ class _Session {
 }
 
 class _PendingHandover {
-  _PendingHandover(this.handover, this.accepted, this.cancel, this.at);
+  _PendingHandover(this.handover, this.accepted, this.cancel, this.at, {this.signIn = false});
 
   final PlayHandover handover;
   final Future<bool> accepted;
   final Completer<void> cancel;
   final DateTime at;
+
+  /// "Sign (screen) in": an Immich session comes, not a Plex server
+  final bool signIn;
   bool done = false;
 }
 
@@ -158,11 +179,14 @@ class ScreenPlayerSession {
     required this.screenId,
     required this._phones,
     required this._actions,
-    this.kinds = const {PlayKind.plex, PlayKind.immich, PlayKind.share, PlayKind.mediaServer},
+    this.kinds = const {PlayKind.plex, PlayKind.immich, PlayKind.share, PlayKind.mediaServer, PlayKind.relay},
+    this.os = '',
     DateTime Function()? clock,
     Random? random,
+    String? Function(String client)? relayHostOf,
   }) : _clock = clock ?? DateTime.now,
-       _random = random ?? Random.secure();
+       _random = random ?? Random.secure(),
+       _relayHostOf = relayHostOf ?? playRelayClientIPv4;
 
   static const nonceLifetime = Duration(seconds: 30);
   static const maxNonces = 16;
@@ -180,10 +204,18 @@ class ScreenPlayerSession {
   /// The kinds of item this screen opens: a play of another kind is "invalid", as build 51 answers anything but a
   /// Plex film
   final Set<PlayKind> kinds;
+
+  /// The system of this screen, "Android", "Windows", "Linux" or "macOS" (as "Sign in with your phone" says it): a
+  /// phone that signs the screen in names its session in Immich after it. Empty when unknown.
+  final String os;
   final List<LinkedPeer> Function() _phones;
   final ScreenPlayerActions _actions;
   final DateTime Function() _clock;
   final Random _random;
+
+  /// The host a relayed item of a request from [client] is read at: its private IPv4 address, else none (the tests
+  /// map the loopback)
+  final String? Function(String client) _relayHostOf;
 
   final Map<String, DateTime> _nonces = {};
   final Map<String, _Session> _sessions = {};
@@ -292,8 +324,9 @@ class ScreenPlayerSession {
   void close() => [..._sessions.keys].forEach(_end);
 
   /// POST /v1/cmd: 410 for a session the screen no longer has (the phone opens a new one), 400 for an envelope that
-  /// does not open; else the sealed answer
-  Future<PlayLinkAnswer> command(Map<String, Object?> envelope) async {
+  /// does not open; else the sealed answer. [client] is the IPv4 address the request came from: the only host a relayed
+  /// item of this session is read from (release 53); without it, a relayed item does not play.
+  Future<PlayLinkAnswer> command(Map<String, Object?> envelope, {String? client}) async {
     _expire();
     final session = _sessions[envelope['s']];
     if (session == null) {
@@ -316,7 +349,7 @@ class ScreenPlayerSession {
       _end(session.channel.handle);
       return (status: 200, body: body);
     }
-    final answer = await _handle(session, message);
+    final answer = await _handle(session, message, client);
     // Gone while it waited: nothing goes back under its keys
     if (!identical(_sessions[session.channel.handle], session)) {
       return _error(410, 'session');
@@ -334,7 +367,7 @@ class ScreenPlayerSession {
     return {'status': status, 'state': (own ? state : state.withoutItem()).toJson()};
   }
 
-  Future<Map<String, Object?>> _handle(_Session session, Map<String, Object?> message) async {
+  Future<Map<String, Object?>> _handle(_Session session, Map<String, Object?> message, String? client) async {
     switch (message['type']) {
       case 'status':
         final after = message['after'];
@@ -345,8 +378,12 @@ class ScreenPlayerSession {
         );
         return _withState(session, 'ok');
       case 'play':
-        final item = PlayItem.fromJson(message);
-        if (item == null || !kinds.contains(item.kind)) {
+        final parsed = PlayItem.fromJson(message);
+        if (parsed == null || !kinds.contains(parsed.kind)) {
+          return _withState(session, 'invalid');
+        }
+        final item = _bindRelay(parsed, session, client == null ? null : _relayHostOf(client));
+        if (item == null) {
           return _withState(session, 'invalid');
         }
         await _actions.play(item, session.phone);
@@ -378,7 +415,7 @@ class ScreenPlayerSession {
         await _actions.stop();
         return _withState(session, 'ok');
       case 'handoverHello':
-        return _handoverHello(session, message);
+        return await _handoverHello(session, message);
       case 'handoverServer':
         return _handoverServer(session, message);
       case 'handoverCancel':
@@ -394,6 +431,26 @@ class ScreenPlayerSession {
       default:
         return {'status': 'unknown'};
     }
+  }
+
+  /// [item], a relayed one read from [host] (the address of the session's own request) under the session's K_relay:
+  /// never a host of the message. Null for a relayed item without an address to read it from.
+  static PlayItem? _bindRelay(PlayItem item, _Session session, String? host) {
+    final target = item.target;
+    if (target is! RelayPlayTarget) {
+      return item;
+    }
+    if (host == null) {
+      return null;
+    }
+    return PlayItem.of(
+      target.boundTo(PlayRelayOrigin(host: host, relayKey: session.channel.keys.relay)),
+      serverName: item.serverName,
+      title: item.title,
+      offsetMs: item.offsetMs,
+      audio: item.audio,
+      subtitle: item.subtitle,
+    );
   }
 
   /// Waits until the state is past [after], [wait] at most
@@ -425,11 +482,17 @@ class ScreenPlayerSession {
     await subscription.cancel();
   }
 
-  Map<String, Object?> _handoverHello(_Session session, Map<String, Object?> message) {
+  Future<Map<String, Object?>> _handoverHello(_Session session, Map<String, Object?> message) async {
     final phoneKey = pairingDecodeBase64(message['pk']);
     final server = message['serverName'];
-    if (phoneKey == null || phoneKey.length != 33 || server is! String) {
+    final signIn = message['purpose'] == playHandoverSignIn;
+    final user = message['user'];
+    if (phoneKey == null || phoneKey.length != 33 || server is! String || (signIn && user is! String)) {
       return {'status': 'invalid'};
+    }
+    // A phone signs in a screen signed in to no server only: never the household's TV out of its account
+    if (signIn && !await _actions.canBeSignedIn().catchError((Object _) => false)) {
+      return {'status': HandoverResult.alreadySignedIn.wire};
     }
     final previous = session.handover;
     if (previous != null && !previous.done && _clock().difference(previous.at) < handoverLifetime) {
@@ -444,17 +507,22 @@ class ScreenPlayerSession {
       return {'status': 'invalid'};
     }
     final cancel = Completer<void>();
-    final name = cleanPairingText(server);
+    String short(String text) {
+      final clean = cleanPairingText(text);
+      return clean.length > 64 ? clean.substring(0, 64) : clean;
+    }
+
     final accepted = _actions
         .askHandover(
           from: session.phone,
-          server: name.length > 64 ? name.substring(0, 64) : name,
+          server: short(server),
           check: handover.check,
           cancel: Future.any([cancel.future, Future<void>.delayed(handoverLifetime)]),
+          signInAs: signIn && user is String ? short(user) : null,
         )
         .catchError((Object _) => false);
-    session.handover = _PendingHandover(handover, accepted, cancel, _clock());
-    return {'status': 'ok', 'pk': pairingBase64(own.publicKey)};
+    session.handover = _PendingHandover(handover, accepted, cancel, _clock(), signIn: signIn);
+    return {'status': 'ok', 'pk': pairingBase64(own.publicKey), if (signIn && os.isNotEmpty) 'os': os};
   }
 
   Future<Map<String, Object?>> _handoverServer(_Session session, Map<String, Object?> message) async {
@@ -470,6 +538,15 @@ class ScreenPlayerSession {
       return {'status': HandoverResult.declined.wire};
     }
     final opened = pending.handover.channel(isPhone: false).open(inner);
+    if (pending.signIn) {
+      // The session the phone made for this screen, opened only now that its user accepted
+      final immich = opened?['immich'];
+      if (immich is! Map<String, Object?>) {
+        return {'status': HandoverResult.failed.wire};
+      }
+      final result = await _actions.signIn(session.phone, immich).catchError((Object _) => HandoverResult.failed);
+      return {'status': result.wire};
+    }
     final server = HandedPlexServer.fromJson(opened?['server']);
     final token = opened?['token'];
     if (opened == null || server == null || token is! String || token.length < 8 || token.length > 4096) {

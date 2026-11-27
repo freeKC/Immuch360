@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/film_player_preference.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/models/value_codec.dart';
@@ -34,6 +36,11 @@ enum SettingsKey<T> {
   // The date and time of a photo at the bottom left with the controls on a TV, see ViewerConfig.tvShowDateTime
   viewerTvShowDateTime<bool>(),
   viewerSpatial25d<bool>(),
+  // Spatial 2.5D of the 3D photos on the computers: what moves the view, how far, which way, see
+  // ViewerConfig.spatialMoveWith, spatialSensitivity and spatialReverse
+  viewerSpatialMoveWith<ViewerPositionKind?>(codec: EnumCodec<ViewerPositionKind>(ViewerPositionKind.values)),
+  viewerSpatialSensitivity<int>(),
+  viewerSpatialReverse<bool>(),
   // The stabilisation of the raw 360° videos with the motion track of their camera, see ViewerConfig.stabilizeVideos
   viewerStabilizeVideos<bool>(),
   // The gyroscope of the 360° photo viewer and of the 360° video player of the phones, one choice for both, see
@@ -47,8 +54,12 @@ enum SettingsKey<T> {
   // ViewerConfig.sharpFlatScreens
   viewerSharpFlatScreens<bool>(),
   // A blurred, darker copy of the photo around it on the flat screens of the Meta Quest immersive viewer, see
-  // ViewerConfig.frostedFlatScreens
+  // ViewerConfig.frostedFlatScreens: what viewerSlideshowBackground follows until the user picks a background
   viewerFrostedFlatScreens<bool>(),
+  // The background and the transition of the photos of a flat screen of the Meta Quest immersive viewer (issue 19),
+  // see ViewerConfig.slideshowBackground and slideshowTransition; null until the user picks a background
+  viewerSlideshowBackground<SlideshowBackground?>(codec: EnumCodec<SlideshowBackground>(SlideshowBackground.values)),
+  viewerSlideshowTransition<SlideshowTransition>(codec: EnumCodec(SlideshowTransition.values)),
   // The Gaussian splat files of other tools on a Meta Quest 3 or 3S, see ViewerConfig.gaussianSplats and largeSplats
   viewerGaussianSplats<bool>(),
   viewerLargeSplats<bool>(),
@@ -60,6 +71,11 @@ enum SettingsKey<T> {
   viewerMarkSplatPhotos<bool>(),
   // The AV2 videos of the computers, decoded by the processor, see ViewerConfig.av2Videos
   viewerAv2Videos<bool>(),
+  // Spatial 2.5D on the computers, the head tracked by the webcam: whether the webcam may be used, the user's yes on
+  // the card of the first time, the webcam picked, see ViewerConfig.spatialWebcam and the fields after it
+  viewerSpatialWebcam<bool>(),
+  viewerSpatialWebcamConsent<bool>(),
+  viewerSpatialCamera<String?>(),
   // Null until the user picks a source: viewerLoadOriginalVideo tells it until then, see ViewerConfig.videoSource
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
   // The Wikipedia block of the film page of a Plex film, see ViewerConfig.filmWikipedia

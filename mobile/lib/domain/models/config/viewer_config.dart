@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/domain/models/film_player_preference.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 
 part 'viewer_config.freezed.dart';
 
@@ -33,6 +35,16 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// Videos turns it off)
     @Default(true) bool spatial25d,
 
+    /// Immuch360 Desktop, Spatial 2.5D of the 3D photos (release 53): what moves the view, null until the user picks
+    /// one (the mouse then; the head tracker of the webcam is another lot). See lib/desktop/spatial/viewer_position.dart
+    ViewerPositionKind? spatialMoveWith,
+
+    /// Immuch360 Desktop, Spatial 2.5D: how far the view moves, in percent of the default (25 to 200)
+    @Default(100) int spatialSensitivity,
+
+    /// Immuch360 Desktop, Spatial 2.5D: the view moves the other way
+    @Default(false) bool spatialReverse,
+
     /// Experimental: a raw 360° video whose camera recorded its motion (the gyroscope of an Insta360, CORI and GRAV of a
     /// GoPro, the attitude of a DJI Osmo 360) plays stabilised, the horizon level and the shake gone, the view following
     /// the road (issue 14). On by default, the lab rule (Settings, Asset Viewer, Videos, and the switch of the 360°
@@ -59,10 +71,19 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// On by default (Settings, Advanced turns it off: the photos then go on the quad mesh, without filters)
     @Default(true) bool sharpFlatScreens,
 
-    /// Meta Quest immersive viewer, experimental (issue 19): a blurred, darker copy of the photo of a flat screen fills
-    /// the box the user set around it, on a compositor layer behind it. On by default (Settings, Advanced, "Frosted
-    /// background behind photos")
+    /// Meta Quest immersive viewer (issue 19): a blurred, darker copy of the photo of a flat screen fills the box the
+    /// user set around it, on a compositor layer behind it. The switch of build 49, on by default; [slideshowBackground]
+    /// follows it until the user picks a background (see HeadsetSlideshowLook.ofSettings)
     @Default(true) bool frostedFlatScreens,
+
+    /// Meta Quest immersive viewer (issue 19): what surrounds the photos of a flat screen (black, the blurred photo, or
+    /// the room through the passthrough), null until the user picks one in Settings, Advanced or on the panel of the
+    /// viewer
+    SlideshowBackground? slideshowBackground,
+
+    /// Meta Quest immersive viewer (issue 19): how a photo of a flat screen gives way to the next one, in the slideshow
+    /// and as the user browses; a cross fade by default
+    @Default(SlideshowTransition.crossFade) SlideshowTransition slideshowTransition,
 
     /// Experimental: the Gaussian splat files of other tools (.spz, .ply) of the shares are listed and open in the
     /// immersive viewer of a Quest 3 or 3S (lot S5), and in the splat viewer of the computers, phones and tablets. On
@@ -97,6 +118,18 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// plan-2026-11-02.md, section 1.3). On by default, the lab rule (Settings, Asset Viewer, Videos turns it off: an
     /// AV2 video then says so instead of playing)
     @Default(true) bool av2Videos,
+
+    /// Immuch360 Desktop, Spatial 2.5D, the head tracked by the webcam (lib/desktop/spatial/spatial_settings.dart):
+    /// "Use the webcam for head tracking", on by default. The webcam still opens only once [spatialWebcamConsent] is
+    /// given on the card of the first time, and only while a Spatial 2.5D view is on screen; off, the view follows the
+    /// mouse
+    @Default(true) bool spatialWebcam,
+
+    /// The user said yes on the card that explains the webcam, the first time the head moved the view
+    @Default(false) bool spatialWebcamConsent,
+
+    /// The webcam picked in the menu, null for the default one (never an infrared camera)
+    String? spatialCamera,
 
     /// Experimental: the page of a film of a Plex server shows the opening of its Wikipedia article in the language of
     /// the app, found through Wikidata by the film's IMDb or TMDB number (store/m2/plex-films-2026-11-10/report.md,

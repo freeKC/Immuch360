@@ -187,8 +187,10 @@ void main() {
       print('resident memory after 200 passes: ${growth >= 0 ? '+' : ''}${(growth / 1048576).toStringAsFixed(1)} MiB');
       expect(last, expected);
       // One output left behind would be 1.4 MB a pass, 280 MB over 200 passes. The 4.3 MB of the input belong to the
-      // arena of Dart, and the small native objects a pass makes are counted by the test below
-      expect(growth, lessThan(48 * 1048576));
+      // arena of Dart, and the small native objects a pass makes are counted by the test below. The heap of Dart
+      // swings by itself between its collections (-1.5 to +54.6 MiB on the Linux runners, run 45916494495): half of
+      // one output left behind is the bound, above that swing and well under the leak
+      expect(growth, lessThan(140 * 1048576));
     });
 
     test('gives back every native object it makes: in a pass, after an error of ONNX Runtime, and on close', () {

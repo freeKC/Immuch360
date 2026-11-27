@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
@@ -20,6 +21,7 @@ import 'package:immich_mobile/domain/models/config/theme_config.dart';
 import 'package:immich_mobile/domain/models/config/timeline_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/film_player_preference.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
@@ -82,18 +84,26 @@ abstract class AppConfig with _$AppConfig {
             .viewerTapToNavigate => viewer.tapToNavigate,
             .viewerTvShowDateTime => viewer.tvShowDateTime,
             .viewerSpatial25d => viewer.spatial25d,
+            .viewerSpatialMoveWith => viewer.spatialMoveWith,
+            .viewerSpatialSensitivity => viewer.spatialSensitivity,
+            .viewerSpatialReverse => viewer.spatialReverse,
             .viewerStabilizeVideos => viewer.stabilizeVideos,
             .viewerPanoramaGyroscope => viewer.panoramaGyroscope,
             .viewerReverseThumbstickTurn => viewer.reverseThumbstickTurn,
             .viewerFlat3dByName => viewer.flat3dByName,
             .viewerSharpFlatScreens => viewer.sharpFlatScreens,
             .viewerFrostedFlatScreens => viewer.frostedFlatScreens,
+            .viewerSlideshowBackground => viewer.slideshowBackground,
+            .viewerSlideshowTransition => viewer.slideshowTransition,
             .viewerGaussianSplats => viewer.gaussianSplats,
             .viewerLargeSplats => viewer.largeSplats,
             .viewerHighPerformanceGpu => viewer.highPerformanceGpu,
             .viewerKeepAllGaussians => viewer.keepAllGaussians,
             .viewerMarkSplatPhotos => viewer.markSplatPhotos,
             .viewerAv2Videos => viewer.av2Videos,
+            .viewerSpatialWebcam => viewer.spatialWebcam,
+            .viewerSpatialWebcamConsent => viewer.spatialWebcamConsent,
+            .viewerSpatialCamera => viewer.spatialCamera,
             .viewerVideoSource => viewer.videoSource,
             .viewerFilmWikipedia => viewer.filmWikipedia,
             .viewerFilmPlayer => viewer.filmPlayer,
@@ -169,18 +179,30 @@ abstract class AppConfig with _$AppConfig {
       .viewerTapToNavigate => copyWith(viewer: viewer.copyWith(tapToNavigate: value as bool)),
       .viewerTvShowDateTime => copyWith(viewer: viewer.copyWith(tvShowDateTime: value as bool)),
       .viewerSpatial25d => copyWith(viewer: viewer.copyWith(spatial25d: value as bool)),
+      .viewerSpatialMoveWith => copyWith(viewer: viewer.copyWith(spatialMoveWith: value as ViewerPositionKind?)),
+      .viewerSpatialSensitivity => copyWith(viewer: viewer.copyWith(spatialSensitivity: value as int)),
+      .viewerSpatialReverse => copyWith(viewer: viewer.copyWith(spatialReverse: value as bool)),
       .viewerStabilizeVideos => copyWith(viewer: viewer.copyWith(stabilizeVideos: value as bool)),
       .viewerPanoramaGyroscope => copyWith(viewer: viewer.copyWith(panoramaGyroscope: value as bool)),
       .viewerReverseThumbstickTurn => copyWith(viewer: viewer.copyWith(reverseThumbstickTurn: value as bool)),
       .viewerFlat3dByName => copyWith(viewer: viewer.copyWith(flat3dByName: value as bool)),
       .viewerSharpFlatScreens => copyWith(viewer: viewer.copyWith(sharpFlatScreens: value as bool)),
       .viewerFrostedFlatScreens => copyWith(viewer: viewer.copyWith(frostedFlatScreens: value as bool)),
+      .viewerSlideshowBackground => copyWith(
+        viewer: viewer.copyWith(slideshowBackground: value as SlideshowBackground?),
+      ),
+      .viewerSlideshowTransition => copyWith(
+        viewer: viewer.copyWith(slideshowTransition: value as SlideshowTransition),
+      ),
       .viewerGaussianSplats => copyWith(viewer: viewer.copyWith(gaussianSplats: value as bool)),
       .viewerLargeSplats => copyWith(viewer: viewer.copyWith(largeSplats: value as bool)),
       .viewerHighPerformanceGpu => copyWith(viewer: viewer.copyWith(highPerformanceGpu: value as bool)),
       .viewerKeepAllGaussians => copyWith(viewer: viewer.copyWith(keepAllGaussians: value as bool)),
       .viewerMarkSplatPhotos => copyWith(viewer: viewer.copyWith(markSplatPhotos: value as bool)),
       .viewerAv2Videos => copyWith(viewer: viewer.copyWith(av2Videos: value as bool)),
+      .viewerSpatialWebcam => copyWith(viewer: viewer.copyWith(spatialWebcam: value as bool)),
+      .viewerSpatialWebcamConsent => copyWith(viewer: viewer.copyWith(spatialWebcamConsent: value as bool)),
+      .viewerSpatialCamera => copyWith(viewer: viewer.copyWith(spatialCamera: value as String?)),
       .viewerVideoSource => copyWith(viewer: viewer.copyWith(videoSource: value as VideoSourcePolicy?)),
       .viewerFilmWikipedia => copyWith(viewer: viewer.copyWith(filmWikipedia: value as bool)),
       .viewerFilmPlayer => copyWith(viewer: viewer.copyWith(filmPlayer: value as FilmPlayerPreference)),

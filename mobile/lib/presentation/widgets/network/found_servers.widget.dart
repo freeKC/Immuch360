@@ -102,6 +102,7 @@ class FoundServersList extends StatelessWidget {
                         // Never found on the network
                         NetworkSourceType.documentTree => context.t.dji_import_title,
                         NetworkSourceType.deviceFolder => context.t.folders,
+                        NetworkSourceType.phoneRelay => context.t.play_on_this_phone,
                       },
                 style: context.textTheme.labelMedium?.copyWith(
                   color: context.primaryColor,

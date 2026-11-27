@@ -11,8 +11,8 @@
 //   transcript  = SHA-256(lp("immuch360 player 1") lp(screenId) lp(phoneId) lp(nonce_s) lp(nonce_p)), lp() a two
 //                 byte big endian length then the bytes
 //   proof_p     = HMAC-SHA256(K, "phone" || transcript), proof_s = HMAC-SHA256(K, "screen" || transcript)
-//   PRK         = HMAC-SHA256(key: transcript, K); K_up, K_down, K_handover = HMAC-SHA256(PRK, "up" | "down" |
-//                 "handover" || 0x01)
+//   PRK         = HMAC-SHA256(key: transcript, K); K_up, K_down, K_handover, K_relay = HMAC-SHA256(PRK, "up" |
+//                 "down" | "handover" | "relay" || 0x01)
 //   s           = the first 8 bytes of the transcript, base64url: which session a command belongs to
 // Every command after that (POST /v1/cmd) and every answer is sealed with a counter:
 //   envelope    = {v, s, k: counter, c: AES-256-GCM(K_up or K_down, nonce, JSON)}
@@ -23,6 +23,10 @@
 //
 // "Add (server) to (screen)" moves a Plex token, and only with a fresh P-256 hello inside such a session, whose check
 // number both sides show and both users accept (see PlayHandover): a link key alone never moves a token.
+//
+// The relay of the phone (release 53) serves an item of the phone to the screen of the session only: a lease is pinned
+// to the screen's address and asks for the header x-immuch-relay = base64url(HMAC-SHA256(K_relay, lease path)), which
+// only the two ends of the session can compute ([playRelayMac]).
 //
 // test/fixtures/play_link/vectors.json holds known answers, made apart from this code (make_vectors.py).
 
@@ -41,6 +45,10 @@ const playLinkDefaultPort = 8363;
 
 /// The kind of the TXT record of the screen's listener, under the pairing type (no third service type)
 const playLinkKind = 'player';
+
+/// The purpose of a handover that signs a screen in to the phone's Immich server (release 53); a handover without
+/// one hands a Plex server over
+const playHandoverSignIn = 'signIn';
 
 /// Bytes of a link key, of a nonce
 const playLinkKeyBytes = 32;
@@ -112,7 +120,7 @@ Uint8List playLinkProof({required List<int> key, required PlayLinkRole role, req
 
 /// The keys of one session
 class PlayLinkKeys {
-  const PlayLinkKeys({required this.up, required this.down, required this.handover});
+  const PlayLinkKeys({required this.up, required this.down, required this.handover, required this.relay});
 
   /// Phone to screen
   final Uint8List up;
@@ -123,6 +131,9 @@ class PlayLinkKeys {
   /// Mixed into the keys of a token handover (see PlayHandover)
   final Uint8List handover;
 
+  /// What the header of a request to the phone's relay is made with ([playRelayMac], release 53)
+  final Uint8List relay;
+
   Uint8List keyFor(PairingDirection direction) => direction == PairingDirection.up ? up : down;
 }
 
@@ -130,8 +141,14 @@ class PlayLinkKeys {
 PlayLinkKeys derivePlayLinkKeys({required List<int> key, required List<int> transcript}) {
   final prk = _hmac(transcript, key);
   Uint8List expand(String info) => _hmac(prk, [...utf8.encode(info), 1]);
-  return PlayLinkKeys(up: expand('up'), down: expand('down'), handover: expand('handover'));
+  return PlayLinkKeys(up: expand('up'), down: expand('down'), handover: expand('handover'), relay: expand('relay'));
 }
+
+/// The header a request of the screen to the phone's relay carries
+const playRelayHeader = 'x-immuch-relay';
+
+/// The value of [playRelayHeader] for the lease at [path] ("/cast/(id)/film"), under the K_relay of a session
+String playRelayMac(List<int> relayKey, String path) => pairingBase64(_hmac(relayKey, utf8.encode(path)));
 
 Uint8List _counterBytes(int counter) {
   final bytes = ByteData(8)..setUint64(0, counter);

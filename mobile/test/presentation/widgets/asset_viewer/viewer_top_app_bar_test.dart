@@ -467,7 +467,8 @@ void main() {
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
         slideshowSeconds: any(named: 'slideshowSeconds'),
-        frostedBackground: any(named: 'frostedBackground'),
+        slideshowBackground: any(named: 'slideshowBackground'),
+        slideshowTransition: any(named: 'slideshowTransition'),
       ),
     ).thenAnswer(openImmersive);
     previewRequests = [];
@@ -749,7 +750,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       );
     });
@@ -1167,7 +1169,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured;
       expect(captured[0], ImmersiveStereoLayout.mono);
@@ -1205,7 +1208,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       );
     });
@@ -1259,7 +1263,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -1303,7 +1308,8 @@ void main() {
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
             slideshowSeconds: any(named: 'slideshowSeconds'),
-            frostedBackground: any(named: 'frostedBackground'),
+            slideshowBackground: any(named: 'slideshowBackground'),
+            slideshowTransition: any(named: 'slideshowTransition'),
           ),
         ).captured;
         expect(captured, [
@@ -1357,7 +1363,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
@@ -1397,7 +1404,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
@@ -1464,7 +1472,8 @@ void main() {
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
             slideshowSeconds: any(named: 'slideshowSeconds'),
-            frostedBackground: any(named: 'frostedBackground'),
+            slideshowBackground: any(named: 'slideshowBackground'),
+            slideshowTransition: any(named: 'slideshowTransition'),
           ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
@@ -1502,7 +1511,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
@@ -1548,7 +1558,8 @@ void main() {
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
             slideshowSeconds: any(named: 'slideshowSeconds'),
-            frostedBackground: any(named: 'frostedBackground'),
+            slideshowBackground: any(named: 'slideshowBackground'),
+            slideshowTransition: any(named: 'slideshowTransition'),
           ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
@@ -1587,7 +1598,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).called(1);
     });
@@ -1623,7 +1635,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).called(1);
     });
@@ -1679,7 +1692,8 @@ void main() {
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
             slideshowSeconds: any(named: 'slideshowSeconds'),
-            frostedBackground: any(named: 'frostedBackground'),
+            slideshowBackground: any(named: 'slideshowBackground'),
+            slideshowTransition: any(named: 'slideshowTransition'),
           ),
         ).captured.single;
         expect(startPosition, expected, reason: '$status');
@@ -1762,7 +1776,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
@@ -1838,7 +1853,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
@@ -1882,7 +1898,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.leftRight, ImmersiveSphereCoverage.half]);
@@ -1950,7 +1967,8 @@ void main() {
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
             slideshowSeconds: any(named: 'slideshowSeconds'),
-            frostedBackground: any(named: 'frostedBackground'),
+            slideshowBackground: any(named: 'slideshowBackground'),
+            slideshowTransition: any(named: 'slideshowTransition'),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -2002,7 +2020,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
@@ -2057,7 +2076,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured.single;
       expect(startPosition, 12000);
@@ -2096,7 +2116,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       );
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
@@ -2159,7 +2180,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).called(1);
     });
@@ -2201,7 +2223,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).called(1);
     });
@@ -2357,7 +2380,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
@@ -2637,15 +2661,15 @@ void main() {
       }
     });
 
-    testWidgets('says on a computer that the player comes in a later version', (tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    testWidgets('says on a computer without the passes (Linux) that 3D videos come in a later version', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
       try {
         when(spatialVideoApi.capabilities).thenAnswer(
           (_) async => SpatialCapabilities(
             supported: false,
             frontCamera: false,
             cameraPermissionGranted: false,
-            reason: 'not on the computers yet',
+            reason: 'no Spatial renderer for videos on this system',
           ),
         );
         await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
@@ -2655,8 +2679,32 @@ void main() {
 
         expect(calls, isEmpty);
         verifyNever(() => spatialVideoApi.open(any()));
-        expect(find.text('Spatial 2.5D comes to Immuch360 Desktop in a later version'), findsOneWidget);
+        expect(find.text('On Linux, Spatial 2.5D shows 3D photos: 3D videos come in a later version'), findsOneWidget);
         expect(find.text('Spatial 2.5D is not available on this device'), findsNothing);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    testWidgets('says nothing of Linux on Windows when libmpv did not load', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        when(spatialVideoApi.capabilities).thenAnswer(
+          (_) async => SpatialCapabilities(
+            supported: false,
+            frontCamera: false,
+            cameraPermissionGranted: false,
+            reason: 'no libmpv',
+          ),
+        );
+        await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
+
+        await tester.tap(spatialButton);
+        await tester.pumpAndSettle();
+
+        verifyNever(() => spatialVideoApi.open(any()));
+        expect(find.text('Spatial 2.5D is not available on this device'), findsOneWidget);
+        expect(find.textContaining('On Linux'), findsNothing);
       } finally {
         debugDefaultTargetPlatformOverride = null;
       }
@@ -2948,7 +2996,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
@@ -3012,7 +3061,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured;
       expect(captured, ['$server/assets/${asset.id}/video/playback', null, switchedMessage]);
@@ -3302,7 +3352,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured;
       // The original the pair was read from, not an edit of it
@@ -3364,7 +3415,8 @@ void main() {
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
         slideshowSeconds: any(named: 'slideshowSeconds'),
-        frostedBackground: any(named: 'frostedBackground'),
+        slideshowBackground: any(named: 'slideshowBackground'),
+        slideshowTransition: any(named: 'slideshowTransition'),
       ),
     ).captured;
 
@@ -3550,7 +3602,8 @@ void main() {
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
         slideshowSeconds: any(named: 'slideshowSeconds'),
-        frostedBackground: any(named: 'frostedBackground'),
+        slideshowBackground: any(named: 'slideshowBackground'),
+        slideshowTransition: any(named: 'slideshowTransition'),
       ),
     ).captured;
 
@@ -3882,7 +3935,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).captured;
       expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
@@ -3945,7 +3999,8 @@ void main() {
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
         slideshowSeconds: any(named: 'slideshowSeconds'),
-        frostedBackground: any(named: 'frostedBackground'),
+        slideshowBackground: any(named: 'slideshowBackground'),
+        slideshowTransition: any(named: 'slideshowTransition'),
       ),
     ).captured;
 
@@ -4102,7 +4157,8 @@ void main() {
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
           slideshowSeconds: any(named: 'slideshowSeconds'),
-          frostedBackground: any(named: 'frostedBackground'),
+          slideshowBackground: any(named: 'slideshowBackground'),
+          slideshowTransition: any(named: 'slideshowTransition'),
         ),
       ).thenThrow(PlatformException(code: 'no-activity'));
       final asset = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
@@ -4157,7 +4213,8 @@ void main() {
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
         slideshowSeconds: any(named: 'slideshowSeconds'),
-        frostedBackground: any(named: 'frostedBackground'),
+        slideshowBackground: any(named: 'slideshowBackground'),
+        slideshowTransition: any(named: 'slideshowTransition'),
       ),
     ).captured;
 

@@ -203,6 +203,39 @@ void main() {
       expect(back.sameAs(state), isTrue);
     });
 
+    test('a 360° view of the screen goes as view: sphere, and never to another phone', () {
+      const state = ScreenPlayState(seq: 4, phase: ScreenPlayPhase.playing, media: PlayMedia.video, sphere: true);
+      expect(state.toJson()['view'], 'sphere');
+      expect(ScreenPlayState.fromJson(state.toJson()).sphere, isTrue);
+      expect(ScreenPlayState.fromJson({'seq': 1, 'phase': 'playing'}).sphere, isFalse);
+      expect(state.withoutItem().toJson().containsKey('view'), isFalse);
+      expect(state.sameAs(state.next(sphere: false)), isFalse);
+    });
+
+    test('a share carries the home addresses of its host, four at most, private IPv4 only', () {
+      const target = SharePlayTarget(type: PlayShareType.smb, source: 'nas.local:445/Videos', path: '/a.mp4');
+      expect(target.host, 'nas.local');
+      expect(target.sourceWithoutHost, ':445/Videos');
+      expect(
+        const SharePlayTarget(type: PlayShareType.webdav, source: '192.168.1.10/dav', path: '/a').host,
+        '192.168.1.10',
+      );
+      final json = {
+        ...target.withHostAddresses(['192.168.1.10']).toJson(),
+        'type': 'play',
+      };
+      expect((PlayTarget.fromJson(json)! as SharePlayTarget).hostAddresses, ['192.168.1.10']);
+      expect(target.toJson().containsKey('hostAddresses'), isFalse);
+      for (final bad in [
+        ['8.8.8.8'],
+        ['nas.local'],
+        ['192.168.1.1', '192.168.1.2', '192.168.1.3', '192.168.1.4', '192.168.1.5'],
+        '192.168.1.10',
+      ]) {
+        expect(PlayTarget.fromJson({...target.toJson(), 'hostAddresses': bad}), isNull, reason: '$bad');
+      }
+    });
+
     test('a state of build 51 gives its item as the key', () {
       final back = ScreenPlayState.fromJson({'seq': 1, 'phase': 'playing', 'server': 'abc', 'item': '42'});
       expect(back.key, '42');
@@ -212,6 +245,61 @@ void main() {
     test('the new reasons go and come back', () {
       for (final reason in ScreenPlayReason.values) {
         expect(ScreenPlayReason.fromWire(reason.wire), reason);
+      }
+    });
+  });
+
+  group('sent from the relay of the phone (release 53)', () {
+    const target = RelayPlayTarget(
+      lease: '00112233445566778899aabbccddeeff',
+      port: 8364,
+      name: 'PXL_20261126_101010.mp4',
+      mime: 'video/mp4',
+      size: 1234567,
+      projection: PlayProjection.equirect,
+    );
+
+    test('a round trip names the lease, the port, the file and its type, never a host nor a key', () {
+      final json = const PlayItem.of(target, title: 'PXL').toJson();
+      expect(json, {
+        'kind': 'relay',
+        'lease': '00112233445566778899aabbccddeeff',
+        'port': 8364,
+        'name': 'PXL_20261126_101010.mp4',
+        'mime': 'video/mp4',
+        'size': 1234567,
+        'media': 'video',
+        'projection': 'equirect',
+        'title': 'PXL',
+        'offsetMs': 0,
+      });
+      final back = PlayItem.fromJson(json)!.target as RelayPlayTarget;
+      expect(back.lease, target.lease);
+      expect(back.port, 8364);
+      expect(back.size, 1234567);
+      expect(back.projection, PlayProjection.equirect);
+      expect(back.origin, isNull, reason: 'only the session binds where it is read');
+      expect(back.path, '/cast/00112233445566778899aabbccddeeff/film');
+      expect(back.serverKey, 'relay');
+      expect(back.itemKey, target.lease);
+    });
+
+    test('names and types out of bounds are refused', () {
+      for (final name in ['', '.', '..', 'a/b.jpg', 'a\\b.jpg', 'a\u0000.jpg', 'x' * 121]) {
+        expect(RelayPlayTarget.isSafeName(name), isFalse, reason: name);
+      }
+      expect(RelayPlayTarget.isSafeName('IMG 0001 (2).HEIC'), isTrue);
+      Map<String, Object?> with_(String key, Object? value) => {...target.toJson(), key: value};
+      for (final json in [
+        with_('lease', '0011'),
+        with_('lease', '00112233445566778899AABBCCDDEEFF'),
+        with_('port', 70000),
+        with_('port', '8364'),
+        with_('mime', 'application/octet-stream'),
+        with_('media', 'photo'),
+        with_('size', 0),
+      ]) {
+        expect(PlayItem.fromJson(json), isNull, reason: '$json');
       }
     });
   });

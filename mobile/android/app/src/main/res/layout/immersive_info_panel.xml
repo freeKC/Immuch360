@@ -118,6 +118,46 @@
       android:tooltipText="@string/immersive_seek_forward" />
   </LinearLayout>
 
+  <!-- The background and the transition of the photos of a flat screen (issue 19): each button goes to the next
+       choice. In place of the time bar, which a photo never shows, and lower than it (with the bar of a relief being
+       made, 4 + 6 + 4 + 40 dp against its 8 + 48 dp), so the rows still fit -->
+  <LinearLayout
+    android:id="@+id/immersive_look_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:visibility="gone">
+
+    <Button
+      android:id="@+id/immersive_background"
+      android:layout_width="0dp"
+      android:layout_height="40dp"
+      android:minHeight="0dp"
+      android:layout_marginEnd="12dp"
+      android:layout_weight="1"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:paddingTop="0dp"
+      android:paddingBottom="0dp"
+      android:textAllCaps="false"
+      android:textSize="15sp" />
+
+    <Button
+      android:id="@+id/immersive_transition"
+      android:layout_width="0dp"
+      android:layout_height="40dp"
+      android:minHeight="0dp"
+      android:layout_weight="1"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:paddingTop="0dp"
+      android:paddingBottom="0dp"
+      android:textAllCaps="false"
+      android:textSize="15sp" />
+  </LinearLayout>
+
   <!-- Previous and next media of the app (photos and videos), and play or pause: a video, or the slideshow of the
        photos of a flat screen. Not offered in a 3D scene, where the left thumbstick glides -->
   <LinearLayout

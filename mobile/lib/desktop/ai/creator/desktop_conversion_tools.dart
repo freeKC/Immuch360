@@ -43,6 +43,7 @@
 // that album is out of the backup, no 3D photo takes its name there.
 
 import 'dart:async';
+import 'dart:ffi' show Abi;
 import 'dart:io';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -1186,6 +1187,8 @@ ConversionTools desktopConversionTools(Ref ref) {
       appMemoryOf: appGraphicsMemoryOf,
     ),
     releaseGraphics: releaseDesktopGraphics,
+    // A Mac with an Apple chip: its GPU shares the memory of the computer (Enhance (AI), release 53)
+    unifiedMemory: Abi.current() == Abi.macosArm64,
   );
 }
 

@@ -7,10 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
+import 'package:immich_mobile/infrastructure/network/cast/cast_relay.dart';
+import 'package:immich_mobile/presentation/widgets/cast/cast_group.widget.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on.sheet.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/phone_relay.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 
 import '../../../test_utils.dart';
@@ -41,6 +45,40 @@ class _Nearby extends NearbyPlayScreensNotifier {
   Map<String, PlayScreenAddress> build() => initial;
 }
 
+/// The playback of the phone: what the sheet asked it to play, and what each play ends in
+class _Remote extends RemotePlaybackController {
+  _Remote(this.answer);
+
+  final PlayOnOutcome Function(PlayOnRequest request) answer;
+  final played = <PlayOnRequest>[];
+
+  @override
+  Future<PlayOnOutcome> play(LinkedPeer screen, PlayScreenAddress address, PlayOnRequest request) async {
+    played.add(request);
+    return answer(request);
+  }
+}
+
+/// The keep alive of an iPhone: the app must stay open while it sends
+class _IosKeepAlive implements PlayRelayKeepAlive {
+  @override
+  Future<void> start({
+    required String title,
+    required String text,
+    required String stopLabel,
+    required String channel,
+  }) async {}
+
+  @override
+  Future<void> stop() async {}
+
+  @override
+  Stream<void> get stopRequests => const Stream.empty();
+
+  @override
+  bool get needsAppOpen => true;
+}
+
 const _request = PlayOnRequest(sourceId: 'source-1', server: _machine, serverName: 'Home Plex', ratingKey: '77');
 
 void main() {
@@ -51,8 +89,11 @@ void main() {
     List<LinkedPeer> screens = const [],
     Map<String, PlayScreenAddress> nearby = const {},
     Map<String, Set<String>> withoutServer = const {},
+    Set<String> signedOut = const {},
     void Function(bool)? answered,
     PlayOnRequest request = _request,
+    _Remote? remote,
+    bool iPhone = false,
   }) async {
     playOnPhoneScreen(tester);
     await pumpPlayOn(
@@ -65,6 +106,17 @@ void main() {
         linkedScreensProvider.overrideWith(() => _Screens(screens)),
         nearbyPlayScreensProvider.overrideWith(() => _Nearby(nearby)),
         screensWithoutServerProvider.overrideWith((_) => withoutServer),
+        screensSignedOutProvider.overrideWith((_) => signedOut),
+        if (remote != null) remotePlaybackProvider.overrideWith(() => remote),
+        if (iPhone)
+          phoneRelayEnvironmentProvider.overrideWithValue(
+            PhoneRelayEnvironment(
+              addressFor: (_) async => null,
+              bind: (address) => CastRelayServer.bind(address),
+              keepAlive: _IosKeepAlive(),
+              texts: () => (title: (s) => s, text: '', stopLabel: '', channel: ''),
+            ),
+          ),
       ],
     );
     await tester.tap(find.text('open'));
@@ -183,6 +235,28 @@ void main() {
       ),
       PlayScreenRowState.notAnnounced,
     );
+    // Signed out: for an Immich item only
+    expect(
+      playScreenRowState(
+        screen: tv,
+        nearby: const {_tvId: address},
+        withoutServer: const {},
+        server: 'immich',
+        signedOut: const {_tvId},
+        immich: true,
+      ),
+      PlayScreenRowState.signedOut,
+    );
+    expect(
+      playScreenRowState(
+        screen: tv,
+        nearby: const {_tvId: address},
+        withoutServer: const {},
+        server: _machine,
+        signedOut: const {_tvId},
+      ),
+      PlayScreenRowState.ready,
+    );
   });
 
   group('Immich', () {
@@ -202,6 +276,19 @@ void main() {
       endpoints: const [],
       serverName: 'photos.example.org',
     )!;
+
+    testWidgets('a screen that said it is signed out offers to sign it in, and can still be tried', (tester) async {
+      await open(
+        tester,
+        request: photo(),
+        screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+        nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+        signedOut: {_tvId},
+      );
+      expect(find.text('Not signed in to photos.example.org'), findsOneWidget);
+      expect(find.text('Sign Living room TV in to photos.example.org'), findsOneWidget);
+      expect(tile(tester, _tvId).onTap, isNotNull);
+    });
 
     testWidgets('with no linked screen, the text speaks of photos and videos', (tester) async {
       await open(tester, request: photo());
@@ -235,6 +322,132 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('play_on_private_dialog')), findsNothing);
       expect(find.byType(CircularProgressIndicator), findsNothing);
+    });
+  });
+
+  group('sent from this phone (release 53)', () {
+    PlayOnRequest remotePhoto() => PlayOnRequest.ofAsset(
+      RemoteAsset(
+        id: '3f2504e0-4f89-11d3-9a0c-0305e82c3301',
+        name: 'IMG_0001.HEIC',
+        ownerId: 'a1b2c3d4-0000-4000-8000-00000000abcd',
+        checksum: 'c',
+        type: AssetType.image,
+        createdAt: DateTime.utc(2026),
+        updatedAt: DateTime.utc(2026),
+        isEdited: false,
+      ),
+      userId: 'a1b2c3d4-0000-4000-8000-00000000abcd',
+      endpoints: const [],
+      serverName: 'photos.example.org',
+    )!;
+
+    final local = PlayOnRequest.relayed(
+      sourceId: playOnLocalSource,
+      serverName: '',
+      title: 'PXL_0001.mp4',
+      localAssetId: '1234',
+      relay: PlayOnRelayItem(
+        key: 'local:1234',
+        name: 'PXL_0001.mp4',
+        media: PlayMedia.video,
+        content: () async => null,
+      ),
+    );
+
+    testWidgets(
+      'a screen of another account offers Send it from this phone, which sends the same item from the relay',
+      (tester) async {
+        final remote = _Remote((request) => request.relay == null ? PlayOnOutcome.otherAccount : PlayOnOutcome.playing);
+        bool? playing;
+        await open(
+          tester,
+          request: remotePhoto(),
+          screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+          nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+          remote: remote,
+          answered: (value) => playing = value,
+        );
+        expect(find.text('Send it from this phone'), findsNothing);
+        await tester.tap(find.byKey(const ValueKey('play_on_$_tvId')));
+        await tester.pumpAndSettle();
+        expect(find.text('Living room TV uses another Immich account, which cannot see this'), findsOneWidget);
+        await tester.tap(find.byKey(const ValueKey('play_on_send_from_phone_$_tvId')));
+        await tester.pumpAndSettle();
+        expect(remote.played, hasLength(2));
+        final sent = remote.played.last;
+        expect(sent.kind, PlayKind.relay);
+        expect(sent.immich?.id, '3f2504e0-4f89-11d3-9a0c-0305e82c3301');
+        expect(sent.relay?.name, 'IMG_0001.jpg', reason: 'the server\'s JPEG of a HEIC photo');
+        expect(playing, isTrue);
+      },
+    );
+
+    testWidgets('a screen that does not have the share offers it too; a refusal of another kind does not', (
+      tester,
+    ) async {
+      var outcome = PlayOnOutcome.declined;
+      final remote = _Remote((_) => outcome);
+      await open(
+        tester,
+        request: remotePhoto(),
+        screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+        nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+        remote: remote,
+      );
+      await tester.tap(find.byKey(const ValueKey('play_on_$_tvId')));
+      await tester.pumpAndSettle();
+      expect(find.text('Send it from this phone'), findsNothing);
+      outcome = PlayOnOutcome.notVisible;
+      await tester.tap(find.byKey(const ValueKey('play_on_$_tvId')));
+      await tester.pumpAndSettle();
+      expect(find.text('Send it from this phone'), findsOneWidget);
+      expect(playOnSendableFromPhone(PlayOnOutcome.noSuchSource), isTrue);
+      expect(playOnSendableFromPhone(PlayOnOutcome.otherServer), isTrue);
+      expect(playOnSendableFromPhone(PlayOnOutcome.locked), isFalse);
+      expect(playOnSendableFromPhone(PlayOnOutcome.unreachable), isFalse);
+    });
+
+    testWidgets('an item on this phone only: a note, no Cast device, and the screen plays it', (tester) async {
+      final remote = _Remote((_) => PlayOnOutcome.playing);
+      await open(
+        tester,
+        request: local,
+        screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+        nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+        remote: remote,
+      );
+      expect(find.text('On this phone only: Immuch360 sends it to the screen from here'), findsOneWidget);
+      expect(find.byType(CastGroup), findsNothing);
+      expect(find.byKey(const Key('play_on_keep_open')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('play_on_$_tvId')));
+      await tester.pumpAndSettle();
+      expect(remote.played.single.relay?.key, 'local:1234');
+    });
+
+    testWidgets('on an iPhone the sheet says to keep the app open while it sends', (tester) async {
+      await open(
+        tester,
+        request: local,
+        screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+        nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+        iPhone: true,
+      );
+      expect(find.text('Keep Immuch360 open on this phone while the screen shows it'), findsOneWidget);
+    });
+
+    testWidgets('a relay that could not send says so', (tester) async {
+      final remote = _Remote((_) => PlayOnOutcome.relayFailed);
+      await open(
+        tester,
+        request: local,
+        screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+        nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+        remote: remote,
+      );
+      await tester.tap(find.byKey(const ValueKey('play_on_$_tvId')));
+      await tester.pump();
+      expect(find.text('Living room TV could not read it from this phone'), findsOneWidget);
     });
   });
 }

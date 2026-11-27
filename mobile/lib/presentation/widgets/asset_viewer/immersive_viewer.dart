@@ -45,6 +45,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/big_screen.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 import 'package:immich_mobile/domain/models/immersive_playback_labels.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
@@ -208,7 +209,7 @@ class ImmersiveRequest {
 /// for none.
 ///
 /// [slideshowSeconds] is how long each photo of the slideshow of a flat screen stays (SlideshowConfig.duration), 0 for
-/// the viewer's 5 s, and [frostedBackground] the "Frosted background behind photos" setting.
+/// the viewer's 5 s, and [headsetLook] the background and the transition of the photos of a flat screen (issue 19).
 Future<void> openImmersiveRequest(
   ImmersiveApi api,
   ImmersiveRequest request, {
@@ -223,7 +224,7 @@ Future<void> openImmersiveRequest(
   String? startNotice,
   ImmersiveStabilization? stabilization,
   int slideshowSeconds = 0,
-  bool frostedBackground = true,
+  HeadsetSlideshowLook headsetLook = const HeadsetSlideshowLook(),
 }) {
   Future<void> open() => _openImmersiveRequest(
     api,
@@ -238,7 +239,7 @@ Future<void> openImmersiveRequest(
     watchMinDurationMs: watchMinDurationMs,
     startNotice: startNotice,
     slideshowSeconds: slideshowSeconds,
-    frostedBackground: frostedBackground,
+    headsetLook: headsetLook,
   );
   return stabilization == null ? open() : stabilization.around(request, open);
 }
@@ -256,7 +257,7 @@ Future<void> _openImmersiveRequest(
   required int watchMinDurationMs,
   required String? startNotice,
   required int slideshowSeconds,
-  required bool frostedBackground,
+  required HeadsetSlideshowLook headsetLook,
 }) => api.open(
   request.url,
   request.headers,
@@ -279,7 +280,8 @@ Future<void> _openImmersiveRequest(
   watchMinDurationMs: watchMinDurationMs,
   startNotice: startNotice,
   slideshowSeconds: slideshowSeconds,
-  frostedBackground: frostedBackground,
+  slideshowBackground: headsetLook.background.name,
+  slideshowTransition: headsetLook.transition.name,
 );
 
 /// The watch progress of the films of the immersive viewer, read from the providers (see ImmersiveWatch): before the
@@ -556,7 +558,7 @@ class ImmersiveAssetResolver {
     this.sharpFlatScreens = true,
     this.gaussianSplats = true,
     this.slideshowSeconds = 0,
-    this.frostedBackground = true,
+    this.headsetLook = const HeadsetSlideshowLook(),
     this.raw,
     this.exifOf,
     this.forcedSource,
@@ -585,7 +587,7 @@ class ImmersiveAssetResolver {
       sharpFlatScreens: ref.read(appConfigProvider).viewer.sharpFlatScreens,
       gaussianSplats: ref.read(appConfigProvider).viewer.gaussianSplats,
       slideshowSeconds: ref.read(appConfigProvider).slideshow.duration,
-      frostedBackground: ref.read(appConfigProvider).viewer.frostedFlatScreens,
+      headsetLook: ref.read(appConfigProvider).viewer.headsetLook,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
       forcedSource: ref.read(videoSourceOverridesProvider.notifier).of,
@@ -673,9 +675,9 @@ class ImmersiveAssetResolver {
   /// opened (Settings, Slideshow); 0 for the viewer's 5 s
   final int slideshowSeconds;
 
-  /// Whether a blurred copy of the photo of a flat screen fills the box around it (Frosted background behind photos,
-  /// experimental, on by default), as the settings said when the viewer opened
-  final bool frostedBackground;
+  /// The background and the transition of the photos of a flat screen (issue 19), as the settings said when the viewer
+  /// opened
+  final HeadsetSlideshowLook headsetLook;
 
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
@@ -939,7 +941,7 @@ class ImmersiveAssetResolver {
     startNotice: startNotice,
     stabilization: raw?.stabilization,
     slideshowSeconds: slideshowSeconds,
-    frostedBackground: frostedBackground,
+    headsetLook: headsetLook,
   );
 }
 
@@ -1339,7 +1341,7 @@ Future<void> openImmersiveUrl(
   final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
   final sharpFlatScreens = ref.read(appConfigProvider).viewer.sharpFlatScreens;
   final gaussianSplats = ref.read(appConfigProvider).viewer.gaussianSplats;
-  final frostedBackground = ref.read(appConfigProvider).viewer.frostedFlatScreens;
+  final headsetLook = ref.read(appConfigProvider).viewer.headsetLook;
   final stabilization = ImmersiveStabilization.read(ref);
   await player?.suspendForExternalPlayer();
   final openingId = session.start(navigator);
@@ -1356,7 +1358,7 @@ Future<void> openImmersiveUrl(
       watchMinDurationMs: watchMinDurationMs,
       startNotice: startNotice,
       stabilization: stabilization,
-      frostedBackground: frostedBackground,
+      headsetLook: headsetLook,
     );
   } catch (_) {
     session.cancel(openingId);

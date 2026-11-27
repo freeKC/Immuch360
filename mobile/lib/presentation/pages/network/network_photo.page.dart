@@ -5,8 +5,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart' show ConversionKind;
+import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/library/share_versions_button.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart' show aiFeaturesEnabledProvider;
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_conversion.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
+import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
@@ -29,6 +36,7 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
@@ -67,15 +75,20 @@ const _maxFlatSize = 4096;
 /// TIFF decoder, by its name or the type its share gives ([mimeType]), is decoded in Dart (see NetworkTiffImage), unless
 /// its file ([size] bytes) is larger than the device reads. On Android a HEIF, AVIF or raw file is decoded by the
 /// native decoder at the same size, never by the fallback decoder of the engine (see GuardedNetworkImage).
-ImageProvider networkPhotoImage(Uri url, {String? mimeType, int? size}) => isDartTiffUrl(url, mimeType: mimeType)
-    ? NetworkTiffImage(url, maxSide: math.min(_maxFlatSize, TiffBudget.current.maxViewerSide), size: size)
+ImageProvider networkPhotoImage(Uri url, {String? mimeType, int? size, int maxSide = _maxFlatSize}) =>
+    isDartTiffUrl(url, mimeType: mimeType)
+    ? NetworkTiffImage(url, maxSide: math.min(maxSide, TiffBudget.current.maxViewerSide), size: size)
     : GuardedNetworkImage(
         url.toString(),
         source: 'sharePage',
-        maxWidth: _maxFlatSize,
-        maxHeight: _maxFlatSize,
+        maxWidth: maxSide,
+        maxHeight: maxSide,
         undecodableKey: undecodableShareKey(url),
       );
+
+/// Immuch360 Desktop: the largest side a photo zoomed in on a computer is decoded at, as the files of the library
+/// (local_image_request.dart): its pixels one to one, up to the largest texture
+const desktopZoomedFlatSize = 16384;
 
 /// The image of a photo of a share for the 360° viewer, through the media bridge at [url]: at most 8192 x 4096 pixels,
 /// the largest texture most phones take (see textureDecodeSize), or 4096 x 2048 on a TV that Android calls a low RAM
@@ -160,6 +173,13 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   final _transformation = TransformationController();
   Offset? _doubleTapPosition;
 
+  /// Immuch360 Desktop: the zoom of the mouse, the wheel, the trackpad and the keyboard (desktop_photo_zoom.dart)
+  final _desktopZoom = CurrentPlatform.isDesktop ? DesktopZoomController() : null;
+
+  /// Immuch360 Desktop: once zoomed in, the photo decoded again up to [desktopZoomedFlatSize] over the one decoded for
+  /// the screen, which would only grow blurred
+  bool _zoomedOnce = false;
+
   /// The page itself, which takes the keys of a remote while no button has the focus
   final _rootFocus = FocusNode(debugLabel: 'Network photo');
 
@@ -176,6 +196,14 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     super.initState();
     // Back on a TV depends on where the focus is
     _appBarFocus.addListener(_onAppBarFocus);
+    _desktopZoom?.addListener(_onDesktopZoom);
+  }
+
+  void _onDesktopZoom() {
+    final zoom = _desktopZoom;
+    if (zoom != null && !_zoomedOnce && desktopZoomed(zoom) && mounted) {
+      setState(() => _zoomedOnce = true);
+    }
   }
 
   void _onAppBarFocus() {
@@ -220,6 +248,15 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       }
       return KeyEventResult.handled;
     }
+    // Immuch360 Desktop: + and - zoom, 0 fits, 1 shows the pixels one to one; zoomed in, the arrows of the page itself
+    // move the photo and Escape shows it whole before it leaves the page (desktop_photo_zoom.dart)
+    final zoom = _desktopZoom;
+    final zoomKey = zoom == null || photo == null ? null : desktopZoomKeyOf(event);
+    if (zoom != null && zoomKey != null && (node.hasPrimaryFocus || !isDesktopZoomArrow(zoomKey))) {
+      if (desktopZoomApplyKey(zoom, zoomKey, animate: !desktopReducedMotion(context))) {
+        return KeyEventResult.handled;
+      }
+    }
     if (!node.hasPrimaryFocus) {
       return KeyEventResult.ignored;
     }
@@ -256,7 +293,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   /// turn the camera rather than the picture, or hold their eyes or their scene where they are.
   bool get _canRotate {
     final info = _info;
+    // An item a phone sends from its relay: nothing of it is kept here, its turns neither
     return info != null &&
+        !isPlayRelaySource(widget.sourceId) &&
         !info.is360 &&
         info.stereoPair == null &&
         info.stereoPhoto == null &&
@@ -316,6 +355,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
           ),
     );
     _transformation.value = Matrix4.identity();
+    _desktopZoom?.reset();
   }
 
   /// The previous or next photo or video of the folder, in place of this page: a TV user does not go back to the grid
@@ -417,6 +457,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   void dispose() {
     _imageStream?.removeListener(_imageListener);
     _transformation.dispose();
+    _desktopZoom?.dispose();
     _appBarFocus.removeListener(_onAppBarFocus);
     _rootFocus.dispose();
     _appBarFocus.dispose();
@@ -609,7 +650,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     // A TV is a viewer: nothing is sent from it
     final tvMode = ref.watch(tvModeProvider);
-    final canUpload = !tvMode && ref.watch(hasServerProvider);
+    // An item a phone sends from its relay (release 53) is shown, never kept on this device
+    final relayed = isPlayRelaySource(widget.sourceId);
+    final canUpload = !tvMode && !relayed && ref.watch(hasServerProvider);
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
     // The page covers the screen, under the app bar too: from the menu, Left would land on it rather than on the Back
     // button. Out of the directional moves while the app bar has the focus (set here, not while the focus changes);
@@ -623,7 +666,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final turns = current == null ? 0 : _turnsOf(current);
     // Immuch360 Desktop: "Make 3D (AI)" in the menu, as for a photo of the library
     // (lib/desktop/ai/ui/share_conversion.dart)
-    final makeImmersive = CurrentPlatform.isDesktop && current != null && !tvMode
+    final makeImmersive = CurrentPlatform.isDesktop && current != null && !tvMode && !relayed
         ? watchShareMakeImmersive(
             ref,
             context.t,
@@ -633,8 +676,37 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
             height: _info?.frameHeight ?? _imageSize?.height.round(),
           )
         : null;
+    // Immuch360 Desktop: "Spatial 2.5D" for a photo of two eyes once its file was read, as in the viewer of a library
+    // photo (lib/desktop/spatial/spatial_photo_button.dart)
+    final spatialPhoto = CurrentPlatform.isDesktop && current != null && !tvMode
+        ? spatialPhotoOfShare(ref, _name, _info, decoded: _imageSize)
+        : null;
+    // Immuch360 Desktop: "Enhance (AI)" in the menu, for any photo of the share while the AI features are on: the
+    // dialog says what it takes (lib/desktop/ai/enhance/enhance_dialog.dart); never for an item a phone sends from its
+    // relay, which is shown only
+    final enhance =
+        CurrentPlatform.isDesktop &&
+        current != null &&
+        !tvMode &&
+        !relayed &&
+        current.entry.isImage &&
+        ref.watch(aiFeaturesEnabledProvider);
+    // And for a plain photo, or a 360° photo of one eye, whose 3D version this computer makes with AI: made first,
+    // then opened (lib/desktop/spatial/spatial_conversion.dart); never for an item a phone sends from its relay, as
+    // above
+    final spatialConvert = CurrentPlatform.isDesktop && current != null && !tvMode && !relayed && spatialPhoto == null
+        ? spatialConversionKindOfShare(
+            ref,
+            current.entry,
+            _info,
+            width: _info?.frameWidth ?? _imageSize?.width.round(),
+            height: _info?.frameHeight ?? _imageSize?.height.round(),
+          )
+        : null;
     // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
-    final reliefGate = isHorizonOs && current != null && _canRotate ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
+    final reliefGate = isHorizonOs && current != null && _canRotate && !relayed
+        ? ref.watch(reliefGateProvider)
+        : ReliefGate.hidden;
     // The view a relief first shows in, read with the gate: a page without the button reads no setting
     final reliefMode = reliefGate.visible
         ? ref.watch(appConfigProvider.select((config) => config.aiImmersive.questMode))
@@ -797,9 +869,32 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                       tooltip: '360°',
                       onPressed: () => unawaited(_open360(photo)),
                     ),
+                  if (photo != null && spatialPhoto != null)
+                    SpatialPhotoIconButton(
+                      // The picture the page shows, from the image cache: the frame whole, at most 4096 pixels
+                      onOpen: () => ref.read(spatialSharePhotoOpenerProvider)(
+                        context,
+                        networkPhotoImage(photo.url, mimeType: photo.entry.mimeType, size: photo.entry.size),
+                        photo.entry.name,
+                        spatialPhoto,
+                      ),
+                    ),
+                  if (photo != null && spatialConvert != null)
+                    SpatialConvertPhotoButton(
+                      key: ValueKey('spatial-convert:${photo.entry.path}'),
+                      sphere: spatialConvert == ConversionKind.stereoPanoramaFromPanorama,
+                      run: () => runShareSpatialConversion(
+                        this.context,
+                        ref,
+                        photo.entry,
+                        neighbours: widget.folder?.entries,
+                        imageOf: (url, file) => networkPhotoImage(url, mimeType: file.mimeType, size: file.size),
+                        kind: spatialConvert,
+                      ),
+                    ),
                   // Immuch360 Desktop: the versions of the photo on its share, and its original for a version
                   // (lib/desktop/ai/library/share_versions_button.dart)
-                  if (CurrentPlatform.isDesktop && photo != null)
+                  if (CurrentPlatform.isDesktop && photo != null && !relayed)
                     DesktopShareVersionsButton(
                       key: ValueKey('versions:${photo.entry.path}'),
                       entry: photo.entry,
@@ -807,7 +902,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                     ),
                   // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
                   if (CurrentPlatform.isDesktop) const DesktopFullScreenButton(),
-                  if (photo != null && (!is360 || canUpload || makeImmersive != null))
+                  if (photo != null && (!is360 || canUpload || makeImmersive != null || enhance))
                     PopupMenuButton<void>(
                       tooltip: context.t.more,
                       itemBuilder: (context) => [
@@ -838,6 +933,11 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                             makeImmersive,
                             onOpen: () =>
                                 unawaited(ref.read(shareConversionOpenerProvider)(this.context, [photo.entry])),
+                          ),
+                        if (enhance)
+                          desktopShareEnhanceMenuItem(
+                            context,
+                            onOpen: () => unawaited(ref.read(shareEnhanceOpenerProvider)(this.context, [photo.entry])),
                           ),
                       ],
                     ),
@@ -892,6 +992,10 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   Widget _buildPhoto(_Photo photo, int turns) {
     final image = networkPhotoImage(photo.url, mimeType: photo.entry.mimeType, size: photo.entry.size);
     _listenToImage(image);
+    final zoom = _desktopZoom;
+    if (zoom != null) {
+      return _buildDesktopPhoto(photo, image, turns, zoom);
+    }
     return GestureDetector(
       onDoubleTapDown: (details) => _doubleTapPosition = details.localPosition,
       onDoubleTap: _onDoubleTap,
@@ -916,6 +1020,70 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
               errorBuilder: (context, error, _) => NetworkErrorView(error: error, color: Colors.white70),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// The pixels of the photo, turned as shown: those its file declares, else those decoded
+  Size? _pixelsOf(int turns) {
+    final width = _info?.frameWidth;
+    final height = _info?.frameHeight;
+    final pixels = width != null && height != null && width > 0 && height > 0
+        ? Size(width.toDouble(), height.toDouble())
+        : _imageSize;
+    if (pixels == null) {
+      return null;
+    }
+    // The decoded picture gives the shape, the file the size: its EXIF orientation may have swapped its sides
+    final decoded = _imageSize;
+    final shaped = decoded != null && (decoded.width > decoded.height) != (pixels.width > pixels.height)
+        ? Size(pixels.height, pixels.width)
+        : pixels;
+    return turns.isOdd ? Size(shaped.height, shaped.width) : shaped;
+  }
+
+  /// Immuch360 Desktop: the photo under the zoom of a computer; once zoomed in, the same photo decoded at up to
+  /// [desktopZoomedFlatSize] lies over it, from its first frame, and nothing changes if it does not come
+  Widget _buildDesktopPhoto(_Photo photo, ImageProvider image, int turns, DesktopZoomController zoom) {
+    final decoded = _imageSize;
+    final larger =
+        _zoomedOnce && decoded != null && decoded.longestSide >= _maxFlatSize - 1 && image is! NetworkTiffImage;
+    return DesktopZoomView(
+      controller: zoom,
+      pixelSize: _pixelsOf(turns),
+      child: RotatedBox(
+        quarterTurns: turns,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image(
+              image: image,
+              fit: BoxFit.contain,
+              gaplessPlayback: true,
+              filterQuality: FilterQuality.medium,
+              loadingBuilder: (context, child, progress) => progress == null
+                  ? child
+                  : image is NetworkTiffImage
+                  ? TiffDecodingView(progress: progress, color: Colors.white70)
+                  : const NetworkLoadingView(color: Colors.white70),
+              errorBuilder: (context, error, _) => NetworkErrorView(error: error, color: Colors.white70),
+            ),
+            if (larger)
+              Image(
+                key: const Key('network_photo_zoomed'),
+                image: networkPhotoImage(
+                  photo.url,
+                  mimeType: photo.entry.mimeType,
+                  size: photo.entry.size,
+                  maxSide: desktopZoomedFlatSize,
+                ),
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.medium,
+                frameBuilder: (context, child, frame, _) => frame == null ? const SizedBox.shrink() : child,
+                errorBuilder: (context, error, _) => const SizedBox.shrink(),
+              ),
+          ],
         ),
       ),
     );

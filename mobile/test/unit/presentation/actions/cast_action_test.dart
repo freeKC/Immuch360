@@ -81,7 +81,7 @@ void main() {
       expect(find.byIcon(Icons.cast_rounded), findsNothing);
     });
 
-    testWidgets('absent for an asset with no request (on this device only)', (tester) async {
+    testWidgets('absent for an asset with no request', (tester) async {
       await tester.pumpTestWidget(
         context,
         const ActionIconButton(action: CastAction()),

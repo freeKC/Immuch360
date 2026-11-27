@@ -170,6 +170,11 @@ the gate is per desktop and is noted.
 | `lib/providers/settings_file/settings_file_io.dart:94` | the settings file: the Android picker (DocumentTreeApi) | right: the computers took the branch before it |
 | `lib/providers/settings_file/settings_file_io.dart:117` | the settings file: the copy in the cache deleted after the read, on Android | right: the computers read the file where it is and delete nothing |
 | `lib/providers/settings_file/settings_file_io.dart:138` | the settings file: no save dialog off Android | right: the computers returned before it |
+| `lib/providers/play_on_screen/screen_native_viewers.dart:59` | Play from a phone: whether the immersive viewer of the Quest is open, read on Android only | right: the computers read their 360° player's session alone |
+| `lib/providers/play_on_screen/screen_native_viewers.dart:68` | Play from a phone: whether a native viewer activity is in front, asked through the Android channel | right: on the computers the 360° player is a route of the window, whose own lifecycle the receiver follows (none) |
+| `lib/providers/play_on_screen/screen_native_viewers.dart:95` | Play from a phone: the native 360° player and immersive viewer closed through the Android channel | right: the computers pop their 360° player route in the branch before it |
+| `lib/providers/play_on_screen/phone_relay.provider.dart:215` | Play on (release 53): the foreground service that keeps the phone's relay sending with its screen off, on Android | right: the computers never send (the sheet is for phones and tablets), they take the last branch, no keep alive |
+| `lib/providers/play_on_screen/phone_relay.provider.dart:217` | Play on: the screen of an iPhone kept on while its relay sends | right: idem, the computers take the branch after it |
 
 ## Desktop gates added outside these lines
 
@@ -200,7 +205,7 @@ or `deviceFeaturesProvider` so that the phones run exactly as before:
 | `lib/widgets/common/local_album_sliver_app_bar.dart`, `lib/presentation/widgets/panorama_360/panorama_360_filter_bar.widget.dart` | "On this computer" instead of "On this device" |
 | `lib/presentation/widgets/camera/camera_live_view.widget.dart` | `DesktopCameraLiveView` (media_kit, `lib/desktop/video/camera_live_view.dart`) instead of the Android view, with the same states; the live view announced for later where libmpv is missing; a battery or solar camera (no RTSP) is told that its media port live view comes later, a mains camera without a camera account still asks for one; a camera of another brand (release 48) keeps its rtsps:// address on the computers (FFmpeg opens it over TLS, `liveProtocols` lists rtsps and tls), while the phones, the TV and the Quest take `phonePlayableAddress` (a UniFi Protect link on its plain port 7447, another RTSPS link told it plays on a computer only) |
 | `lib/infrastructure/ipcam/ip_camera_service.dart` | `currentCameraPlayer`: libmpv on the computers (every codec FFmpeg decodes, RTSPS), read before the iOS term, so that a computer is never told a codec is not played here; Dart RTSP to HLS on iOS, Media3 on Android |
-| `lib/presentation/widgets/asset_viewer/spatial_viewer.dart` | Spatial 2.5D announced for later instead of "not available on this device" |
+| `lib/presentation/widgets/asset_viewer/spatial_viewer.dart` | Spatial 2.5D of videos in the page of the window on Windows and macOS (`desktop_spatial_video_api.dart`); on Linux, which has no renderer of the passes yet, a message saying 3D videos come later instead of "not available on this device" |
 | `lib/widgets/forms/login/login_form.dart` | OAuth through `deviceFeaturesProvider.oauth`, with a line saying so |
 | `lib/presentation/widgets/local_session/local_session_permission_banner.dart` | `FoldersBanner` instead of the gallery permission |
 | `lib/widgets/settings/ssl_client_cert_settings.dart` | `importClientCertificate` from a file instead of the system picker |

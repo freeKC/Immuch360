@@ -86,8 +86,10 @@ class _FakeActions implements ScreenPlayerActions {
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   }) {
     asked = (from: from, server: server, check: check);
+    askedSignInAs = signInAs;
     handoverCancel = cancel;
     return handoverAnswer?.future ?? Future.value(acceptHandover);
   }
@@ -96,6 +98,21 @@ class _FakeActions implements ScreenPlayerActions {
   Future<HandoverResult> addServer(HandedPlexServer server, String token) async {
     added.add((server, token));
     return addResult;
+  }
+
+  /// "Sign (screen) in": whether this screen is signed out, and the sessions it signed in with
+  bool signedOut = true;
+  String? askedSignInAs;
+  final signedInWith = <(String, Map<String, Object?>)>[];
+  HandoverResult signInResult = HandoverResult.added;
+
+  @override
+  Future<bool> canBeSignedIn() async => signedOut;
+
+  @override
+  Future<HandoverResult> signIn(LinkedPeer from, Map<String, Object?> payload) async {
+    signedInWith.add((from.name, payload));
+    return signInResult;
   }
 }
 
@@ -313,6 +330,68 @@ void main() {
         expect((await send(channel, item))['status'], 'invalid');
       }
       expect(actions.calls, isEmpty);
+    });
+
+    group('an item sent from the relay of the phone (release 53)', () {
+      final relayPlay = {
+        'type': 'play',
+        'kind': 'relay',
+        'lease': '00112233445566778899aabbccddeeff',
+        'port': 8364,
+        'name': 'PXL_20261126.mp4',
+        'mime': 'video/mp4',
+        'size': 123456,
+        'media': 'video',
+        'title': 'PXL_20261126.mp4',
+      };
+
+      test('is read from the address of the session\'s request, under its K_relay', () async {
+        final channel = connect();
+        final answer = await session.command(channel.seal(relayPlay), client: '192.168.1.42');
+        expect(channel.open(answer.body)!['status'], 'ok');
+        final target = actions.played!.target as RelayPlayTarget;
+        expect(target.origin!.host, '192.168.1.42');
+        expect(target.origin!.relayKey, channel.keys.relay);
+        expect(target.path, '/cast/00112233445566778899aabbccddeeff/film');
+        expect(actions.played!.item, '00112233445566778899aabbccddeeff');
+        // An IPv4 address mapped in IPv6 is the same address
+        await session.command(channel.seal(relayPlay), client: '::ffff:192.168.1.43');
+        expect((actions.played!.target as RelayPlayTarget).origin!.host, '192.168.1.43');
+      });
+
+      test('a host in the message is never read: the screen reads the phone it talks to', () async {
+        final channel = connect();
+        await session.command(
+          channel.seal({...relayPlay, 'host': '192.168.1.1', 'origin': '10.0.0.1'}),
+          client: '192.168.1.42',
+        );
+        expect((actions.played!.target as RelayPlayTarget).origin!.host, '192.168.1.42');
+      });
+
+      test('without a private address to read it from, or out of bounds, it is refused before the player', () async {
+        final channel = connect();
+        expect(channel.open((await session.command(channel.seal(relayPlay))).body)!['status'], 'invalid');
+        expect(
+          channel.open((await session.command(channel.seal(relayPlay), client: '8.8.8.8')).body)!['status'],
+          'invalid',
+        );
+        for (final bad in [
+          {...relayPlay, 'lease': 'ABC'},
+          {...relayPlay, 'port': 0},
+          {...relayPlay, 'name': '../secret.mp4'},
+          {...relayPlay, 'name': 'a\nb.mp4'},
+          {...relayPlay, 'mime': 'text/html'},
+          {...relayPlay, 'mime': 'image/jpeg'},
+          {...relayPlay, 'size': -1},
+        ]) {
+          expect(
+            channel.open((await session.command(channel.seal(bad), client: '192.168.1.42')).body)!['status'],
+            'invalid',
+            reason: '$bad',
+          );
+        }
+        expect(actions.calls, isEmpty);
+      });
     });
 
     test('pause, resume, seek, the tracks and stop go to the player', () async {
@@ -545,6 +624,127 @@ void main() {
         'invalid',
       );
       expect(actions.asked, isNull);
+    });
+
+    group('Sign (screen) in', () {
+      Future<PlayHandover?> startSignIn(PlayLinkChannel channel) async {
+        final own = PairingKeyPair.generate(Random(9));
+        final answer = await send(channel, {
+          'type': 'handoverHello',
+          'pk': pairingBase64(own.publicKey),
+          'serverName': 'photos.example.org',
+          'purpose': 'signIn',
+          'user': 'Fred',
+        });
+        if (answer['status'] != 'ok') {
+          return null;
+        }
+        return PlayHandover.of(own: own, peerKey: pairingDecodeBase64(answer['pk'])!, isPhone: true, session: channel);
+      }
+
+      Map<String, Object?> signInMessage(PlayHandover handover) => {
+        'type': 'handoverServer',
+        'h': handover.channel(isPhone: true).seal({
+          'immich': {
+            'token': 'session-token-1234',
+            'endpoints': ['http://192.168.1.10:2283'],
+          },
+        }),
+      };
+
+      test('a screen signed out asks with the account, and opens the session only once its user accepted', () async {
+        final channel = connect();
+        actions.handoverAnswer = Completer<bool>();
+        final handover = (await startSignIn(channel))!;
+        expect(actions.askedSignInAs, 'Fred');
+        expect(actions.asked!.server, 'photos.example.org');
+        final pending = send(channel, signInMessage(handover));
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        expect(actions.signedInWith, isEmpty);
+        actions.handoverAnswer!.complete(true);
+        expect((await pending)['status'], 'added');
+        final (phone, payload) = actions.signedInWith.single;
+        expect(phone, 'Galaxy S24+', reason: 'the name of the link');
+        expect(payload['token'], 'session-token-1234');
+      });
+
+      test('a sign in hello is answered with the system of the screen; a Plex hello is not', () async {
+        session = ScreenPlayerSession(
+          screenId: _screenId,
+          phones: () => phones,
+          actions: actions,
+          os: 'macOS',
+          clock: () => now,
+          random: Random(3),
+        );
+        final channel = connect();
+        final signIn = await send(channel, {
+          'type': 'handoverHello',
+          'pk': pairingBase64(PairingKeyPair.generate(Random(9)).publicKey),
+          'serverName': 'photos.example.org',
+          'purpose': 'signIn',
+          'user': 'Fred',
+        });
+        expect(signIn['status'], 'ok');
+        expect(signIn['os'], 'macOS');
+        await send(channel, {'type': 'handoverCancel'});
+        final plex = await send(channel, {
+          'type': 'handoverHello',
+          'pk': pairingBase64(PairingKeyPair.generate(Random(10)).publicKey),
+          'serverName': 'Plex at home',
+        });
+        expect(plex['status'], 'ok');
+        expect(plex.containsKey('os'), isFalse);
+      });
+
+      test('declined on the screen: nothing signs in', () async {
+        final channel = connect();
+        actions.acceptHandover = false;
+        final handover = (await startSignIn(channel))!;
+        expect((await send(channel, signInMessage(handover)))['status'], 'declined');
+        expect(actions.signedInWith, isEmpty);
+      });
+
+      test('a screen signed in already refuses before any question', () async {
+        final channel = connect();
+        actions.signedOut = false;
+        final own = PairingKeyPair.generate(Random(9));
+        final answer = await send(channel, {
+          'type': 'handoverHello',
+          'pk': pairingBase64(own.publicKey),
+          'serverName': 'photos.example.org',
+          'purpose': 'signIn',
+          'user': 'Fred',
+        });
+        expect(answer['status'], 'alreadySignedIn');
+        expect(actions.asked, isNull);
+      });
+
+      test('a sign in hello without the account is invalid; a Plex server never signs a screen in', () async {
+        final channel = connect();
+        expect(
+          (await send(channel, {
+            'type': 'handoverHello',
+            'pk': pairingBase64(PairingKeyPair.generate(Random(6)).publicKey),
+            'serverName': 'x',
+            'purpose': 'signIn',
+          }))['status'],
+          'invalid',
+        );
+        final handover = (await startSignIn(channel))!;
+        // The Plex message on a sign in handover: nothing added, nothing signed in
+        expect((await send(channel, serverMessage(handover)))['status'], 'failed');
+        expect(actions.added, isEmpty);
+        expect(actions.signedInWith, isEmpty);
+      });
+
+      test('a session on a Plex handover is never signed in with', () async {
+        final channel = connect();
+        final handover = await start(channel);
+        expect(actions.askedSignInAs, isNull);
+        expect((await send(channel, signInMessage(handover)))['status'], 'failed');
+        expect(actions.signedInWith, isEmpty);
+      });
     });
 
     test('the question on the screen is cancelled when the phone is removed', () async {

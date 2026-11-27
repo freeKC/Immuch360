@@ -80,6 +80,10 @@
 // allows (2048, 3072 by default, 4096) and tests the encoder at that square frame; Full or Half applies to the flat
 // ones only. A 2:1 video with no mark is asked ("360° or flat?") and Convert waits for the answer. A VR180 video, one
 // in two eyes already, the raw file of a 360° camera and a cube map are skipped with their reason.
+//
+// "Spatial 2.5D" on a plain photo (lib/desktop/spatial/spatial_conversion.dart) opens this dialog on the 3D photo
+// alone (kindOnly, no choice of the type, the type chosen last left as it was) and is told the id of its job
+// (onQueued) to follow it, in place of the panel of the conversions.
 
 import 'dart:async';
 import 'dart:io';
@@ -489,6 +493,7 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
       ConversionSkipReason.raw360Video => t.ai_immersive_skipped_raw_360_video,
       ConversionSkipReason.sphereLayout => t.ai_immersive_skipped_sphere_layout,
       ConversionSkipReason.tooLarge => t.ai_enhance_refused_too_large,
+      ConversionSkipReason.enhanceStereoInvents => t.ai_enhance_skipped_rebuild_3d_job,
     };
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere (a raw one of a 360°
@@ -1272,7 +1277,14 @@ Future<void> openConversionDialog(
 
 /// See the top of this file
 class ConversionDialog extends ConsumerStatefulWidget {
-  const ConversionDialog({super.key, this.assets = const [], this.kind, this.shareFiles = const []});
+  const ConversionDialog({
+    super.key,
+    this.assets = const [],
+    this.kind,
+    this.shareFiles = const [],
+    this.kindOnly = false,
+    this.onQueued,
+  });
 
   final List<BaseAsset> assets;
 
@@ -1282,6 +1294,13 @@ class ConversionDialog extends ConsumerStatefulWidget {
 
   /// The type to start with when this build makes it and it takes a photo, before the one chosen last
   final ConversionKind? kind;
+
+  /// Only [kind] is offered, no choice of the type: the 3D photo of "Spatial 2.5D" on a plain photo
+  /// (lib/desktop/spatial/spatial_conversion.dart)
+  final bool kindOnly;
+
+  /// Told the ids of the jobs once Convert handed them to the queue, before the dialog closes
+  final void Function(List<String> ids)? onQueued;
 
   @override
   ConsumerState<ConversionDialog> createState() => _ConversionDialogState();
@@ -1460,7 +1479,8 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     _strength = _settings.reliefStrength;
     _videoStrength = _settings.videoReliefStrength;
     _videoHalf = _settings.videoHalfSbs;
-    _offered = ref.read(offeredConversionKindsProvider);
+    final only = widget.kindOnly ? widget.kind : null;
+    _offered = only != null ? [only] : ref.read(offeredConversionKindsProvider);
     _reading = true;
     List<_Photo>? photos;
     try {
@@ -2264,19 +2284,22 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     if (kind == ConversionKind.sceneFromPhoto && settings.exportGlb) {
       ref.read(sceneGlbCopiesProvider.notifier).follow(ids);
     }
+    widget.onQueued?.call(ids);
     _close();
     final skipExisting = _existing == ExistingVersionChoice.skip;
     final stereoKept = kind == ConversionKind.panoramaFromPhoto ? _alsoStereo : settings.alsoStereoPanorama;
     final strengthKept = kind == ConversionKind.sbsFromPhoto ? _strength : settings.reliefStrength;
+    // A type the user did not choose (kindOnly) is not kept as the one chosen last
+    final typeKept = widget.kindOnly ? settings.lastType : kind.name;
     if (settings.skipExisting != skipExisting ||
-        settings.lastType != kind.name ||
+        settings.lastType != typeKept ||
         settings.alsoStereoPanorama != stereoKept ||
         settings.reliefStrength != strengthKept) {
       unawaited(
         _store.update(
           (kept) => kept.copyWith(
             skipExisting: skipExisting,
-            lastType: () => kind.name,
+            lastType: () => typeKept,
             alsoStereoPanorama: stereoKept,
             reliefStrength: strengthKept,
           ),
@@ -2447,7 +2470,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 ),
               const SizedBox(height: 12),
               if (_copying case final copying?)
-                _ShareCopyLine(key: const Key('ai_conversion_share_copy'), copying: copying)
+                ShareCopyLine(key: const Key('ai_conversion_share_copy'), copying: copying)
               else if (gates.any((each) => each.isLoading) || candidates == null)
                 const Padding(
                   padding: EdgeInsets.all(16),
@@ -3147,8 +3170,8 @@ class _ChosenFolderStore extends DesktopAiSettingsStore {
 
 /// The copy of a photo of a share under way: "Copying salon.jpg from the share: 4.2 MiB of 12.0 MiB", "2 of 5" for a
 /// selection, and its bar
-class _ShareCopyLine extends StatelessWidget {
-  const _ShareCopyLine({super.key, required this.copying});
+class ShareCopyLine extends StatelessWidget {
+  const ShareCopyLine({super.key, required this.copying});
 
   final ({int index, int count, String name, int copied, int? total}) copying;
 

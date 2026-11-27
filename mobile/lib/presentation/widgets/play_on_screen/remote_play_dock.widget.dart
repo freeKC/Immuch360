@@ -286,7 +286,8 @@ class _DockBar extends ConsumerWidget {
                     ),
                   ),
                   if (live) ...[
-                    if (!photo)
+                    // A 360° view of the screen's own (the TV's 360° player, the headset) takes no pause from here
+                    if (!photo && !state.sphere)
                       IconButton(
                         key: const Key('remote_play_dock_play'),
                         icon: Icon(
@@ -295,7 +296,7 @@ class _DockBar extends ConsumerWidget {
                         ),
                         onPressed: () => unawaited(playing ? controller.pause() : controller.resume()),
                       ),
-                    if (playback.request.sourceId == playOnImmichSource) const PlayOnSlideshowButtons(),
+                    if (playback.request.ofViewer) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('remote_play_dock_stop'),
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.play_bar_stop),

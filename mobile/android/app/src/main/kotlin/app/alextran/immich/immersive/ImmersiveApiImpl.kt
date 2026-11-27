@@ -131,6 +131,24 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     }
 
     /**
+     * Tells Flutter the user chose the background [background] (black, blurred or passthrough) and the transition
+     * [transition] (none, crossFade or slide) of the photos of a flat screen on the panel of the viewer of [openingId],
+     * so that the settings of the app follow (issue 19). Without an engine for the app UI the event is dropped.
+     */
+    fun notifySlideshowLookChanged(openingId: Long, background: String, transition: String) {
+      onMainThread {
+        val current = events
+        if (current == null) {
+          Log.i(TAG, "no Flutter engine to tell the slideshow background and transition")
+          return@onMainThread
+        }
+        current.slideshowLookChanged(openingId, background, transition) { result ->
+          result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the slideshow look event", it) }
+        }
+      }
+    }
+
+    /**
      * Asks Flutter, under [requestId], for the media [step] places away from the one shown (+1 next, -1 previous) in
      * the viewer of [openingId]. [stereoLayout] and [coverage] are what the viewer shows now, which the app keeps for
      * that media before moving on. [callback] runs on the main thread with true once Flutter found one and showed it
@@ -214,7 +232,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     watchMinDurationMs: Long,
     startNotice: String?,
     slideshowSeconds: Long,
-    frostedBackground: Boolean,
+    slideshowBackground: String,
+    slideshowTransition: String,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -235,7 +254,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         "stereo pair=${stereoPair != null}, reverse thumbstick turn=$reverseThumbstickTurn, " +
         "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}, notice=${sourceNotice != null}, " +
         "refused=${sourceRefusal != null}, gaussian splats=$gaussianSplats, films from $watchMinDurationMs ms, " +
-        "start notice=${startNotice != null}, slideshow $slideshowSeconds s, frosted background=$frostedBackground",
+        "start notice=${startNotice != null}, slideshow $slideshowSeconds s, background $slideshowBackground, " +
+        "transition $slideshowTransition",
     )
     val intent =
       ImmersiveViewerActivity.intent(
@@ -259,7 +279,8 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         watchMinDurationMs,
         startNotice,
         slideshowSeconds,
-        frostedBackground,
+        slideshowBackground,
+        slideshowTransition,
       )
     appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }

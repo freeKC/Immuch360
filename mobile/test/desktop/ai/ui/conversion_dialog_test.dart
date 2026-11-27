@@ -1009,6 +1009,9 @@ void main() {
           reason: name,
         );
       }
+      // The reads of the three files may still run once the texts hold still (a slow Windows runner, run
+      // 45909701215): Convert is asked once they are done
+      await settle(tester, until: () => convertEnabled(tester));
       expect(convertEnabled(tester), isTrue);
 
       await tapIn(tester, convert());

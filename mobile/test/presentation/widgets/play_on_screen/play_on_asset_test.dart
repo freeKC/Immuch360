@@ -3,6 +3,7 @@
 // archived one the sheet did not confirm, and nothing at all while no screen shows the viewer's asset. A video that
 // ended on the screen still counts as sent: the next item follows it.
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -209,12 +210,208 @@ void main() {
       expect(container.read(playOnSlideshowProvider), isFalse);
     });
 
+    test(
+      'a selection or an album: Next and Previous step through its list, past what may not go, to its ends',
+      () async {
+        final container = containerFor(showing(1));
+        container.read(playOnQueueProvider.notifier).state = PlayOnQueue(
+          items: [
+            _asset(1),
+            _asset(2, visibility: AssetVisibility.locked),
+            _asset(3, visibility: AssetVisibility.archive),
+            _asset(4, type: AssetType.video),
+            _asset(5),
+          ],
+          index: 0,
+        );
+        final slideshow = container.read(playOnSlideshowProvider.notifier);
+        expect(slideshow.canStep, isTrue);
+        expect(await slideshow.step(1), isTrue);
+        expect(remote.sent.map((request) => request.ratingKey), [_asset(4).id], reason: 'locked and archived skipped');
+        expect(container.read(playOnQueueProvider)!.index, 3);
+        expect(await slideshow.step(1), isTrue);
+        expect(await slideshow.step(1), isFalse, reason: 'nothing after the last');
+        expect(await slideshow.step(-1), isTrue);
+        expect(remote.sent.last.ratingKey, _asset(4).id);
+        expect(container.read(playOnQueueProvider)!.index, 3);
+      },
+    );
+
+    test('a list whose item sent was archived sends its archived items too', () async {
+      final container = containerFor(showing(1, visibility: AssetVisibility.archive));
+      container.read(playOnQueueProvider.notifier).state = PlayOnQueue(
+        items: [
+          _asset(1, visibility: AssetVisibility.archive),
+          _asset(2, visibility: AssetVisibility.archive),
+        ],
+        index: 0,
+      );
+      expect(await container.read(playOnSlideshowProvider.notifier).step(1), isTrue);
+      expect(remote.sent.single.ratingKey, _asset(2).id);
+    });
+
+    test('a list while nothing shows on a screen any more: nothing goes', () async {
+      final container = containerFor(null);
+      container.read(playOnQueueProvider.notifier).state = PlayOnQueue(items: [_asset(1), _asset(2)], index: 0);
+      expect(await container.read(playOnSlideshowProvider.notifier).step(1), isFalse);
+      expect(remote.sent, isEmpty);
+    });
+
+    test('what a selection or the follow passes over', () {
+      final plain = _requestOf(_asset(1));
+      final archived = _requestOf(_asset(2, visibility: AssetVisibility.archive));
+      expect(playOnSkips(plain, null), isFalse);
+      expect(playOnSkips(null, plain), isTrue);
+      expect(playOnSkips(_requestOf(_asset(3, visibility: AssetVisibility.locked)), archived), isTrue);
+      expect(playOnSkips(archived, plain), isTrue);
+      expect(playOnSkips(archived, archived), isFalse);
+    });
+
     test('no viewer left on the phone: nothing moves, the slideshow stops', () async {
       final container = containerFor(showing(1));
       container.read(playOnViewerJumpProvider.notifier).state = _Jump(count: 3)..gone = true;
       final slideshow = container.read(playOnSlideshowProvider.notifier)..play();
       expect(await slideshow.step(1), isFalse);
       expect(container.read(playOnSlideshowProvider), isFalse);
+    });
+  });
+
+  group('sent from this phone (release 53)', () {
+    LocalAsset local(String id, {String name = 'PXL_1.jpg', AssetType type = AssetType.image}) => LocalAsset(
+      id: id,
+      name: name,
+      type: type,
+      createdAt: DateTime.utc(2026),
+      updatedAt: DateTime.utc(2026),
+      playbackStyle: type == AssetType.video ? AssetPlaybackStyle.video : AssetPlaybackStyle.image,
+      isEdited: false,
+    );
+
+    late Directory folder;
+    late List<(String, int)> drawn;
+    late List<String> files;
+
+    setUp(() async {
+      folder = await Directory.systemTemp.createTemp('play_on_asset');
+      drawn = [];
+      files = [];
+    });
+    tearDown(() => folder.delete(recursive: true));
+
+    PlayRelayDevice device() => PlayRelayDevice(
+      file: (id) async {
+        files.add(id);
+        final file = File('${folder.path}/$id');
+        await file.writeAsBytes([1, 2, 3, 4]);
+        return file;
+      },
+      picture: (id, side) async {
+        drawn.add((id, side));
+        return Uint8List.fromList([0xff, 0xd8, 0xff, 0xd9]);
+      },
+    );
+
+    ProviderContainer relayContainer(RemotePlayback? playback) {
+      remote = _Remote(playback);
+      late ProviderContainer container;
+      container = ProviderContainer(
+        overrides: [
+          assetViewerProvider.overrideWith(_Viewer.new),
+          remotePlaybackProvider.overrideWith(() => remote),
+          playRelayDeviceProvider.overrideWithValue(device()),
+          playOnProjectionProvider.overrideWithValue((_) => PlayProjection.flat),
+          playOnAssetRequestProvider.overrideWithValue(
+            (asset) => asset.isLocalOnly ? container.read(playOnLocalRequestProvider)(asset) : _requestOf(asset),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(playOnViewerFollowProvider);
+      container.read(assetViewerProvider);
+      return container;
+    }
+
+    test('a photo or a video on this phone only is a request of the relay, to a screen only', () async {
+      final container = relayContainer(null);
+      final photo = container.read(playOnLocalRequestProvider)(local('11'))!;
+      expect(photo.kind, PlayKind.relay);
+      expect(photo.sourceId, playOnLocalSource);
+      expect(photo.localAssetId, '11');
+      expect(photo.relay?.key, 'local:11');
+      expect(photo.isPhoto, isTrue);
+      expect(playOnSkips(photo, null, toScreen: true), isFalse);
+      expect(playOnSkips(photo, null), isTrue, reason: 'a Cast device never gets it');
+      // A JPEG goes as it is: its XMP (a 360° projection among it) stays
+      final jpeg = await photo.relay!.content();
+      expect(jpeg?.mime, 'image/jpeg');
+      expect(jpeg?.size, 4);
+      expect(files, ['11']);
+      expect(drawn, isEmpty);
+    });
+
+    test('a photo that is no JPEG goes as a JPEG the system draws, a 360° one with more pixels', () async {
+      final container = relayContainer(null);
+      final heic = container.read(playOnLocalRequestProvider)(local('12', name: 'IMG_1.HEIC'))!;
+      expect(heic.relay?.name, 'IMG_1.jpg');
+      final made = await heic.relay!.content();
+      expect(made?.mime, 'image/jpeg');
+      expect(drawn, [('12', playRelayPhotoSide)]);
+      final sphere = playOnDeviceRelayItem(
+        device(),
+        key: 'local:13',
+        localId: '13',
+        name: 'PANO.dng',
+        video: false,
+        projection: PlayProjection.equirect,
+      );
+      await sphere.content();
+      expect(drawn.last, ('13', playRelaySpherePhotoSide));
+      final video = container.read(playOnLocalRequestProvider)(local('14', name: 'VID.MOV', type: AssetType.video))!;
+      final file = await video.relay!.content();
+      expect(file?.mime, 'video/quicktime');
+      expect(video.isPhoto, isFalse);
+    });
+
+    test('the follow sends a photo of this phone only to the screen, and moves on from it', () async {
+      final container = relayContainer(showing(1));
+      final viewer = container.read(assetViewerProvider.notifier) as _Viewer;
+      viewer.show(local('21'));
+      await wait();
+      expect(remote.sent.single.relay?.key, 'local:21');
+      // The screen shows it now: the next swipe follows from it
+      remote = _Remote(null);
+      final shown = RemotePlayback(
+        screen: _screen,
+        request: remote.sent.isEmpty ? container.read(playOnLocalRequestProvider)(local('21'))! : remote.sent.single,
+        state: const ScreenPlayState(seq: 4, phase: ScreenPlayPhase.showing, server: 'relay'),
+      );
+      expect(shown.isOfAsset('21'), isTrue);
+      expect(shown.request.ofViewer, isTrue);
+      expect(playOnRemoteFollows(shown), isTrue);
+    });
+
+    test('once the user chose Send it from this phone, the next Immich items of the viewer go so too', () async {
+      final container = relayContainer(null);
+      final sent = container.read(playOnSendFromPhoneProvider)(_requestOf(_asset(1))!)!;
+      expect(sent.kind, PlayKind.relay);
+      expect(sent.immich?.id, _asset(1).id);
+      final playback = RemotePlayback(
+        screen: _screen,
+        request: sent,
+        state: const ScreenPlayState(seq: 2, phase: ScreenPlayPhase.showing, server: 'relay'),
+      );
+      expect(playback.isOfAsset(_asset(1).id), isTrue);
+      remote = _Remote(playback);
+      final followed = relayContainer(playback);
+      (followed.read(assetViewerProvider.notifier) as _Viewer).show(_asset(2));
+      await wait();
+      expect(remote.sent.single.kind, PlayKind.relay);
+      expect(remote.sent.single.immich?.id, _asset(2).id);
+      // A locked item is never sent from the phone either
+      expect(
+        container.read(playOnSendFromPhoneProvider)(_requestOf(_asset(3, visibility: AssetVisibility.locked))!),
+        isNull,
+      );
     });
   });
 }

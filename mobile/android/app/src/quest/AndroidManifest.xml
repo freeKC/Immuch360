@@ -44,6 +44,8 @@
     <!-- No phone share service on the headset: PhoneShareService.start and stop look the service up in the manifest
          first and do nothing here, so closing the app does not make Android log "Unable to start service" -->
     <service android:name=".phoneshare.PhoneShareService" tools:node="remove" />
+    <!-- No "Play on…" sending from the headset, which is a screen: PlayRelayService.start and stop do nothing here -->
+    <service android:name=".playrelay.PlayRelayService" tools:node="remove" />
     <!-- No relay to headsets from a headset: DJI link's Send to a headset is for phones, DjiLinkRelayService.start and
          stop do nothing here -->
     <service android:name=".djilink.DjiLinkRelayService" tools:node="remove" />
