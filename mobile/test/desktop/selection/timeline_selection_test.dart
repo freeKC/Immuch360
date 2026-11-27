@@ -5,10 +5,12 @@
 // entries in the order of the sheet; "N selected" in the bar; Command on macOS. The assets an album holds already are
 // never taken, and a right click on the page that picks them adds. What the user does while Control A loads wins once
 // it ends; a Shift click finds its anchor again after photos arrived above it. A Control click keeps the place of a
-// scrolled timeline, though Control also turns the wheel into the zoom. A phone, the read only mode and the remote
-// control layout on a computer keep the timeline as it was.
+// scrolled timeline, though Control also turns the wheel into the zoom. Copy, in the menu and by Control C, puts the
+// files of the selection on the clipboard, never in the trash. A phone, the read only mode and the remote control
+// layout on a computer keep the timeline as it was.
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
@@ -24,17 +26,21 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copies.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copy.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/repositories/storage.repository.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/overview/timeline_wheel_zoom.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -42,9 +48,11 @@ import 'package:immich_mobile/providers/timeline/multiselect.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as p;
 
 import '../../fixtures/asset.stub.dart';
 import '../../unit/presentation/presentation_context.dart';
+import '../clipboard/recording_copier.dart';
 import 'selection_test_app.dart';
 
 class _ReadOnly extends ReadOnlyModeNotifier {
@@ -54,6 +62,16 @@ class _ReadOnly extends ReadOnlyModeNotifier {
 
   @override
   bool build() => value;
+}
+
+/// The files of the folder library by asset id
+class _Storage extends StorageRepository {
+  _Storage(this.files);
+
+  final Map<String, File> files;
+
+  @override
+  Future<File?> getFileForAsset(String assetId) async => files[assetId];
 }
 
 void main() {
@@ -112,6 +130,7 @@ void main() {
     MultiSelectState? selection,
     TimelineOrigin origin = TimelineOrigin.main,
     bool ai = false,
+    List<Override> extra = const [],
   }) async {
     tester.view
       ..physicalSize = const Size(1600, 2400)
@@ -164,6 +183,7 @@ void main() {
           aiGateResultForProvider.overrideWith((ref, _) => Completer<AiGateResult>().future),
         ],
         if (selection != null) multiSelectProvider.overrideWith(() => MultiSelectNotifier(selection)),
+        ...extra,
       ],
     );
     // Segments, then the assets of the rows
@@ -388,6 +408,57 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    testWidgets('Copy, in the menu and by Control C, puts the files of the selection on the clipboard, in order', (
+      tester,
+    ) async {
+      final folder = Directory.systemTemp.createTempSync('timeline-copy-test');
+      addTearDown(() => folder.deleteSync(recursive: true));
+      final files = {
+        for (var i = 0; i < 30; i++) 'p$i': File(p.join(folder.path, 'p$i.jpg'))..writeAsBytesSync([i]),
+      };
+      final copier = RecordingCopier();
+      await pumpTimeline(
+        tester,
+        assets: photos(30),
+        extra: [
+          desktopClipboardCopierProvider.overrideWithValue(copier),
+          storageRepositoryProvider.overrideWithValue(_Storage(files)),
+        ],
+      );
+      for (final index in [3, 1]) {
+        await clickWith(tester, [LogicalKeyboardKey.controlLeft], index);
+      }
+      await rightClick(tester, tile(1));
+      await settle(tester);
+      final copy = find.byKey(const Key('desktop_selection_copy'));
+      expect(find.descendant(of: copy, matching: find.text(t.desktop_copy)), findsOneWidget);
+      expect(
+        tester.getTopLeft(copy).dy,
+        lessThan(tester.getTopLeft(find.byKey(const Key('desktop_selection_select_all'))).dy),
+        reason: 'with the actions, before Select all',
+      );
+      await tester.tap(copy);
+      await settle(tester);
+      List<String> names(List<ClipboardSource> sources) => [
+        for (final source in sources) (source as LocalClipboardSource).path,
+      ];
+      expect(names(copier.copies.single), [files['p3']!.path, files['p1']!.path], reason: 'in the order selected');
+      expect(copy, findsNothing, reason: 'the menu closed');
+
+      expect(await withShortcut(tester, LogicalKeyboardKey.keyC), isTrue);
+      await settle(tester);
+      expect(copier.copies, hasLength(2));
+      expect(names(copier.copies.last), [files['p3']!.path, files['p1']!.path]);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await settle(tester);
+      expect(selected(tester), isEmpty);
+      await withShortcut(tester, LogicalKeyboardKey.keyC);
+      await settle(tester);
+      expect(copier.copies, hasLength(2), reason: 'nothing selected, nothing copied');
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('with the AI features on, "Make 3D (AI)" then "Make a splat scene (AI)" follow Upload to Immich', (
       tester,
     ) async {
@@ -560,6 +631,7 @@ void main() {
         reason: 'restore or delete, from the sheet',
       );
       expect(find.byKey(const Key('desktop_selection_upload')), findsNothing);
+      expect(find.byKey(const Key('desktop_selection_copy')), findsNothing);
       expect(find.byType(DesktopMakeImmersiveButton), findsNothing);
       expect(find.byType(DesktopMakeSplatButton), findsNothing);
       debugDefaultTargetPlatformOverride = null;
@@ -604,6 +676,8 @@ void main() {
       await settle(tester);
       expect(selected(tester), isEmpty);
       expect(find.byKey(const Key('desktop_selection_select_all')), findsNothing);
+      expect(find.byKey(const Key('desktop_selection_copy')), findsNothing);
+      expect(await withShortcut(tester, LogicalKeyboardKey.keyC), isFalse, reason: 'no copy in the remote layout');
 
       await clickWith(tester, [LogicalKeyboardKey.controlLeft], 1);
       expect(router.current.name, AssetViewerRoute.name, reason: 'Control click opens, as a click');
@@ -651,6 +725,7 @@ void main() {
     await settle(tester);
     expect(selected(tester), {'p1'});
     expect(find.byKey(const Key('desktop_selection_select_all')), findsNothing);
+    expect(find.byKey(const Key('desktop_selection_copy')), findsNothing, reason: 'no copy on a phone');
     await clickWith(tester, [LogicalKeyboardKey.shiftLeft], 4);
     expect(selected(tester), {'p1', 'p4'}, reason: 'a click adds while selecting, Shift or not');
     debugDefaultTargetPlatformOverride = null;

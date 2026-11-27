@@ -9,6 +9,9 @@
 // Control A and a Shift click load the items of the grid, which takes a while on a large timeline: what the user does
 // meanwhile (Escape, a click, the close button) wins over what they load, and a second Control A waits for the first.
 //
+// The menu ends with Copy when the grid copies (Control C too, through DesktopShell): the files of the selection on the
+// clipboard of the system (lib/desktop/clipboard).
+//
 // A plain click stays what it was: it opens the item when nothing is selected, and adds it or takes it out while
 // something is. Touch, the TV and the remote control layout are unchanged; a long press, a drag and the circle of a
 // header still select as before.
@@ -21,6 +24,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/clipboard/copy_targets.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -294,7 +298,8 @@ abstract final class DesktopSelectionTargets {
 
 /// The grid [child] on a computer, selected in by [selectable]: what the tiles call on a click (see [maybeOf]), the
 /// target of Control A and Escape while it is shown, and the menu of a right click, with the entries of [menu] (built
-/// while the menu shows, with this scope's context, which lives as long as the grid) then Select all and Unselect all.
+/// while the menu shows, with this scope's context, which lives as long as the grid), Copy when [copy] is given (also
+/// the target of Control C while the grid is shown), then Select all and Unselect all.
 /// Nothing of this while not [enabled] (the read only mode, the remote control layout). Control A or a Shift click
 /// still loading after a second shows a bar at the top of the grid and the busy pointer.
 class DesktopSelectionScope<T> extends ConsumerStatefulWidget {
@@ -303,6 +308,7 @@ class DesktopSelectionScope<T> extends ConsumerStatefulWidget {
     required this.selectable,
     required this.selection,
     required this.menu,
+    this.copy,
     this.enabled = true,
     required this.child,
   });
@@ -314,6 +320,9 @@ class DesktopSelectionScope<T> extends ConsumerStatefulWidget {
   final ProviderListenable<Object?> selection;
 
   final List<Widget> Function(BuildContext context, WidgetRef ref) menu;
+
+  /// Copies the selection to the clipboard, with this scope's context; null when the grid offers no copy
+  final Future<void> Function(BuildContext context, WidgetRef ref)? copy;
   final bool enabled;
   final Widget child;
 
@@ -327,7 +336,8 @@ class DesktopSelectionScope<T> extends ConsumerStatefulWidget {
   ConsumerState<DesktopSelectionScope<T>> createState() => DesktopSelectionScopeState<T>();
 }
 
-class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<T>> implements DesktopSelectionTarget {
+class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<T>>
+    implements DesktopSelectionTarget, DesktopCopyTarget {
   late final DesktopSelectionController<T> controller = DesktopSelectionController(
     widget.selectable,
     alive: () => mounted,
@@ -352,6 +362,16 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
     if (widget.enabled) {
       DesktopSelectionTargets.register(this);
     }
+    _registerCopy();
+  }
+
+  /// A target of Control C while the grid selects and copies
+  void _registerCopy() {
+    if (widget.enabled && widget.copy != null) {
+      DesktopCopyTargets.register(this);
+    } else {
+      DesktopCopyTargets.unregister(this);
+    }
   }
 
   @override
@@ -364,6 +384,9 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
   void didUpdateWidget(DesktopSelectionScope<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     controller.selectable = widget.selectable;
+    if ((widget.copy == null) != (oldWidget.copy == null) || widget.enabled != oldWidget.enabled) {
+      _registerCopy();
+    }
     if (widget.enabled == oldWidget.enabled) {
       return;
     }
@@ -378,6 +401,7 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
   @override
   void dispose() {
     DesktopSelectionTargets.unregister(this);
+    DesktopCopyTargets.unregister(this);
     _busyTimer?.cancel();
     super.dispose();
   }
@@ -419,6 +443,16 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
   @override
   void clear() => controller.clear();
 
+  /// Control C: the selection, when there is one
+  @override
+  Future<void> copy() async {
+    final copy = widget.copy;
+    if (copy == null || selectable.count == 0 || !mounted) {
+      return;
+    }
+    await copy(context, ref);
+  }
+
   @override
   void closeMenu() {
     if (isMenuOpen) {
@@ -459,7 +493,17 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
 
   List<Widget> _menuEntries(BuildContext context) {
     final t = context.t;
-    final entries = widget.menu(context, ref);
+    final copy = widget.copy;
+    final entries = [
+      ...widget.menu(context, ref),
+      if (copy != null)
+        DesktopSelectionMenuEntry(
+          key: const Key('desktop_selection_copy'),
+          icon: Icons.content_copy_rounded,
+          label: t.desktop_copy,
+          onPressed: selectable.count > 0 ? () => unawaited(copy(context, ref)) : null,
+        ),
+    ];
     return [
       ...entries,
       if (entries.isNotEmpty) const Divider(height: 1),

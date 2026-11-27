@@ -276,6 +276,33 @@ void main() {
       }
       debugDefaultTargetPlatformOverride = null;
     });
+
+    testWidgets('Control C copies on Windows and Linux, Command C on macOS, never while typing', (tester) async {
+      for (final platform in _desktops) {
+        debugDefaultTargetPlatformOverride = platform;
+        final mac = platform == TargetPlatform.macOS;
+        final copyKey = mac ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft;
+        final otherKey = mac ? LogicalKeyboardKey.controlLeft : LogicalKeyboardKey.metaLeft;
+        final c = _down(LogicalKeyboardKey.keyC, character: 'c');
+        expect(desktopWindowKeyOf(c, typing: false), isNull, reason: '${platform.name}: C alone');
+
+        await tester.sendKeyDownEvent(copyKey);
+        expect(desktopWindowKeyOf(c, typing: false), DesktopWindowKey.copy, reason: platform.name);
+        expect(desktopWindowKeyOf(c, typing: true), isNull, reason: '${platform.name}: the text field copies its text');
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        expect(desktopWindowKeyOf(c, typing: false), isNull, reason: '${platform.name}: with Shift');
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        expect(desktopWindowKeyOf(c, typing: false), isNull, reason: '${platform.name}: with Alt');
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+        await tester.sendKeyUpEvent(copyKey);
+
+        await tester.sendKeyDownEvent(otherKey);
+        expect(desktopWindowKeyOf(c, typing: false), isNull, reason: '${platform.name}: the other modifier');
+        await tester.sendKeyUpEvent(otherKey);
+      }
+      debugDefaultTargetPlatformOverride = null;
+    });
   });
 
   test('the back button of a mouse, and no other button, goes back', () {

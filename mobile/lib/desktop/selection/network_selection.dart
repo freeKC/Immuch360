@@ -2,13 +2,15 @@
 // right clicks on its photos and videos, Control A and Escape, written into networkSelectionProvider of the folder, in
 // the order of the grid. Control A takes the splat files listed after the photos and videos too, as Select all of the
 // bar does; a click on a splat tile keeps the behaviour of that tile. A folder ignores the keys and opens. The menu of
-// a right click sends the selection to the Immich server, as the bar at the bottom of the page does. A Shift click
+// a right click sends the selection to the Immich server, as the bar at the bottom of the page does, and copies it to
+// the clipboard of the system, fetched first (lib/desktop/clipboard), as Control C does. A Shift click
 // finds its anchor again by its path: a refresh may have brought files above it.
 
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copy.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -185,8 +187,19 @@ class _NetworkSelectionState extends ConsumerState<_NetworkSelection> {
       selection: networkSelectionProvider(widget.folder),
       enabled: widget.enabled,
       menu: _menu,
+      copy: _copy,
       child: widget.child,
     );
+  }
+
+  /// The files picked, in the order of the grid, on the clipboard
+  Future<void> _copy(BuildContext context, WidgetRef ref) {
+    final selection = ref.read(networkSelectionProvider(widget.folder));
+    final entries = [
+      for (final entry in widget.media())
+        if (selection.contains(entry.path)) entry,
+    ];
+    return copyEntriesToClipboard(context, ref, entries);
   }
 
   /// "Upload to Immich", or why there is none, as the bar at the bottom of the page says

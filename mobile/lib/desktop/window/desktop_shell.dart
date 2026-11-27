@@ -1,6 +1,7 @@
 // What concerns the whole window of Immuch360 Desktop, wrapped around the navigator inside MaterialApp (main.dart, through
 // desktopAppShell): the keys that work on every page (Control A for the selection of the grid shown,
-// lib/desktop/selection, and Escape, the one step back: see _onEscape), the back button of the mouse, Alt Left and
+// lib/desktop/selection, Control C for the copy of the viewer or of the selection shown, lib/desktop/clipboard, and
+// Escape, the one step back: see _onEscape), the back button of the mouse, Alt Left and
 // Command [, full screen and the close guard, then the close itself (close_sequence.dart), and the offer to resume the
 // 3D videos a quit stopped, once the main page of the library shows
 // (never over the splash page, whose replacement would close it, nor over the welcome or the login pages). The viewers
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/ui/ai_updates.dart';
 import 'package:immich_mobile/desktop/ai/ui/video_resume_offer.dart';
+import 'package:immich_mobile/desktop/clipboard/copy_targets.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
@@ -248,6 +250,14 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
           return KeyEventResult.ignored;
         }
         unawaited(grid.selectAll());
+        return KeyEventResult.handled;
+      case DesktopWindowKey.copy:
+        // The viewer or the grid shown, never what lies under a dialog or a menu
+        final target = DesktopCopyTargets.active;
+        if (target == null || route is PopupRoute) {
+          return KeyEventResult.ignored;
+        }
+        unawaited(target.copy());
         return KeyEventResult.handled;
       case DesktopWindowKey.toggleHeadsetView:
       case DesktopWindowKey.recenterHeadsetView:
