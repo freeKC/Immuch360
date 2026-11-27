@@ -2176,6 +2176,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       placed: progress.placed,
       // Each step of the generation says it (null: whole, also when sd-cli goes back to one); kept after it
       segments: reported == ConversionState.generating ? () => progress.segments : null,
+      tilePhase: current ? () => progress.tilePhase : null,
       remaining: () => conversionTimeLeft(
         job.kind,
         stage,

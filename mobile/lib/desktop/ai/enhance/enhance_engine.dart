@@ -5,9 +5,11 @@
 //     orientation applied, another format by the decoder the caller gives (the app: the engine of Flutter on the root
 //     isolate, engine_picture.dart, as the other kinds do); the ICC profile its pixels are in goes with them. This file
 //     imports nothing of Flutter, so that a program compiled by `dart compile exe` (tools/enhance_probe.dart) runs it;
-//  2. refuses a photo of more than 50 megapixels (tooLarge), and a run while the memory free is below the need of the
-//     level (outOfMemory with enhanceMemoryMessage, which the panel says as "close other programs"): sd.cpp refused
-//     SeedVR2 three times on the 16 GB laptop of the probe with 1 to 2 GB free;
+//  2. refuses a photo of more than 50 megapixels (tooLarge), and a run while the memory available is below the need of
+//     the level for this photo (outOfMemory with enhanceMemoryShortMessage: both figures, which the panel says with
+//     "close other programs"): sd.cpp refused SeedVR2 three times on the 16 GB laptop of the probe with 1 to 2 GB
+//     free, and once after 4 min 37 s on 27 November 2026. The memory is read as sd.cpp reads it (the least of the
+//     physical memory available and the commit left), and the reading goes to the log either way;
 //  3. runs the model of the level, its tiles told as "step 12 of 63": on the whole picture of a flat photo, on each eye
 //     of a 3D photo, on the seam and the poles of a 360° photo apart (enhance_layout.dart, release 53);
 //  4. takes the colour fix for Rebuild details (SeedVR2 shifts tones; VOSR takes its own inside Natural), then the
@@ -51,6 +53,40 @@ final _log = Logger('EnhanceEngine');
 /// The message of a refusal for want of memory on the computer, which the panel says as "close other programs"
 const enhanceMemoryMessage = 'enhance: not enough memory free on this computer';
 
+/// The message of a refusal for want of memory with its figures: the memory available and what the photo needs when
+/// its run starts (enhance_plan.dart), which the panel says ([enhanceMemoryFiguresOf])
+String enhanceMemoryShortMessage(int available, int need) =>
+    '$enhanceMemoryMessage (available $available bytes, needed $need bytes)';
+
+/// The message of a run sd-cli refused for memory while it ran, again after its one try again, the memory available
+/// back to the need of the photo once it ended: how many bytes it was short
+String enhanceMemoryRanShortMessage(int short) => '$enhanceMemoryMessage while it ran (short $short bytes)';
+
+final _memoryFigures = RegExp(r'\(available (\d+) bytes, needed (\d+) bytes\)');
+final _memoryShort = RegExp(r'while it ran \(short (-?\d+) bytes\)');
+
+/// The figures of a refusal for memory [message] carries: the memory available and the need, or how short sd-cli was
+/// while it ran; null for another message
+({int? available, int? need, int? short})? enhanceMemoryFiguresOf(String? message) {
+  if (message == null || !message.startsWith(enhanceMemoryMessage)) {
+    return null;
+  }
+  final head = message.length > enhanceMemoryMessage.length + 80
+      ? message.substring(0, enhanceMemoryMessage.length + 80)
+      : message;
+  if (_memoryFigures.firstMatch(head) case final match?) {
+    return (available: int.parse(match.group(1)!), need: int.parse(match.group(2)!), short: null);
+  }
+  if (_memoryShort.firstMatch(head) case final match?) {
+    return (available: null, need: null, short: int.parse(match.group(1)!));
+  }
+  return null;
+}
+
+/// Where the tiles of a run of a backend that follows its phases are (Rebuild details): the phase, the tile of the
+/// photo under way and its tiles, and the time left as the backend measured it (null until it can tell)
+typedef EnhanceTileProgress = ({ImmersiveTilePhase phase, int tile, int tiles, Duration? left});
+
 /// The message of a card without the integer dot product SeedVR2 needs on it
 const enhanceNoIntDotMessage = 'enhance: the graphics card lacks the integer dot product';
 
@@ -67,6 +103,10 @@ abstract interface class EnhanceBackend {
 
   /// Whether the last run said part of its work fell back to the processor
   bool get fellBack;
+
+  /// Where its tiles are while it runs, for a backend that follows its phases (Rebuild details); null for the others,
+  /// whose time left the engine takes from the pace of the steps done
+  EnhanceTileProgress? get tileProgress;
 
   /// The enhanced [picture] (upright RGBA), the same size, before the colour fix and the strength. [onStep] tells the
   /// tiles done of all. Throws [BackendException]: cancelled when [cancel] stopped it, outOfMemory with
@@ -240,6 +280,30 @@ class EnhanceEngine implements ImmersiveEngine {
       onProgress?.call(ImmersiveProgress(next, perMille, step: step, steps: steps, remaining: left));
     }
 
+    // The tiles of a backend that follows its phases: their phase and their tile in the panel, the time left as the
+    // backend measured it (a 360° or 3D photo: at the pace of the steps done, once the backend can tell its own)
+    void tilesAt(int done, int all, EnhanceTileProgress tiles) {
+      if (stage != ImmersiveStage.generating) {
+        times[stage] = (times[stage] ?? Duration.zero) + clock.elapsed;
+        clock.reset();
+        stage = ImmersiveStage.generating;
+      }
+      final own = tiles.left;
+      final left = own == null || job.layout.isFlat || done <= 0
+          ? own
+          : Duration(microseconds: clock.elapsed.inMicroseconds * (all - done) ~/ done);
+      onProgress?.call(
+        ImmersiveProgress(
+          ImmersiveStage.generating,
+          all == 0 ? 80 : 80 + 780 * done ~/ all,
+          step: tiles.tile,
+          steps: tiles.tiles,
+          remaining: left,
+          tilePhase: tiles.phase,
+        ),
+      );
+    }
+
     void check() {
       if (cancel.isCancelled) {
         throw const _Stop(ImmersiveErrorCode.cancelled);
@@ -280,14 +344,16 @@ class EnhanceEngine implements ImmersiveEngine {
       if (width * height > enhanceMaxPixels) {
         throw _Stop(ImmersiveErrorCode.tooLarge, '$width x $height is more than ${enhanceMaxPixels ~/ 1000000} MP');
       }
-      // The memory of every pixel the model works on: a 360° photo also holds its seam copy and the faces of its poles
-      final available = memory.read().available;
+      // The memory of every pixel the model works on: a 360° photo also holds its seam copy and the faces of its poles.
+      // Available as stable-diffusion.cpp counts it: the least of the physical memory and the commit left on Windows
+      final available = memory.read().sdCppAvailable;
       final need = enhanceFreeMemoryOf(job.level, pixels: enhanceWorkPixels(width, height, job.layout));
+      _log.info(
+        'Enhance ${job.id} (${job.level.name}) of $width x $height: '
+        '${available == null ? 'memory available unknown' : '${available >> 20} MiB available'}, ${need >> 20} MiB needed',
+      );
       if (available != null && available < need) {
-        throw _Stop(
-          ImmersiveErrorCode.outOfMemory,
-          '$enhanceMemoryMessage (${available >> 20} MiB free, ${need >> 20} MiB needed)',
-        );
+        throw _Stop(ImmersiveErrorCode.outOfMemory, enhanceMemoryShortMessage(available, need));
       }
       check();
 
@@ -316,8 +382,14 @@ class EnhanceEngine implements ImmersiveEngine {
             return backend.enhance(piece, workFolder: into, seed: job.seed, cancel: cancel, onStep: onStep);
           },
           cover: cover,
-          onStep: (done, all) =>
-              enter(ImmersiveStage.generating, all == 0 ? 80 : 80 + 780 * done ~/ all, step: done, steps: all),
+          onStep: (done, all) {
+            final tiles = backend.tileProgress;
+            if (tiles != null) {
+              tilesAt(done, all, tiles);
+            } else {
+              enter(ImmersiveStage.generating, all == 0 ? 80 : 80 + 780 * done ~/ all, step: done, steps: all);
+            }
+          },
           compute: enhanceLayoutWorkInIsolate,
         );
       } on BackendException catch (error) {

@@ -659,7 +659,9 @@ void main() {
 
       now = now.add(const Duration(seconds: 60));
       await tester.pump(const Duration(seconds: 1));
-      expect(inRow('salon.jpg', find.text('About 1 s left')), findsOneWidget, reason: 'never below zero');
+      // Run out: nothing, never "About 1 s left" held until the engine tells again (27 November 2026)
+      expect(inRow('salon.jpg', find.text('About 1 s left')), findsNothing);
+      expect(inRow('salon.jpg', find.byKey(const Key('ai_job_time_left'))), findsNothing);
     });
 
     testWidgets('a scene made: the share of it filled in, its flags, and "Delete this version" asked as such', (

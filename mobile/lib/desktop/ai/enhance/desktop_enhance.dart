@@ -162,7 +162,11 @@ class DesktopEnhanceEngine implements ImmersiveEngine, KeptAiEngine {
         files,
         'Vulkan$index',
         card: SdCppCard(name: card.name, integrated: integrated),
-        stall: integrated ? _integratedStall : const Duration(seconds: 180),
+        // Rebuild details: sd-cli wrote nothing for 2 min 20 s after its start on 27 November 2026, its first run after
+        // the engine was installed (rebuildStallTimeout)
+        stall: integrated
+            ? _integratedStall
+            : (level == EnhanceLevel.rebuild ? rebuildStallTimeout : const Duration(seconds: 180)),
         graphicsFree: card.budget == null ? null : card.freeMemory,
       ),
       null,

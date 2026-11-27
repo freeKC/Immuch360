@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -8,13 +9,16 @@ import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart' show rebuildFreeMemoryOf;
 import 'package:immich_mobile/desktop/ai/enhance/natural_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/seedvr2_dgl.dart';
 import 'package:immich_mobile/desktop/ai/enhance/sharpen_backend.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
+import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 import '../fakes/fake_enhance_tools.dart';
@@ -47,6 +51,17 @@ void _expectClose(Uint8List a, Uint8List b, {int tolerance = 2}) {
 }
 
 typedef _ScriptRunner = FakeSeedVr2Runner;
+
+/// The memory of the computer, always the same
+class _Memory implements MemoryProbe {
+  const _Memory(this.available);
+
+  final int available;
+
+  @override
+  MemoryFacts read() => MemoryFacts(physical: 16 << 30, available: available, commitAvailable: 17 << 30);
+}
+
 typedef _FourTimes = FakeX4Upscaler;
 
 /// A graph whose run fails as Core ML could, or is stopped
@@ -110,6 +125,7 @@ void main() {
       _ScriptRunner runner, {
       RebuildFiles files = const RebuildFiles(sdCli: 'sd-cli', dit: '/m/dit.safetensors', vae: '/m/vae.safetensors'),
       String Function(String path)? asciiPath,
+      MemoryProbe memory = const _Memory(8 << 30),
     }) => SdCppRebuildBackend(
       runner: runner,
       settings: settings(),
@@ -117,6 +133,8 @@ void main() {
       modelSha256: 'c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157',
       graphicsFree: 7 << 30,
       asciiPath: asciiPath,
+      memory: memory,
+      retryWait: Duration.zero,
     );
 
     setUp(SdCppDevice.forgetLearned);
@@ -133,8 +151,9 @@ void main() {
         onStep: (done, all) => steps.add((done, all)),
       );
       _expectClose(out, picture.rgba);
-      final tiles = planTiles(1100, 700).length;
-      expect(steps.last, (3 * tiles, 3 * tiles));
+      // The work of the three phases, all of it done
+      expect(planTiles(1100, 700).length, lessThanOrEqualTo(seedVr2OneRun));
+      expect(steps.last.$1, steps.last.$2);
       expect(runner.launches.single.arguments, [
         '-M',
         'dgl',
@@ -175,6 +194,155 @@ void main() {
               .having((error) => error.message, 'message', startsWith(enhanceMemoryMessage)),
         ),
       );
+    });
+
+    group('memory (release 54, the run refused after 4 min 37 s on 27 November 2026)', () {
+      late List<LogRecord> logs;
+      late StreamSubscription<LogRecord> subscription;
+      setUp(() {
+        Logger.root.level = Level.ALL;
+        logs = [];
+        subscription = Logger.root.onRecord.listen(logs.add);
+      });
+      tearDown(() => subscription.cancel());
+
+      // 30 tiles of 512: a first run of 3, then one of 27
+      final picture = _picture(2400, 1900);
+
+      test('a photo of more than 24 tiles runs in several programs, each its tiles, blended back whole', () async {
+        expect(planTiles(2400, 1900).length, 30);
+        final runner = _ScriptRunner();
+        final steps = <(int, int)>[];
+        final out = await backendWith(runner).enhance(
+          picture,
+          workFolder: temp.path,
+          seed: 42,
+          cancel: NativeCancelFlag(),
+          onStep: (d, a) => steps.add((d, a)),
+        );
+        _expectClose(out, picture.rgba);
+        expect(runner.launches.length, 2);
+        final first = File(p.join(temp.path, 'rebuild-1.dgl')).readAsStringSync();
+        final second = File(p.join(temp.path, 'rebuild-2.dgl')).readAsStringSync();
+        expect(first, contains('tile_002.png'));
+        expect(first, isNot(contains('tile_003.png')));
+        expect(second, contains('tile_003.png'));
+        expect(second, contains('tile_029.png'));
+        expect(first, contains('seed = 42'));
+        expect(second, contains('seed = 45'));
+        // The work only goes forward, to all of it
+        for (var i = 1; i < steps.length; i++) {
+          expect(steps[i].$1, greaterThanOrEqualTo(steps[i - 1].$1));
+        }
+        expect(steps.last.$1, steps.last.$2);
+      });
+
+      test('refused at a tile of the DiT: the run under way made again once, the runs before kept', () async {
+        final runner = _ScriptRunner(refuseRuns: {2});
+        final out = await backendWith(
+          runner,
+        ).enhance(picture, workFolder: temp.path, seed: 42, cancel: NativeCancelFlag(), onStep: (_, _) {});
+        _expectClose(out, picture.rgba);
+        // The first run once, the second twice: never the 3 tiles of the first again
+        expect(runner.launches.length, 3);
+        expect(runner.launches.map((launch) => p.basename(launch.arguments[3])), [
+          'rebuild-1.dgl',
+          'rebuild-2.dgl',
+          'rebuild-2.dgl',
+        ]);
+        expect(
+          logs.map((record) => record.message),
+          contains(allOf(contains('refused run 2 of 2'), contains('made again once'))),
+        );
+      });
+
+      test('refused again after its one try: the job fails with how short sd-cli was, never a third run', () async {
+        final runner = _ScriptRunner(refuseRuns: {2, 3, 4});
+        await expectLater(
+          backendWith(
+            runner,
+          ).enhance(picture, workFolder: temp.path, seed: 42, cancel: NativeCancelFlag(), onStep: (_, _) {}),
+          throwsA(
+            isA<BackendException>().having((error) => error.code, 'code', ImmersiveErrorCode.outOfMemory).having(
+              (error) => enhanceMemoryFiguresOf(error.message),
+              'figures',
+              (available: null, need: null, short: 363834672 - 337764352),
+            ),
+          ),
+        );
+        expect(runner.launches.length, 3);
+      });
+
+      test('refused while the memory stays below the need: no try again, the two figures', () async {
+        final runner = _ScriptRunner(refuseRuns: {1});
+        const free = 2 << 30;
+        await expectLater(
+          backendWith(
+            runner,
+            memory: const _Memory(free),
+          ).enhance(picture, workFolder: temp.path, seed: 42, cancel: NativeCancelFlag(), onStep: (_, _) {}),
+          throwsA(
+            isA<BackendException>().having((error) => enhanceMemoryFiguresOf(error.message), 'figures', (
+              available: free,
+              need: rebuildFreeMemoryOf(2400 * 1900),
+              short: null,
+            )),
+          ),
+        );
+        expect(runner.launches.length, 1);
+      });
+
+      test('a run that failed leaves its last lines and the memory in the log, never the bars', () async {
+        final runner = _ScriptRunner(refuseRuns: {2, 3});
+        await expectLater(
+          backendWith(
+            runner,
+          ).enhance(picture, workFolder: temp.path, seed: 42, cancel: NativeCancelFlag(), onStep: (_, _) {}),
+          throwsA(isA<BackendException>()),
+        );
+        final failed = logs.lastWhere((record) => record.message.startsWith('Rebuild details failed')).message;
+        expect(failed, contains('at sample tile 5 of 30'));
+        expect(failed, contains('after its one try again'));
+        expect(failed, contains('memory available 8192 MiB at the start'));
+        expect(failed, contains('${rebuildFreeMemoryOf(2400 * 1900) >> 20} MiB needed at the start'));
+        expect(failed, contains('the last lines of sd-cli:'));
+        expect(failed, contains('RAM graph capacity exceeded. Requested 363834672 bytes'));
+        expect(failed, contains('map sample_tile: item 2/27'));
+        expect(failed, isNot(contains('|###')));
+      });
+
+      test('the tiles told with their phase, and a time left only once every phase timed a tile', () async {
+        final seen = <EnhanceTileProgress?>[];
+        late SdCppRebuildBackend backend;
+        backend = backendWith(_ScriptRunner());
+        await backend.enhance(
+          picture,
+          workFolder: temp.path,
+          seed: 42,
+          cancel: NativeCancelFlag(),
+          onStep: (_, _) => seen.add(backend.tileProgress),
+        );
+        final told = seen.nonNulls.toList();
+        expect(told.first.phase, ImmersiveTilePhase.encode);
+        expect(told.first.tile, 1);
+        expect(told.map((tiles) => tiles.tiles).toSet(), {30});
+        expect(told.map((tiles) => tiles.phase).toSet(), ImmersiveTilePhase.values.toSet());
+        final firstLeft = told.indexWhere((tiles) => tiles.left != null);
+        final firstDecode = told.indexWhere((tiles) => tiles.phase == ImmersiveTilePhase.decode);
+        expect(firstLeft, greaterThan(firstDecode), reason: 'no time before a decoded tile was timed');
+      });
+    });
+
+    test('the lines of sd-cli kept in the log name the home folder ~', () {
+      expect(
+        rebuildLogLine(
+          r'[I] loading tensors from C:\Users\Freek\AppData\Local\dit.safetensors',
+          home: r'C:\Users\freek',
+        ),
+        r'[I] loading tensors from ~\AppData\Local\dit.safetensors',
+      );
+      expect(rebuildLogLine('parse /home/a/models/vae.safetensors', home: '/home/a'), 'parse ~/models/vae.safetensors');
+      expect(rebuildLogLine('[V] map sample_tile: item 2/27', home: '/home/a'), '[V] map sample_tile: item 2/27');
     });
 
     test('a tile missing is a refused output, never a hole', () async {

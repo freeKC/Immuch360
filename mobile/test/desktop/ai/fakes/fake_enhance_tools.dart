@@ -21,11 +21,25 @@ class FakeSeedVr2Runner implements ProcessRunner {
     this.writeTiles = true,
     this.metal = false,
     this.metalLine,
+    this.refuseRuns = const {},
+    this.onLaunch,
   });
 
   final int intDot;
   final bool refuseMemory;
   final bool writeTiles;
+
+  /// The runs (from 1, each launch of sd-cli) refused for memory at their second tile of the DiT, as on 27 November
+  /// 2026: their tiles encoded, none written
+  final Set<int> refuseRuns;
+
+  /// Told of each launch, its number from 1 (the tests move their clock or their memory there)
+  final void Function(int run)? onLaunch;
+
+  /// The refusal sd-cli wrote on the owner's laptop on 27 November 2026
+  static const refusal =
+      '[E] RAM graph capacity exceeded. Requested 363834672 bytes, 337764352 bytes available, 0 bytes resident --- '
+      'model_manager.cpp:1307';
 
   /// The Metal build of a Mac: ggml lists its GPU, no Vulkan device; [metalLine] said before the work when given
   final bool metal;
@@ -35,13 +49,15 @@ class FakeSeedVr2Runner implements ProcessRunner {
   @override
   Future<RunningProcess> start(ProcessLaunch launch) async {
     launches.add(launch);
+    onLaunch?.call(launches.length);
+    final refusedHere = refuseRuns.contains(launches.length);
     final script = File(launch.arguments[launch.arguments.indexOf('--script') + 1]).readAsStringSync();
     final input = RegExp(r'input_path = "([^"]+)"').firstMatch(script)!.group(1)!;
     final picture = decodePngPicture(File(input).readAsBytesSync());
     final tiles = RegExp(r'\{x = (\d+), y = (\d+), path = "([^"]+)"\}').allMatches(script).toList();
     final width = int.parse(RegExp(r'tile_w = (\d+)').firstMatch(script)!.group(1)!);
     final height = int.parse(RegExp(r'tile_h = (\d+)').firstMatch(script)!.group(1)!);
-    if (writeTiles && !refuseMemory) {
+    if (writeTiles && !refuseMemory && !refusedHere) {
       for (final tile in tiles) {
         final x = int.parse(tile.group(1)!);
         final y = int.parse(tile.group(2)!);
@@ -71,7 +87,15 @@ class FakeSeedVr2Runner implements ProcessRunner {
       ],
       if (refuseMemory)
         ('[E] RAM graph capacity exceeded. Requested 3892568608 bytes, 708513792 bytes available', isError: true),
-      if (!refuseMemory)
+      if (refusedHere) ...[
+        for (var item = 1; item <= count; item++)
+          ('[V] map encode_tile: item $item/$count --- executor.cpp:168', isError: false),
+        ('[V] map sample_tile: item 1/$count --- executor.cpp:168', isError: false),
+        (r'[I] loading 845/847 tensors from C:\Users\freek\AppData\Local\models\dit.safetensors', isError: false),
+        ('  |##########                      | 200/845 - 120.17MB/s\u001b[K', isError: false),
+        if (count > 1) ('[V] map sample_tile: item 2/$count --- executor.cpp:168', isError: false),
+        (refusal, isError: true),
+      ] else if (!refuseMemory)
         for (final phase in ['encode', 'sample', 'decode'])
           for (var item = 1; item <= count; item++)
             ('[V] map ${phase}_tile: item $item/$count --- executor.cpp:168', isError: false),
@@ -79,7 +103,7 @@ class FakeSeedVr2Runner implements ProcessRunner {
     return FakeRunningProcess(
       4000 + launches.length,
       launch,
-      FakeProcessScript(lines: lines, exitCode: refuseMemory ? 1 : 0),
+      FakeProcessScript(lines: lines, exitCode: refuseMemory || refusedHere ? 1 : 0),
     );
   }
 }
