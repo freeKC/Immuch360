@@ -1,6 +1,6 @@
 pkgbase = immuch360-bin
 	pkgdesc = Photos and videos, 360° included, from Immich, your folders and your network shares
-	pkgver = 3.4.6.31
+	pkgver = 3.4.8.34
 	pkgrel = 1
 	url = https://immuch360.com
 	arch = x86_64
@@ -28,10 +28,10 @@ pkgbase = immuch360-bin
 	optdepends = kwallet: keep the passwords of the servers between two starts, on KDE Plasma
 	provides = immuch360
 	conflicts = immuch360
-	noextract = Immuch360-Desktop-3.4.6-desktop.31-linux-amd64.deb
+	noextract = Immuch360-Desktop-3.4.8-desktop.34-linux-amd64.deb
 	options = !strip
 	options = !debug
-	source = https://github.com/freeKC/Immuch360/releases/download/desktop-v3.4.6-31/Immuch360-Desktop-3.4.6-desktop.31-linux-amd64.deb
-	sha256sums = 2bee82f21611d0a3dd68fad685f7ab0b7c441ee4271ffeab86f1e1dc43921e77
+	source = https://github.com/freeKC/Immuch360/releases/download/desktop-v3.4.8-34/Immuch360-Desktop-3.4.8-desktop.34-linux-amd64.deb
+	sha256sums = f0dab41a2e6cd9f0e4595fe9896903512fe4926fb0d5ce178d74eaebd5257453
 
 pkgname = immuch360-bin
