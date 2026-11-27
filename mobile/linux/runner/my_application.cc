@@ -5,6 +5,7 @@
 #include <gdk/gdkx.h>
 #endif
 
+#include "clipboard_channel.h"
 #include "flutter/generated_plugin_registrant.h"
 
 struct _MyApplication {
@@ -15,6 +16,8 @@ struct _MyApplication {
   // Brings to Dart the files of later starts and of drops on the window
   // (lib/desktop/window/single_instance.dart)
   FlMethodChannel* instance_channel;
+  // The copy of photos and videos to the clipboard (clipboard_channel.h)
+  FlMethodChannel* clipboard_channel;
 };
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
@@ -120,6 +123,8 @@ static void my_application_activate(GApplication* application) {
   self->instance_channel = fl_method_channel_new(
       fl_engine_get_binary_messenger(fl_view_get_engine(view)),
       kInstanceChannel, FL_METHOD_CODEC(codec));
+  self->clipboard_channel = clipboard_channel_new(
+      fl_engine_get_binary_messenger(fl_view_get_engine(view)));
 
   // Files dropped anywhere on the window: GTK hands a drop on the Flutter view,
   // which takes none itself, to the window
@@ -220,6 +225,7 @@ static void my_application_dispose(GObject* object) {
   MyApplication* self = MY_APPLICATION(object);
   g_clear_pointer(&self->dart_entrypoint_arguments, g_strfreev);
   g_clear_object(&self->instance_channel);
+  g_clear_object(&self->clipboard_channel);
   G_OBJECT_CLASS(my_application_parent_class)->dispose(object);
 }
 
