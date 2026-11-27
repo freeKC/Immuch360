@@ -195,10 +195,10 @@ CreateClipboardChannel(flutter::BinaryMessenger* messenger, HWND owner) {
             return;
           }
           int64_t value = 0;
-          if (const auto* small = std::get_if<int32_t>(&token->second)) {
-            value = *small;
-          } else if (const auto* large = std::get_if<int64_t>(&token->second)) {
-            value = *large;
+          if (const auto* narrow = std::get_if<int32_t>(&token->second)) {
+            value = *narrow;
+          } else if (const auto* wide = std::get_if<int64_t>(&token->second)) {
+            value = *wide;
           } else {
             result->Error("clipboard", "the token is not a number");
             return;

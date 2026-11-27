@@ -88,19 +88,7 @@ for (var i = 0; i < items.count; i++) {
   }
   types.push(names);
 }
-var png = 0;
-var width = 0;
-var height = 0;
-if (items.count > 0) {
-  var data = items.objectAtIndex(0).dataForType('public.png');
-  if (!data.isNil()) {
-    png = data.length;
-    var rep = $.NSBitmapImageRep.imageRepWithData(data);
-    width = rep.pixelsWide;
-    height = rep.pixelsHigh;
-  }
-}
-JSON.stringify({files: files, types: types, png: png, width: width, height: height});
+JSON.stringify({files: files, types: types});
 ''';
 
 /// The width and height a PNG declares in its IHDR, null for another file
@@ -142,13 +130,27 @@ Future<_Read> _readClipboard() async {
       for (final url in json['files'] as List? ?? const [])
         if ('$url'.isNotEmpty) Uri.parse('$url').toFilePath(),
     ];
-    final png = _int(json['png']);
+    // The PNG as AppleScript reads it (the class PNGf of public.png), written to a file whose header gives its size
+    final pngFile = File(p.join(Directory.systemTemp.path, 'immuch360-clipboard-read.png'));
+    final png = await _run('osascript', [
+      '-e',
+      'set picture to the clipboard as «class PNGf»',
+      '-e',
+      'set target to open for access (POSIX file "${pngFile.path}") with write permission',
+      '-e',
+      'set eof target to 0',
+      '-e',
+      'write picture to target',
+      '-e',
+      'close access target',
+    ]);
+    final size = png.exitCode == 0 && pngFile.existsSync() ? _pngSize(pngFile.readAsBytesSync()) : null;
     return _Read(
       files: files,
-      hasPicture: png > 0,
-      width: _int(json['width']),
-      height: _int(json['height']),
-      extra: {'types': json['types']},
+      hasPicture: size != null,
+      width: size?.$1,
+      height: size?.$2,
+      extra: {'types': json['types'], 'png': png.exitCode == 0 ? 'read' : '${png.stderr}'.trim()},
     );
   }
   // Linux: xclip asks the app, which serves the selection while it runs
@@ -211,10 +213,26 @@ Future<Uint8List> _photo(int width, int height) async {
   return bytes!.buffer.asUint8List();
 }
 
-/// Whether [a] and [b] name the same file: Windows ignores the case, macOS has /var under /private
+/// Whether [a] and [b] name the same file: Windows ignores the case; macOS gives back its names decomposed (the "é" of
+/// a file URL is an "e" and its accent), so there the two must be one file of the same folder, by their stat
 bool _samePath(String a, String b) {
+  if (Platform.isWindows) {
+    return p.equals(a.toLowerCase(), b.toLowerCase());
+  }
+  if (Platform.isMacOS) {
+    final (first, second) = (File(a), File(b));
+    if (!first.existsSync() || !second.existsSync()) {
+      return false;
+    }
+    final (x, y) = (first.statSync(), second.statSync());
+    return p.equals(first.parent.resolveSymbolicLinksSync(), second.parent.resolveSymbolicLinksSync()) &&
+        x.size == y.size &&
+        x.modified == y.modified &&
+        x.changed == y.changed &&
+        p.extension(a) == p.extension(b);
+  }
   String real(String path) => File(path).existsSync() ? File(path).resolveSymbolicLinksSync() : path;
-  return Platform.isWindows ? p.equals(a.toLowerCase(), b.toLowerCase()) : p.equals(real(a), real(b));
+  return p.equals(real(a), real(b));
 }
 
 void main() {
@@ -282,7 +300,14 @@ void main() {
     read = await _readClipboard();
     debugPrint('A remote photo: $read');
     expect(p.basename(read.files.single), 'IMG_0042.png');
-    expect(_samePath(p.dirname(p.dirname(read.files.single)), root.path), isTrue, reason: '$read');
+    expect(
+      p.equals(
+        Directory(p.dirname(p.dirname(read.files.single))).resolveSymbolicLinksSync(),
+        root.resolveSymbolicLinksSync(),
+      ),
+      isTrue,
+      reason: 'in a folder of the copies: $read',
+    );
     expect(File(read.files.single).readAsBytesSync(), remoteBytes);
     expect((read.width, read.height), (64, 48));
     final folders = root.listSync().whereType<Directory>().toList();
