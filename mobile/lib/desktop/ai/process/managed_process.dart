@@ -339,11 +339,23 @@ class ManagedProcessRunner implements ProcessRunner {
   String? get _launcher => _isLinux ? linuxLauncher : (_isMacOS ? macLauncher : null);
 
   /// What is started for [launch]: the program itself, or on Linux and macOS the launcher with the id of the app, the
-  /// nice value when the program runs low, and the program with its arguments
+  /// nice value when the program runs low, and the program with its arguments; a [io.ProcessException] when the
+  /// program is the launcher itself, which would only print its usage
   (String, List<String>) commandOf(ProcessLaunch launch) {
     final launcher = _launcher;
     if (launcher == null) {
       return (launch.executable, launch.arguments);
+    }
+    // The launcher started as its own program reads the program's first argument as one of its options, prints its
+    // usage and ends with 2: the program never starts (issue 24, the main file of an archive taken as its program).
+    // Known by its name, or by its path when the launcher was given under another name
+    if (p.basename(launch.executable) == linuxLauncherName || p.equals(launch.executable, launcher)) {
+      throw io.ProcessException(
+        launch.executable,
+        launch.arguments,
+        '$linuxLauncherName was given as the program to start, not the program of the engine',
+        2,
+      );
     }
     return (
       launcher,

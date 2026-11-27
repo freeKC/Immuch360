@@ -1072,6 +1072,52 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      # Issue 24 (desktop 31 to 34): on Linux, Sharpen and Rebuild details took the main file of the archive of sd-cli
+      # (its first program by the order of the paths, mainPath: immuch360-run) as sd-cli, so the launcher started
+      # itself, printed its usage and ended with 2. No job ran these levels from the files the app takes from its
+      # installed components: the sdcpp jobs start sd-cli and the launcher apart, the Mac job names sd-cli itself. Here
+      # the published archives of sd-cli of both levels (ai-components-3 and 7) and x4plus, checked by the sums of the
+      # catalogue and unpacked as the app installs them (programs in mode 755), then enhance_files_test.dart: the
+      # published immuch360-run starts the published sd-cli of each level with the command of the app, low and not low,
+      # and Sharpen of a small picture runs to its end through them on Mesa's software Vulkan (lavapipe), its size checked
+      # as in the app. The lines the test prints must be there: a test skipped for want of its files fails the step
+      - name: Sharpen and Rebuild details through the published launcher and sd-cli of the components (lavapipe)
+        if: ${{ !cancelled() && steps.packages.outcome == 'success' }}
+        timeout-minutes: 30
+        working-directory: mobile
+        run: |
+          set -o pipefail
+          sudo sh ../.github/desktop/packaging/linux/apt_install.sh mesa-vulkan-drivers
+          work="$RUNNER_TEMP/enhance-linux"
+          root="$work/components"
+          mkdir -p "$work/mirror" "$root/models/realesrgan"
+          base=https://github.com/freeKC/Immuch360/releases/download
+          while read -r tag asset sum; do
+            curl -sSfL --retry 3 -o "$work/mirror/$asset" "$base/$tag/$asset"
+            echo "$sum  $work/mirror/$asset" | sha256sum -c -
+          done <<'EOF'
+          ai-components-3 sd-cpp-vulkan-linux-x64.zip 5e7052dc93eec36ad156974e7f56bd7fa13df3482b412935848319680cb5d535
+          ai-components-7 sd-cpp-seedvr2-vulkan-linux-x64.zip 62ae653e2d3e49ba4c9e62741adb69e3c43e18d35a85bf2f13397ef8c798cf29
+          ai-components-3 RealESRGAN_x4plus.pth 4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1
+          EOF
+          for id in sd-cpp-vulkan-linux-x64 sd-cpp-seedvr2-vulkan-linux-x64; do
+            mkdir -p "$root/engines/$id"
+            unzip -q "$work/mirror/$id.zip" -d "$root/engines/$id"
+            chmod 755 "$root/engines/$id/immuch360-run" "$root/engines/$id/sd-cli"
+            sha256sum "$root/engines/$id/immuch360-run"
+          done
+          cp "$work/mirror/RealESRGAN_x4plus.pth" "$root/models/realesrgan/RealESRGAN_x4plus.pth"
+          # ggml leaves a Vulkan device of the CPU type out of its list unless it is named (27 s for 64 x 64 on ai1)
+          export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json GGML_VK_VISIBLE_DEVICES=0
+          IMMUCH360_ENHANCE_COMPONENTS="$root" IMMUCH360_ENHANCE_DEVICE=Vulkan0 \
+            mise exec -- flutter test test/desktop/ai/enhance/enhance_files_test.dart --reporter expanded \
+            | tee "$work/run.log"
+          for line in 'sharpen: .*/sd-cpp-vulkan-linux-x64/immuch360-run -> .*/sd-cpp-vulkan-linux-x64/sd-cli$' \
+            'rebuild: .*/sd-cpp-seedvr2-vulkan-linux-x64/immuch360-run -> .*/sd-cpp-seedvr2-vulkan-linux-x64/sd-cli$' \
+            '^Sharpen 96 x 64 on Vulkan0: '; do
+            grep -Eq "$line" "$work/run.log" || { echo "::error::not in the log: $line"; exit 1; }
+          done
+
   # Each package installed as a user would install it, in a clean container: the package manager brings the
   # dependencies the package declares, then every library the ELF files need must be found, libmpv and libsmb2 among
   # them, the desktop entry must be valid, the MIME types of the raw camera files registered, and the installed app

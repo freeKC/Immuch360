@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/natural_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
+import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart' show sdCliIn;
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart' show linuxLauncherName;
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
@@ -120,22 +121,23 @@ Future<EnhanceComponentsFound> enhanceComponentFiles(
   if (missing.isNotEmpty) {
     return (files: null, missing: missing, notInThisVersion: false);
   }
-  String launcherBeside(String program) => p.join(p.dirname(program), linuxLauncherName);
-  final linux = platform == AiPlatform.linuxX64;
+  // The engine is the folder of the archive's main file, its first program by the order of the paths (mainPath):
+  // immuch360-run in the Linux archives, sd-cli.exe on Windows, sd-cli on a Mac. sd-cli is taken by its name in that
+  // folder, as the panoramas take it (sdCliIn), and the launcher beside it on Linux: taken as the main file, the
+  // launcher was started as its own program, which printed its usage and never started sd-cli (issue 24)
+  final engine = p.dirname(found[needed.first.id]!);
+  final sdCli = sdCliIn(engine, windows: platform == AiPlatform.windowsX64);
+  final linuxLauncher = platform == AiPlatform.linuxX64 ? p.join(engine, linuxLauncherName) : null;
   final files = switch (level) {
     EnhanceLevel.sharpen => EnhanceFiles(
-      sharpen: SharpenFiles(
-        sdCli: found[needed[0].id]!,
-        upscaler: found[upscalerComponent.id]!,
-        linuxLauncher: linux ? launcherBeside(found[needed[0].id]!) : null,
-      ),
+      sharpen: SharpenFiles(sdCli: sdCli, upscaler: found[upscalerComponent.id]!, linuxLauncher: linuxLauncher),
     ),
     EnhanceLevel.rebuild => EnhanceFiles(
       rebuild: RebuildFiles(
-        sdCli: found[needed[0].id]!,
+        sdCli: sdCli,
         dit: found[seedVr2DitComponent.id]!,
         vae: found[seedVr2VaeComponent.id]!,
-        linuxLauncher: linux ? launcherBeside(found[needed[0].id]!) : null,
+        linuxLauncher: linuxLauncher,
       ),
     ),
     EnhanceLevel.natural => EnhanceFiles(
