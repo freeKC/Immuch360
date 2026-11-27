@@ -120,6 +120,21 @@ void main() {
       expect(arguments, ['--parent', '4242', '--nice', '10', '--', '/engines/sd/sd-cli', '-o', 'out.png']);
     });
 
+    test('the launcher as its own program: refused, on Linux and macOS (issue 24: it would only print its usage)', () {
+      const itself = ProcessLaunch(executable: '/engines/sd/immuch360-run', arguments: ['-M', 'upscale']);
+      for (final runner in [
+        ManagedProcessRunner(linuxLauncher: '/engines/sd/immuch360-run', isLinux: true, appPid: 4242),
+        ManagedProcessRunner(isLinux: false, isMacOS: true, macLauncher: '/a/immuch360-run', appPid: 4242),
+      ]) {
+        expect(
+          () => runner.commandOf(itself),
+          throwsA(isA<ProcessException>().having((error) => error.message, 'message', contains('immuch360-run'))),
+        );
+      }
+      // Without a launcher (Windows) nothing wraps it: the program is started as given
+      expect(ManagedProcessRunner(isLinux: false, isMacOS: false).commandOf(itself).$1, '/engines/sd/immuch360-run');
+    });
+
     test('elsewhere, or without a launcher: the program itself', () {
       for (final runner in [
         ManagedProcessRunner(isLinux: true, isMacOS: false),
