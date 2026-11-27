@@ -179,6 +179,19 @@ ONE_TIME_KIND_THRESHOLDS = {
         'universal': 1.7,
         'x86_64': 1.7,
     },
+    # 27 November 2026, for Android build 53, compared with release 52: the 94 new texts of release 53 in 88 languages
+    # (Spatial 2.5D on the computers, Enhance (AI) from every source, "Play on…" from the phone, the Quest slideshow),
+    # compiled into libapp.so by CodegenLoader, as the texts of earlier releases were. The packages of
+    # release-53-candidate at c620438de3 (CI run 45920947685) against release 52: arm64-v8a +0.91 %, the Quest +0.79 %,
+    # armeabi-v7a +1.59 %, x86_64 +1.47 %, universal +1.37 %, the AAB +1.63 %. The commits after it change 2 lines of
+    # Dart, the README, its translations, the user guide and this file. The four kinds above 1 % get 2 %; arm64-v8a
+    # and the Quest keep 1 %. Build 54 compares with build 53 and the ordinary threshold again.
+    'v3.4.7-52': {
+        'aab': 2.0,
+        'armeabi-v7a': 2.0,
+        'universal': 2.0,
+        'x86_64': 2.0,
+    },
 }
 
 
