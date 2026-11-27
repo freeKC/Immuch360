@@ -201,6 +201,21 @@ void main() {
       final expected = ms(2 * 650 + 2 * (6500 + 6400 + 37 * tile));
       expect((left - expected).inMilliseconds.abs(), lessThan(5));
       expect(pace.where, (phase: SeedVr2Phase.decode, tile: 2, tiles: 77));
+
+      // Between two runs: the tile told last stays, and the time left counts the whole of the runs to come
+      pace.read(at(SeedVr2Phase.decode, 3, 3), ms(149650));
+      pace.ended();
+      expect(pace.where, (phase: SeedVr2Phase.decode, tile: 3, tiles: 77));
+      expect(pace.whereInRun, isNull);
+      final ended = pace.left(ms(149650))!;
+      expect((ended - ms(2 * (6500 + 6400 + 37 * tile))).inMilliseconds.abs(), lessThan(5));
+      pace.started(1, ms(150000));
+      expect(pace.where, (phase: SeedVr2Phase.decode, tile: 3, tiles: 77));
+      // 2 s into its start: 4.5 s of it left, its DiT read, its 37 tiles, then the last run
+      final starting = pace.left(ms(152000))!;
+      expect((starting - ms(4500 + 6400 + 37 * tile + 6500 + 6400 + 37 * tile)).inMilliseconds.abs(), lessThan(5));
+      pace.read(at(SeedVr2Phase.encode, 1, 37), ms(156500));
+      expect(pace.where, (phase: SeedVr2Phase.encode, tile: 4, tiles: 77));
     });
 
     test('the work done follows the three phases at their cost, a tile counted once the next one started', () {

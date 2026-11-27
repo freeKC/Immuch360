@@ -52,6 +52,24 @@ void _expectClose(Uint8List a, Uint8List b, {int tolerance = 2}) {
 
 typedef _ScriptRunner = FakeSeedVr2Runner;
 
+/// The memory of the computer, short, and Cancel pressed at its read [cancelAt] (from 1), while the backend waits for
+/// it to come back
+class _CancelWhileShort implements MemoryProbe {
+  _CancelWhileShort(this.cancel, {required this.cancelAt});
+
+  final NativeCancelFlag cancel;
+  final int cancelAt;
+  var reads = 0;
+
+  @override
+  MemoryFacts read() {
+    if (++reads == cancelAt) {
+      cancel.cancel();
+    }
+    return const MemoryFacts(physical: 16 << 30, available: 2 << 30, commitAvailable: 17 << 30);
+  }
+}
+
 /// The memory of the computer, always the same
 class _Memory implements MemoryProbe {
   const _Memory(this.available);
@@ -126,6 +144,7 @@ void main() {
       RebuildFiles files = const RebuildFiles(sdCli: 'sd-cli', dit: '/m/dit.safetensors', vae: '/m/vae.safetensors'),
       String Function(String path)? asciiPath,
       MemoryProbe memory = const _Memory(8 << 30),
+      Duration retryWait = Duration.zero,
     }) => SdCppRebuildBackend(
       runner: runner,
       settings: settings(),
@@ -134,7 +153,7 @@ void main() {
       graphicsFree: 7 << 30,
       asciiPath: asciiPath,
       memory: memory,
-      retryWait: Duration.zero,
+      retryWait: retryWait,
     );
 
     setUp(SdCppDevice.forgetLearned);
@@ -331,6 +350,66 @@ void main() {
         final firstDecode = told.indexWhere((tiles) => tiles.phase == ImmersiveTilePhase.decode);
         expect(firstLeft, greaterThan(firstDecode), reason: 'no time before a decoded tile was timed');
       });
+      test('between two runs the panel keeps the tile told last, never the work units as tiles', () async {
+        // Three runs, as the 77 tiles of 27 November 2026 (3, 37 and 37)
+        final big = _picture(3650, 1858);
+        final tiles = planTiles(big.width, big.height).length;
+        expect(seedVr2Batches(tiles).length, greaterThan(2));
+        final runner = _ScriptRunner();
+        late SdCppRebuildBackend backend;
+        backend = backendWith(runner);
+        final seen = <(int, int, EnhanceTileProgress?)>[];
+        await backend.enhance(
+          big,
+          workFolder: temp.path,
+          seed: 42,
+          cancel: NativeCancelFlag(),
+          onStep: (done, all) => seen.add((done, all, backend.tileProgress)),
+        );
+        expect(runner.launches.length, seedVr2Batches(tiles).length);
+        expect(seen, isNotEmpty);
+        for (final (done, all, told) in seen) {
+          expect(told, isNotNull, reason: 'step $done of $all told without its tile');
+          expect(told!.tile, inInclusiveRange(1, tiles));
+          expect(told.tiles, tiles);
+        }
+        // Where a run ended, the next step says the last tile of it, written
+        final ends = [for (final batch in seedVr2Batches(tiles)) batch.end];
+        for (final end in ends) {
+          expect(
+            seen.map((step) => step.$3).any((told) => told!.phase == ImmersiveTilePhase.decode && told.tile == end),
+            isTrue,
+            reason: 'the end of the run at tile $end',
+          );
+        }
+      });
+
+      test('Cancel pressed while it waits for the memory before its one try again: cancelled, not failed', () async {
+        final cancel = NativeCancelFlag();
+        // Read 1 at the start, 2 at the refusal, 3 as the wait begins: Cancel pressed there
+        final memory = _CancelWhileShort(cancel, cancelAt: 3);
+        await expectLater(
+          backendWith(
+            _ScriptRunner(refuseRuns: {2}),
+            memory: memory,
+            retryWait: const Duration(seconds: 15),
+          ).enhance(picture, workFolder: temp.path, seed: 42, cancel: cancel, onStep: (_, _) {}),
+          throwsA(isA<BackendException>().having((error) => error.code, 'code', ImmersiveErrorCode.cancelled)),
+        );
+      });
+
+      test('a refusal of a later run names the run in the log', () async {
+        final runner = _ScriptRunner(refuseRuns: {2});
+        await expectLater(
+          backendWith(
+            runner,
+            memory: const _Memory(2 << 30),
+          ).enhance(picture, workFolder: temp.path, seed: 42, cancel: NativeCancelFlag(), onStep: (_, _) {}),
+          throwsA(isA<BackendException>()),
+        );
+        final failed = logs.lastWhere((record) => record.message.startsWith('Rebuild details failed')).message;
+        expect(failed, contains('in run 2 of 2 at sample tile 5 of 30'));
+      });
     });
 
     test('the lines of sd-cli kept in the log name the home folder ~', () {
@@ -343,6 +422,15 @@ void main() {
       );
       expect(rebuildLogLine('parse /home/a/models/vae.safetensors', home: '/home/a'), 'parse ~/models/vae.safetensors');
       expect(rebuildLogLine('[V] map sample_tile: item 2/27', home: '/home/a'), '[V] map sample_tile: item 2/27');
+      // An account named with an accent: sd-cli was given the short name of its folder
+      expect(
+        rebuildLogLine(
+          r'[I] loading tensors from C:\Users\FRDRI~1\AppData\Local\dit.safetensors',
+          home: r'C:\Users\Frédéric',
+          shortHome: r'C:\Users\FRDRI~1',
+        ),
+        r'[I] loading tensors from ~\AppData\Local\dit.safetensors',
+      );
     });
 
     test('a tile missing is a refused output, never a hole', () async {

@@ -27,8 +27,9 @@
 //    14 MP photo of that day;
 //  - those needs were measured up to 12 MP; above, the buffers of the app grow with the photo (the float sums of the
 //    blend, the colour fix, the copies between isolates: about 40 bytes a pixel), so each need takes 40 bytes for
-//    every pixel above 12 MP, 1.5 GB more at 50 MP (enhanceExtraMemoryOf); for Rebuild details they come once sd-cli
-//    ended and gave its memory back, and its need grows by what sd-cli holds of the photo instead;
+//    every pixel above 12 MP, 1.5 GB more at 50 MP (enhanceExtraMemoryOf); Rebuild details takes the larger of its
+//    rule above and that need (a 360° photo keeps its seam copy while sd-cli runs its poles; above 23 MP the old need
+//    is the larger, not measured);
 //  - an Intel Mac: Sharpen and Rebuild details need the Metal build of stable-diffusion.cpp, made for Apple chips only,
 //    and its ONNX Runtime 1.23.2 never ran VOSR: nothing is offered there;
 //  - a Mac with an Apple chip (release 53; not tried on a Mac yet, see below): the GPU shares the memory of the
@@ -92,14 +93,21 @@ const rebuildSdCliBytesPerPixel = 4;
 /// What the other programs may take while the run goes on: a choice of release 54, not a measure
 const rebuildDriftMargin = _gib ~/ 2;
 
+/// The need of Rebuild details before release 54: 3 GiB and the buffers of the app above 12 MP (enhanceExtraMemoryOf)
+const rebuildFreeMemoryBefore54 = 3 * _gib;
+
 /// The memory available Rebuild details needs when its run starts for a photo of [pixels] (null: 12 MP), by the rule
-/// of stable-diffusion.cpp (see the top of this file)
-int rebuildFreeMemoryOf(int? pixels) =>
-    sdCppRamHeadroom +
-    rebuildGraphRequest +
-    rebuildSdCliBase +
-    rebuildSdCliBytesPerPixel * (pixels ?? enhanceMeasuredPixels) +
-    rebuildDriftMargin;
+/// of stable-diffusion.cpp (see the top of this file); never less than the need before release 54, whose 40 bytes a
+/// pixel above 12 MP stay counted: a 360° photo holds its seam copy while sd-cli runs its poles, and above 23 MP
+/// that need is the larger one, not measured yet
+int rebuildFreeMemoryOf(int? pixels) => math.max(
+  sdCppRamHeadroom +
+      rebuildGraphRequest +
+      rebuildSdCliBase +
+      rebuildSdCliBytesPerPixel * (pixels ?? enhanceMeasuredPixels) +
+      rebuildDriftMargin,
+  rebuildFreeMemoryBefore54 + enhanceExtraMemoryOf(pixels),
+);
 
 /// What sd-cli must find available at a tile of the DiT, read while it runs: the headroom it keeps and the request
 const rebuildTileMemory = sdCppRamHeadroom + rebuildGraphRequest;

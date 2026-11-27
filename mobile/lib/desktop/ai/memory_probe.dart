@@ -282,6 +282,7 @@ int jobMemoryStillNeeded(ImmersiveKind kind, ImmersiveStage? stage) =>
 /// [besideNeeds] ([jobMemoryStillNeeded]), the memory being [facts]: always when the system does not say what is
 /// available (macOS), as the gate
 bool fitsBeside(int need, MemoryFacts facts, {int besideNeeds = 0}) {
-  final available = facts.available;
+  // The commit left counts too on Windows, as stable-diffusion.cpp counts it (release 54)
+  final available = facts.sdCppAvailable;
   return available == null || available - besideNeeds >= need + secondLaneReserve;
 }

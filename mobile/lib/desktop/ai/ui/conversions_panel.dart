@@ -450,16 +450,21 @@ const _countedInStageText = {
 };
 
 /// "step 12 of 28, about 3 min left" while a generation tells its steps, else "About 20 s left"; [left] is what is
-/// left of the job now, null when nothing tells it
+/// left of the job now, null when nothing tells it. A time told that ran out ([left] zero) says no time: "step 12 of
+/// 28" alone, or nothing, never "1 s left" held until the engine tells again (27 November 2026, release 54)
 String? conversionProgressText(Translations t, ConversionJob job, Duration? left) {
   if (left == null) {
     return null;
   }
-  final time = aiDurationText(t, left);
   final (step, steps) = (job.step, job.steps);
   // The regions of the hidden areas, the images of a splat scene and the tiles of Rebuild details are counted in the
   // words of their step
-  if (step != null && steps != null && !_countedInStageText.contains(job.state) && job.tilePhase == null) {
+  final counted = step != null && steps != null && !_countedInStageText.contains(job.state) && job.tilePhase == null;
+  if (left <= Duration.zero) {
+    return counted ? t.ai_immersive_step_count(step: step, steps: steps) : null;
+  }
+  final time = aiDurationText(t, left);
+  if (counted) {
     return t.ai_immersive_step_progress(step: step, steps: steps, time: time);
   }
   return t.ai_immersive_time_left(time: time);
@@ -834,8 +839,9 @@ class _JobRowState extends ConsumerState<_JobRow> {
     }
   }
 
-  /// What is left of the job now; nothing once the time told has run out, rather than "1 s left" held until the
-  /// engine tells again (a Rebuild details showed it for minutes on 27 November 2026)
+  /// What is left of the job now; zero once the time told has run out, which conversionProgressText says without a
+  /// time, rather than "1 s left" held until the engine tells again (a Rebuild details showed it for minutes on 27
+  /// November 2026)
   Duration? get _left {
     final told = _told;
     final at = _toldAt;
@@ -843,7 +849,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
       return null;
     }
     final left = told - ref.read(conversionClockProvider)().difference(at);
-    return left > Duration.zero ? left : null;
+    return left > Duration.zero ? left : Duration.zero;
   }
 
   @override

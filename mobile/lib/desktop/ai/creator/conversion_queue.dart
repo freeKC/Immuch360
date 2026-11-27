@@ -1158,6 +1158,11 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// What a job under way may still take: a 3D video holds its need once its frames run
   static int _memoryStillNeeded(ConversionJob job) => job.kind.isVideo
       ? (job.state.index >= ConversionState.depth.index ? 0 : _memoryNeedOf(job))
+      // Rebuild details asks the memory again before every tile of its DiT (stable-diffusion.cpp keeps 1 GiB back and
+      // wants its graph, and sd-cli grows when it reads the DiT, again at each of its runs): while its tiles run, the
+      // job beside it leaves it the need it started with (release 54)
+      : job.kind == ConversionKind.enhanceRebuild && job.state == ConversionState.generating
+      ? rebuildFreeMemoryOf(job.enhance?.pixels)
       // An enhanced photo holds the need of its level once its model runs
       : job.kind.isEnhance
       ? (job.state.index >= ConversionState.generating.index ? 0 : _memoryNeedOf(job))

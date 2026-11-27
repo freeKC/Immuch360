@@ -23,7 +23,7 @@ const _fixtures = 'test/fixtures/ai_immersive/codec';
 
 /// A model that adds [add] to every channel, tile after tile, and remembers what it was given
 class _FakeBackend implements EnhanceBackend {
-  _FakeBackend({this.add = 40, this.failure, this.cancelAt, this.tiling});
+  _FakeBackend({this.add = 40, this.failure, this.cancelAt, this.tiling, this.unitsAfter});
 
   final int add;
   final BackendException? failure;
@@ -31,6 +31,10 @@ class _FakeBackend implements EnhanceBackend {
 
   /// The tiles told at each step, as Rebuild details tells them; null: none, as Sharpen
   final List<EnhanceTileProgress>? tiling;
+
+  /// A step told once its tiles are no longer told, in work units rather than tiles (done, all), as Rebuild details
+  /// did between two of its runs
+  final (int, int)? unitsAfter;
   SbsDecoded? given;
   String? folder;
 
@@ -64,6 +68,9 @@ class _FakeBackend implements EnhanceBackend {
         onStep(index, told.length);
       }
       tileProgress = null;
+      if (unitsAfter case (final done, final all)) {
+        onStep(done, all);
+      }
     } else {
       for (var tile = 1; tile <= 3; tile++) {
         onStep(tile, 3);
@@ -269,6 +276,26 @@ void main() {
     expect(tiles.map((progress) => progress.remaining), [null, null, const Duration(seconds: 40)]);
     expect(tiles.map((progress) => (progress.step, progress.steps)), [(1, 30), (2, 30), (2, 30)]);
     expect(tiles.map((progress) => progress.perMille), [80, 80 + 780 ~/ 3, 80 + 780 * 2 ~/ 3]);
+  });
+
+  test('a step told without its tile after tiles were told is not shown as a step count', () async {
+    final heard = <ImmersiveProgress>[];
+    final tiling = <EnhanceTileProgress>[
+      (phase: ImmersiveTilePhase.encode, tile: 1, tiles: 77, left: null),
+      (phase: ImmersiveTilePhase.decode, tile: 3, tiles: 77, left: const Duration(seconds: 90)),
+    ];
+    final result = await engineWith(_FakeBackend(tiling: tiling, unitsAfter: (1027, 13153))).run(
+      jobOf('orientation_1.jpg', level: EnhanceLevel.rebuild),
+      cancel: NativeCancelFlag(),
+      onProgress: heard.add,
+    );
+    expect(result.isDone, isTrue, reason: result.message);
+    final generating = heard.where((progress) => progress.stage == ImmersiveStage.generating).toList();
+    expect(generating, isNotEmpty);
+    for (final progress in generating) {
+      expect(progress.tilePhase, isNotNull, reason: 'step ${progress.step} of ${progress.steps}');
+      expect(progress.steps, 77);
+    }
   });
 
   test('a failure of the model, a cancel and an unreadable photo end the job without a file', () async {

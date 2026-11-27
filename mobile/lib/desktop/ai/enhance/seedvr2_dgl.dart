@@ -293,13 +293,12 @@ class SeedVr2Pace {
   /// The work done
   int get done => _before + _inRun;
 
-  /// The phase under way and its tile among the [tiles] of the photo, from 1; null before the first line of a tile
-  ({SeedVr2Phase phase, int tile, int tiles})? get where {
-    final at = _at;
-    return at == null ? null : (phase: at.phase, tile: _starts[_batch] + at.item, tiles: _starts.last + _sizes.last);
-  }
+  /// The phase and its tile among the [tiles] of the photo told last, from 1: kept between two runs, so that the
+  /// panel never falls back to the work units of [done] and [all]; null before the first line of a tile
+  ({SeedVr2Phase phase, int tile, int tiles})? get where => _shown;
+  ({SeedVr2Phase phase, int tile, int tiles})? _shown;
 
-  /// sd-cli started the run [batch] at [time]
+  /// sd-cli started the run [batch] at [time]; the tile told last ([where]) stays told until this run tells its first
   void started(int batch, Duration time) {
     _batch = batch;
     _launched = time;
@@ -307,7 +306,11 @@ class SeedVr2Pace {
     _atTime = null;
     _firstSample = null;
     _inRun = 0;
+    _runEnded = false;
   }
+
+  /// Whether the run under way ended well ([ended]) and the next did not start yet
+  var _runEnded = false;
 
   /// The run under way failed and is made again: what it did stays counted, and its work is added again
   void again() {
@@ -316,11 +319,25 @@ class SeedVr2Pace {
     _inRun = 0;
   }
 
-  /// The run under way ended well
+  /// The run under way ended well. Its last tile stays where the progress is until the next run tells its first:
+  /// between two runs the panel keeps "Writing the result, tile N of M", never a count of the work units above
   void ended() {
     _before += _costOf(_batch);
     _inRun = 0;
     _at = null;
+    _atTime = null;
+    _runEnded = true;
+  }
+
+  /// The run under way (or the one that just ended), from 0, and the runs of the photo
+  int get run => _batch;
+  int get runs => _sizes.length;
+
+  /// The phase and the tile among the [tiles] of the photo the run under way is at, from 1; null before its first
+  /// tile and once it ended (the log of a failure says where it stopped)
+  ({SeedVr2Phase phase, int tile, int tiles})? get whereInRun {
+    final at = _at;
+    return at == null ? null : (phase: at.phase, tile: _starts[_batch] + at.item, tiles: _starts.last + _sizes.last);
   }
 
   /// Reads the tile [progress] says at [time]
@@ -347,6 +364,7 @@ class SeedVr2Pace {
     }
     _at = progress;
     _atTime = time;
+    _shown = whereInRun;
     final size = _sizes[_batch];
     var work = _batch == 0 ? 0 : seedVr2StartCost;
     final phase = progress.phase.index;
@@ -393,6 +411,14 @@ class SeedVr2Pace {
       // The tile under way has run since its line came
       final since = _atTime == null ? Duration.zero : time - _atTime!;
       left -= since > pace[at.phase]! ? pace[at.phase]! : since;
+    } else if (!_runEnded) {
+      // A run started that told no tile yet: its start (what is left of it), the read of the DiT and all its tiles
+      final since = _launched == null ? Duration.zero : time - _launched!;
+      left += since > start ? Duration.zero : start - since;
+      left += load;
+      for (final phase in SeedVr2Phase.values) {
+        left += pace[phase]! * size;
+      }
     }
     for (var batch = _batch + 1; batch < _sizes.length; batch++) {
       left += start + load;

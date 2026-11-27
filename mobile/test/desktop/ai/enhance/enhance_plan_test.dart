@@ -281,6 +281,14 @@ void main() {
       expect(enhanceFreeMemoryOf(EnhanceLevel.rebuild, pixels: 12000000), rebuildFreeMemoryOf(12000000));
     });
 
+    test('a large photo never needs less than before release 54: the buffers of the app above 12 MP stay counted', () {
+      // 50 MP: 3 GiB and 40 bytes a pixel above 12 MP (4 522 MiB) is more than the rule of sd.cpp (3 610 MiB)
+      expect(rebuildFreeMemoryOf(50000000), 3 * _gib + 40 * 38000000);
+      expect(rebuildFreeMemoryOf(50000000) >> 20, 4521);
+      // The two cross near 23.4 MP; below, the rule of sd.cpp
+      expect(rebuildFreeMemoryOf(20000000), _gib + 363834672 + 3 * _gib ~/ 2 + 4 * 20000000 + _gib ~/ 2);
+    });
+
     test('the photo of 27 November 2026 (4592 x 3056) would have been refused at the start with 3150 MiB', () {
       // The engine's own gate let it start with at least 3150 MiB available (3 GiB and 40 bytes a pixel above 12 MP);
       // sd-cli refused it 4 min 37 s later with 1346 MiB available, 25 MiB short

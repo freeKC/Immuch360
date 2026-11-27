@@ -369,6 +369,7 @@ class EnhanceEngine implements ImmersiveEngine {
       enter(ImmersiveStage.loadingModels, 60);
       final work = folder = workFolder(job.id);
       var pieces = 0;
+      var phased = false;
       final Uint8List result;
       try {
         result = await enhanceLaidOut(
@@ -385,8 +386,11 @@ class EnhanceEngine implements ImmersiveEngine {
           onStep: (done, all) {
             final tiles = backend.tileProgress;
             if (tiles != null) {
+              phased = true;
               tilesAt(done, all, tiles);
-            } else {
+            } else if (!phased) {
+              // A backend that told its tiles once never falls back to these counts: those of Rebuild details are
+              // its work units, not tiles ("step 1027 of 13153" between two runs, release 54)
               enter(ImmersiveStage.generating, all == 0 ? 80 : 80 + 780 * done ~/ all, step: done, steps: all);
             }
           },

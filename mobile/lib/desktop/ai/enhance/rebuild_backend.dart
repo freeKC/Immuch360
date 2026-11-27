@@ -117,18 +117,38 @@ const rebuildMemoryPoll = Duration(seconds: 2);
 /// The lines of sd-cli the log keeps of a run that failed
 const rebuildLogLines = 30;
 
-/// [line] of sd-cli as the log of the app keeps it: the home folder of the account written ~
-String rebuildLogLine(String line, {String? home}) {
+/// [line] of sd-cli as the log of the app keeps it: the home folder of the account written ~, also in its short name
+/// on Windows ([shortHome], read by default), which sd-cli is given when the folder is not ASCII (rebuildAsciiPath)
+String rebuildLogLine(String line, {String? home, String? shortHome}) {
   final folder = home ?? Platform.environment['USERPROFILE'] ?? Platform.environment['HOME'];
   if (folder == null || folder.length < 3) {
     return line;
   }
+  final short = shortHome ?? (home == null ? _shortHome(folder) : null);
   var kept = line;
-  for (final form in {folder, folder.replaceAll(r'\', '/'), folder.replaceAll('/', r'\')}) {
-    kept = kept.replaceAll(RegExp(RegExp.escape(form), caseSensitive: false), '~');
+  for (final name in [folder, if (short != null && short.length >= 3 && short != folder) short]) {
+    for (final form in {name, name.replaceAll(r'\', '/'), name.replaceAll('/', r'\')}) {
+      kept = kept.replaceAll(RegExp(RegExp.escape(form), caseSensitive: false), '~');
+    }
   }
   return kept;
 }
+
+/// The short name of [folder] on Windows when it is not ASCII, read once; null elsewhere or when there is none
+String? _shortHome(String folder) {
+  if (!Platform.isWindows || isAsciiPath(folder)) {
+    return null;
+  }
+  return _shortHomes.putIfAbsent(folder, () {
+    try {
+      return windowsShortPath(folder);
+    } catch (_) {
+      return null;
+    }
+  });
+}
+
+final _shortHomes = <String, String?>{};
 
 /// Whether [line] is a redraw of a progress bar of sd-cli, which the log leaves out
 bool _isBar(String line) => line.contains('|###') || line.contains('|===') || line.contains('\u001b[K');
@@ -310,6 +330,10 @@ class SdCppRebuildBackend implements EnhanceBackend {
           }
           // sd-cli gave its memory back as it ended: once, the run under way again when the photo's need is there
           final now = await _memoryBack(need, cancel);
+          // Cancel or Pause pressed while it waited: the job is stopped, not failed for memory
+          if (cancel.isCancelled) {
+            throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled');
+          }
           if (now != null && now < need) {
             throw BackendException(
               ImmersiveErrorCode.outOfMemory,
@@ -330,10 +354,11 @@ class SdCppRebuildBackend implements EnhanceBackend {
       }
     } on BackendException catch (error) {
       if (error.code != ImmersiveErrorCode.cancelled && !cancel.isCancelled) {
-        final where = pace.where;
+        final where = pace.whereInRun;
+        final run = batches.length == 1 ? '' : 'in run ${pace.run + 1} of ${batches.length} ';
         final at = where == null
-            ? 'before its first tile'
-            : 'at ${where.phase.name} tile ${where.tile} of ${where.tiles}';
+            ? '${run}before its first tile'
+            : '${run}at ${where.phase.name} tile ${where.tile} of ${where.tiles}';
         _log.warning(
           'Rebuild details failed $at (${error.code.name}${retried ? ', after its one try again' : ''}); '
           '${memoryWords()}; ${pace.summary}; the last lines of sd-cli:\n'

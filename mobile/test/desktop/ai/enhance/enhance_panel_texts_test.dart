@@ -70,6 +70,8 @@ void main() {
       conversionProgressText(t, tiles(ImmersiveTilePhase.sample, 40), const Duration(seconds: 50)),
       'About 50 s left',
     );
+    // A countdown run out: no time, and the tiles say their count in their own words
+    expect(conversionProgressText(t, tiles(ImmersiveTilePhase.sample, 40), Duration.zero), isNull);
   });
 
   test('the failures of an enhanced photo say what to do', () {

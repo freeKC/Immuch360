@@ -988,6 +988,7 @@
   "ai_immersive_state_preparing": "Preparing",
   "ai_immersive_state_skipped": "Skipped",
   "ai_immersive_state_waiting": "Waiting",
+  "ai_immersive_step_count": "step {step} of {steps}",
   "ai_immersive_step_progress": "step {step} of {steps}, about {time} left",
   "ai_immersive_time_left": "About {time} left",
   "ai_immersive_time_per_photo": "About {time} per photo",

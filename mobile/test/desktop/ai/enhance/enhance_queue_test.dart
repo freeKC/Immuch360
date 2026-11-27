@@ -227,6 +227,24 @@ void main() {
     await until((state) => state.byId(natural.single)!.state == ConversionState.done);
   });
 
+  test(
+    'while Rebuild details runs its tiles, the other lane leaves it the memory sd-cli checks at each tile',
+    () async {
+      final rebuild = levels[EnhanceLevel.rebuild]!..hold = Completer<void>();
+      final card = queue().add([photo('a.jpg')], kind: ConversionKind.enhanceRebuild);
+      await running([rebuild], 1);
+      await until((state) => state.byId(card.single)!.state == ConversionState.generating);
+      // Room for Natural and its reserve, not for them and what Rebuild details still asks at each tile
+      memory.available = naturalJobMemory + 2 * _gib;
+      expect(memory.available! - naturalJobMemory - _gib, lessThan(rebuildFreeMemoryOf(null)));
+      final natural = queue().add([photo('b.jpg')], kind: ConversionKind.enhanceNatural);
+      await until((state) => state.byId(natural.single)!.waitingFor == ConversionWait.memory);
+      expect(levels[EnhanceLevel.natural]!.running, 0);
+      rebuild.hold!.complete();
+      await until((state) => state.jobs.every((job) => job.state == ConversionState.done));
+    },
+  );
+
   group('on a Mac with an Apple chip (unified memory, no figure of the memory free)', () {
     /// The tools of a Mac of [gigabytes]: a probe of the cards that answers as on macOS, which the levels of the
     /// graphics never ask

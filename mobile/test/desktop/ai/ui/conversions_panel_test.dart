@@ -664,6 +664,25 @@ void main() {
       expect(inRow('salon.jpg', find.byKey(const Key('ai_job_time_left'))), findsNothing);
     });
 
+    testWidgets('a countdown run out keeps the step of a generation, without its time', (tester) async {
+      var now = DateTime(2026, 11, 27, 16);
+      await pumpShown(tester, [
+        job(
+          'plage.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.generating,
+          step: 12,
+          steps: 28,
+          remaining: const Duration(seconds: 10),
+        ),
+      ], clock: () => now);
+      expect(inRow('plage.jpg', find.text('step 12 of 28, about 10 s left')), findsOneWidget);
+
+      now = now.add(const Duration(seconds: 30));
+      await tester.pump(const Duration(seconds: 1));
+      expect(tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_time_left')))).data, 'step 12 of 28');
+    });
+
     testWidgets('a scene made: the share of it filled in, its flags, and "Delete this version" asked as such', (
       tester,
     ) async {
