@@ -445,7 +445,8 @@ jobs:
         working-directory: mobile
         run: |
           mise exec -- dart format --output=none --set-exit-if-changed lib/desktop lib/main_desktop.dart \
-            test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows \
+            test/desktop integration_test/desktop_smoke_test.dart integration_test/desktop_clipboard_test.dart \
+            packages/flutter_secure_storage_windows \
             packages/immuch_sbs_codec packages/immuch_head_tracker/lib packages/immuch_head_tracker/hook
 
       # The Rust JPEG codec of the AI features (mobile/packages/immuch_sbs_codec), in release as its build hook makes
@@ -700,7 +701,7 @@ jobs:
           sudo sh .github/desktop/packaging/linux/apt_install.sh \
             clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev \
             libsecret-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev patchelf libmpv-dev xvfb xauth x11-apps \
-            x11-utils imagemagick sqlite3 gdb xdotool rpm2cpio cpio
+            x11-utils imagemagick sqlite3 gdb xdotool rpm2cpio cpio xclip
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -977,6 +978,18 @@ jobs:
         env:
           IMMUCH360_GPU_PROBE_REAL: build/linux/x64/release/bundle/immuch360
         run: mise exec -- flutter test test/desktop/ai/gpu/gpu_probe_real_test.dart
+
+      # The copy of photos and videos to the clipboard (lib/desktop/clipboard, linux/runner/clipboard_channel.cc) in a
+      # debug app on a virtual screen, read back by xclip as a paste would read it: text/uri-list and
+      # x-special/gnome-copied-files for the files, image/png for the picture of one photo at its size; then xclip
+      # copies something else and the copies of remote files go. Run after a failed test above too
+      - name: The copy to the clipboard in a built app (xvfb, xclip)
+        if: ${{ !cancelled() }}
+        working-directory: mobile
+        timeout-minutes: 25
+        run: |
+          xvfb-run -a -s "-screen 0 1280x800x24" \
+            mise exec -- flutter test integration_test/desktop_clipboard_test.dart -d linux --reporter expanded
 
       # The release build started with a 6 second clip as a file opened with the program, on a virtual screen with
       # software rendering: the app must still run, the picture must change over 5 seconds of playback and the app's
@@ -1800,6 +1813,15 @@ jobs:
         timeout-minutes: 20
         run: flutter test integration_test/desktop_spatial_video_test.dart -d windows --reporter expanded
 
+      # The copy of photos and videos to the clipboard of Windows (lib/desktop/clipboard,
+      # windows/runner/clipboard_channel.cpp) in a debug app, read back by Windows PowerShell as a paste would read it:
+      # the file drop list with "Preferred DropEffect" set to copy, the bitmap and the PNG of one photo at its size;
+      # then Set-Clipboard copies something else and the copies of remote files go
+      - name: The copy to the clipboard in a built app
+        working-directory: mobile
+        timeout-minutes: 20
+        run: flutter test integration_test/desktop_clipboard_test.dart -d windows --reporter expanded
+
       # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
       # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
       # hosted runners have no graphics card, so what it found is printed, not asked for
@@ -2326,6 +2348,16 @@ jobs:
         working-directory: mobile
         timeout-minutes: 25
         run: mise exec -- flutter test integration_test/desktop_spatial_video_test.dart -d macos --reporter expanded
+
+      # The copy of photos and videos to the pasteboard (lib/desktop/clipboard, macos/Runner/MainFlutterWindow.swift) in
+      # the same debug app, read back by osascript in JavaScript as a paste would read it: one item per file with its
+      # file URL, public.png and public.tiff for one photo, its PNG at its size; then pbcopy copies something else and
+      # the copies of remote files go. After the start of the build above, for the same reason as the step before
+      - name: The copy to the pasteboard in a built app
+        if: ${{ !cancelled() }}
+        working-directory: mobile
+        timeout-minutes: 20
+        run: mise exec -- flutter test integration_test/desktop_clipboard_test.dart -d macos --reporter expanded
 
   # The desktop tests on macOS (lots L04 and L05 of the desktop parity plan, 21 November 2026), beside the build: until
   # release 51 they never ran on a Mac, the build job only compiled the app and started it. test/desktop on this arm64
