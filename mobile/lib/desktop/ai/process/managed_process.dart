@@ -347,8 +347,9 @@ class ManagedProcessRunner implements ProcessRunner {
       return (launch.executable, launch.arguments);
     }
     // The launcher started as its own program reads the program's first argument as one of its options, prints its
-    // usage and ends with 2: the program never starts (issue 24, the main file of an archive taken as its program)
-    if (p.basename(launch.executable) == linuxLauncherName) {
+    // usage and ends with 2: the program never starts (issue 24, the main file of an archive taken as its program).
+    // Known by its name, or by its path when the launcher was given under another name
+    if (p.basename(launch.executable) == linuxLauncherName || p.equals(launch.executable, launcher)) {
       throw io.ProcessException(
         launch.executable,
         launch.arguments,

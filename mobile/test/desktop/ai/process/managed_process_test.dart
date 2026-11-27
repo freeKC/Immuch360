@@ -131,6 +131,14 @@ void main() {
           throwsA(isA<ProcessException>().having((error) => error.message, 'message', contains('immuch360-run'))),
         );
       }
+      // A launcher given under another name is known by its path
+      expect(
+        () => ManagedProcessRunner(
+          linuxLauncher: '/t/run',
+          isLinux: true,
+        ).commandOf(const ProcessLaunch(executable: '/t/run')),
+        throwsA(isA<ProcessException>()),
+      );
       // Without a launcher (Windows) nothing wraps it: the program is started as given
       expect(ManagedProcessRunner(isLinux: false, isMacOS: false).commandOf(itself).$1, '/engines/sd/immuch360-run');
     });
