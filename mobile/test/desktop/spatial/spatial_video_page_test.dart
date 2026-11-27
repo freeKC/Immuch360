@@ -12,6 +12,7 @@
 //   enable ran (the layout, the window's box, the viewpoint) reaches the passes once it ends;
 // - refused passes play the video as it is, with the message; the original failing plays the transcoded stream;
 // - a VR180 3D video sets the view, turns with a drag and zooms with the wheel;
+// - the video plays with its sound (the adapter starts silent), M mutes it and gives it back;
 // - DesktopSpatialVideoApi: supported where a renderer exists and libmpv loaded, open pushes the page, its closing
 //   reaches SpatialVideoEvents as the phones' players do.
 
@@ -252,6 +253,17 @@ void main() {
       ),
       mkv.SpatialLayout.sideBySide,
     );
+    // A 360° 3D video (3840x3840, two 2:1 eyes stacked) whose coverage was set to 180°: side by side would cut across
+    // both eyes (night tests of 27 November 2026, D1)
+    expect(
+      spatialEyeLayout(
+        SpatialStereoLayout.auto,
+        width: 3840,
+        height: 3840,
+        projection: SpatialProjection.equirectangular180,
+      ),
+      mkv.SpatialLayout.topBottom,
+    );
     expect(spatialEyeLayout(SpatialStereoLayout.topBottomSwapped), mkv.SpatialLayout.topBottomSwapped);
     expect(spatialEyeLayout(SpatialStereoLayout.auto), mkv.SpatialLayout.sideBySide, reason: 'size unknown');
   });
@@ -275,6 +287,23 @@ void main() {
     await tester.pump(SpatialVideoPageState.resizeDelay * 2);
     expect(passes.setups.last.outputWidth, 1600);
     expect(passes.setups.last.outputHeight, 900);
+    await close(tester);
+  });
+
+  testWidgets('the video plays with its sound, M mutes it and M again gives it back', (tester) async {
+    await pumpPage(tester, sources: {ViewerPositionKind.mouse: MousePositionSource.new});
+    final engine = players.made.first;
+    expect(engine.calls, contains('play'));
+    // The adapter starts silent: without the page's volume the sound button showed on while nothing played (D2)
+    expect(engine.volume, 1, reason: 'the page plays with sound, as the viewer');
+    expect(find.byIcon(Icons.volume_up_rounded), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
+    await tester.pump();
+    expect(engine.volume, 0);
+    expect(find.byIcon(Icons.volume_off_rounded), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
+    await tester.pump();
+    expect(engine.volume, 1);
     await close(tester);
   });
 

@@ -205,7 +205,8 @@ final spatialVideoPositionSourcesProvider = Provider<Map<ViewerPositionKind, Vie
 /// with what the file declares and then the frame shape, is the frame shape here (SpatialVideoActivity.guessedLayout):
 /// a 360° video has two 2:1 eyes, stacked they make a square, side by side a 4:1 frame; a VR180 video two square eyes,
 /// stacked a 1:2 frame; a flat video 0.8 to 0.95 wide for one high is two full eyes stacked; anything else side by
-/// side.
+/// side. A square frame shown as a half sphere is two 2:1 eyes stacked too, as the 360° viewers read it: a 360° video
+/// whose coverage the user set to 180°, which side by side would cut across both eyes.
 mkv.SpatialLayout spatialEyeLayout(
   SpatialStereoLayout selected, {
   int? width,
@@ -233,6 +234,7 @@ mkv.SpatialLayout spatialEyeLayout(
   return switch (projection) {
     SpatialProjection.equirectangular when ratio >= 0.9 && ratio <= 1.1 => mkv.SpatialLayout.topBottom,
     SpatialProjection.equirectangular180 when ratio >= 0.45 && ratio <= 0.55 => mkv.SpatialLayout.topBottom,
+    SpatialProjection.equirectangular180 when ratio >= 0.9 && ratio <= 1.1 => mkv.SpatialLayout.topBottom,
     SpatialProjection.flat when ratio >= 0.8 && ratio <= 0.95 => mkv.SpatialLayout.topBottom,
     _ => mkv.SpatialLayout.sideBySide,
   };
@@ -436,6 +438,8 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
 
   Future<void> _open(String url, {Duration start = Duration.zero}) async {
     try {
+      // The adapter starts silent: the page plays with sound, as the viewer and the 360° player, until M mutes it
+      await _controller.setVolume(_muted ? 0 : 1);
       await _controller.loadVideoSource(sphericalVideoSource(url), startAt: start);
     } catch (error) {
       _log.warning('The video did not open: $error');
