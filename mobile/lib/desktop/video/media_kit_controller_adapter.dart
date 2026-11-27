@@ -28,7 +28,9 @@
 //   controls (desktop_audio_track_button.dart);
 // - an audio track this libmpv does not decode (TrueHD in the app's builds, release 47): another track of the file
 //   plays, in the same language first, when the tracks are listed and again when mpv says a decoder failed to open or
-//   no track plays a while after the first frame; [audioSwitch] tells the page, which says so (film_audio_choice.dart).
+//   no track plays a while after the first frame; [audioSwitch] tells the page, which says so (film_audio_choice.dart);
+// - a video without any audio track: [noAudio], from mpv's own track list once the file is open, for the "No sound"
+//   mark of the controls (desktop_audio_track_button.dart), so that a silent file is not taken for a fault.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -182,6 +184,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   final _externalSubtitles = ValueNotifier<List<VideoSubtitle>>(const []);
   final _decoding = ValueNotifier<({String? hwdec, VideoFrameSize? size})>((hwdec: null, size: null));
   final _audioSwitch = ValueNotifier<FilmAudioSwitch?>(null);
+  final _noAudio = ValueNotifier(false);
 
   /// The audio codecs this player does not decode (film_decoders.dart): TrueHD and MLP in the Quest's libmpv, nothing
   /// on the computers. The tests set their own.
@@ -217,6 +220,9 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
 
   /// The id of the audio track that plays
   ValueListenable<String?> get audioTrack => _audioTrack;
+
+  /// The open video has no audio track at all (see [videoHasNoAudio]); false until its tracks are known
+  ValueListenable<bool> get noAudio => _noAudio;
 
   /// The subtitle tracks of the open file, with the side files of [externalSubtitles] added to it so far
   ValueListenable<List<DesktopSubtitleTrack>> get subtitleTracks => _subtitleTracks;
@@ -347,6 +353,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _handledAudioFailures.clear();
     _wantedAudioId = null;
     _audioSwitch.value = null;
+    _noAudio.value = false;
     _silenceTimer?.cancel();
     _subtitleChoice = null;
     _externalSubtitles.value = const [];
@@ -841,6 +848,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.textureLost.addListener(_onTextureLost);
     engine.buffering.addListener(_onBuffering);
     engine.audioTracks.addListener(_onAudioTracks);
+    engine.audioTracks.addListener(_onNoAudio);
+    engine.hasVideo.addListener(_onNoAudio);
     engine.audioTrack.addListener(_onAudioTrack);
     engine.subtitleTracks.addListener(_onSubtitleTracks);
     engine.subtitleTrack.addListener(_onSubtitleTrack);
@@ -850,6 +859,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _audioFailures = engine.audioDecoderFailures.listen(_onAudioDecoderFailure);
     _videoController.value = engine.videoController;
     _onDecoding();
+    _onNoAudio();
     // Lost while another page held it, or before: no change comes to tell it
     if (engine.textureLost.value) {
       _onTextureLost();
@@ -869,6 +879,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.textureLost.removeListener(_onTextureLost);
     engine.buffering.removeListener(_onBuffering);
     engine.audioTracks.removeListener(_onAudioTracks);
+    engine.audioTracks.removeListener(_onNoAudio);
+    engine.hasVideo.removeListener(_onNoAudio);
     engine.audioTrack.removeListener(_onAudioTrack);
     engine.subtitleTracks.removeListener(_onSubtitleTracks);
     engine.subtitleTrack.removeListener(_onSubtitleTrack);
@@ -1079,6 +1091,16 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     }
   }
 
+  /// Once the tracks of the open file are known; while they are not (an open, a stop), the last answer stays
+  void _onNoAudio() {
+    final engine = _engine;
+    final hasVideo = engine?.hasVideo.value;
+    if (engine == null || hasVideo == null) {
+      return;
+    }
+    _noAudio.value = videoHasNoAudio(hasVideo: hasVideo, audioTracks: engine.audioTracks.value);
+  }
+
   void _onAudioTrack() {
     final engine = _engine;
     final id = engine?.audioTrack.value;
@@ -1224,3 +1246,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     unawaited(FedoraFfmpegHint.instance.playbackFailed());
   }
 }
+
+/// Whether an open file is a video without any audio track: a video track listed and no audio one, mpv's pseudo tracks
+/// left out (DesktopPlaybackEngine). [hasVideo] is null while the file is not open: nothing is known then.
+bool videoHasNoAudio({required bool? hasVideo, required List<DesktopAudioTrack> audioTracks}) =>
+    hasVideo == true && audioTracks.isEmpty;

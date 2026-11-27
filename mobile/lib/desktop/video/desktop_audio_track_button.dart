@@ -3,13 +3,19 @@
 // players show theirs, with the same labels (video_audio_track.dart). The language picked is chosen first for the
 // next videos of the session. A film of a media server shows the names the server gives its tracks, and the server
 // hears of each pick (VideoTrackNaming).
+//
+// A video without any audio track shows "No sound" in its place on a computer, with why in its tooltip, so that nobody
+// takes a silent file for a fault of the sound (MediaKitVideoPlayerController.noAudio, from mpv's own track list). The
+// Quest's player, which lists its tracks with this button too, shows nothing of it.
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/domain/models/video_track_naming.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 
 class DesktopAudioTrackButton extends StatelessWidget {
@@ -59,7 +65,9 @@ class _TrackMenu extends StatelessWidget {
       valueListenable: controller.audioTracks,
       builder: (context, tracks, _) {
         if (tracks.length < 2) {
-          return const SizedBox.shrink();
+          return CurrentPlatform.isDesktop
+              ? DesktopNoSoundMark(noAudio: controller.noAudio, shadows: shadows)
+              : const SizedBox.shrink();
         }
         return ValueListenableBuilder<String?>(
           valueListenable: controller.audioTrack,
@@ -78,6 +86,46 @@ class _TrackMenu extends StatelessWidget {
                   ),
                 ),
             ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// "No sound" while [noAudio]: a small mark beside the controls of a video without any audio track, whose tooltip says
+/// so; nothing otherwise
+class DesktopNoSoundMark extends StatelessWidget {
+  const DesktopNoSoundMark({super.key, required this.noAudio, this.shadows});
+
+  final ValueListenable<bool> noAudio;
+  final List<Shadow>? shadows;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: noAudio,
+      builder: (context, silent, _) {
+        if (!silent) {
+          return const SizedBox.shrink();
+        }
+        final t = context.t;
+        return Tooltip(
+          key: const Key('desktop_no_sound'),
+          message: t.desktop_video_no_sound_tooltip,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.volume_off_rounded, color: Colors.white70, size: 20, shadows: shadows),
+                const SizedBox(width: 4),
+                Text(
+                  t.desktop_video_no_sound,
+                  style: TextStyle(color: Colors.white70, fontSize: 13, shadows: shadows),
+                ),
+              ],
+            ),
           ),
         );
       },
