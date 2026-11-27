@@ -130,27 +130,40 @@ Future<_Read> _readClipboard() async {
       for (final url in json['files'] as List? ?? const [])
         if ('$url'.isNotEmpty) Uri.parse('$url').toFilePath(),
     ];
-    // The PNG as AppleScript reads it (the class PNGf of public.png), written to a file whose header gives its size
+    // The PNG as AppleScript reads it (the class PNGf of public.png), written to a file whose header gives its size;
+    // picture and target are words of AppleScript, not names
     final pngFile = File(p.join(Directory.systemTemp.path, 'immuch360-clipboard-read.png'));
+    if (pngFile.existsSync()) {
+      pngFile.deleteSync();
+    }
     final png = await _run('osascript', [
       '-e',
-      'set picture to the clipboard as «class PNGf»',
+      'set pngData to the clipboard as «class PNGf»',
       '-e',
-      'set target to open for access (POSIX file "${pngFile.path}") with write permission',
+      'set outFile to open for access (POSIX file "${pngFile.path}") with write permission',
       '-e',
-      'set eof target to 0',
+      'set eof outFile to 0',
       '-e',
-      'write picture to target',
+      'write pngData to outFile',
       '-e',
-      'close access target',
+      'close access outFile',
     ]);
-    final size = png.exitCode == 0 && pngFile.existsSync() ? _pngSize(pngFile.readAsBytesSync()) : null;
+    var read = png.exitCode == 0 ? 'AppleScript' : 'AppleScript: ${'${png.stderr}'.trim()}';
+    if (png.exitCode != 0) {
+      // The pasteboard's own data, written by the JavaScript bridge
+      final script =
+          "ObjC.import('AppKit'); var d = \$.NSPasteboard.generalPasteboard.dataForType('public.png'); "
+          "d.isNil() ? 'none' : (d.writeToFileAtomically('${pngFile.path}', true) ? 'written' : 'refused');";
+      final js = await _run('osascript', ['-l', 'JavaScript', '-e', script]);
+      read = '$read; JavaScript: ${'${js.stdout}'.trim()} ${'${js.stderr}'.trim()}';
+    }
+    final size = pngFile.existsSync() ? _pngSize(pngFile.readAsBytesSync()) : null;
     return _Read(
       files: files,
       hasPicture: size != null,
       width: size?.$1,
       height: size?.$2,
-      extra: {'types': json['types'], 'png': png.exitCode == 0 ? 'read' : '${png.stderr}'.trim()},
+      extra: {'types': json['types'], 'png': read},
     );
   }
   // Linux: xclip asks the app, which serves the selection while it runs
