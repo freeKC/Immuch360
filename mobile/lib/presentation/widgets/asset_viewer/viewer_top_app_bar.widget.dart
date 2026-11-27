@@ -8,6 +8,7 @@ import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
+import 'package:immich_mobile/desktop/window/middle_ellipsis_text.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -296,8 +297,13 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     child: NavigationToolbar(
                       centerMiddle: true,
                       leading: const _AppBarBackButton(),
-                      // A TV shows the date and time of a photo at the bottom left instead (see ViewerBottomBar)
-                      middle: showingDetails || (isTv && asset.isImage) ? null : ViewerDateTime(asset: asset),
+                      // A TV shows the date and time of a photo at the bottom left instead (see ViewerBottomBar); a
+                      // computer shows the file name above them (lib/desktop/window/middle_ellipsis_text.dart)
+                      middle: showingDetails || (isTv && asset.isImage)
+                          ? null
+                          : CurrentPlatform.isDesktop && !isTv
+                          ? DesktopViewerTitle(asset: asset)
+                          : ViewerDateTime(asset: asset),
                       trailing:
                           !showingDetails &&
                               (!isViewOnly ||
@@ -423,6 +429,29 @@ Future<void> _openBigScreen(BuildContext context, WidgetRef ref, BaseAsset asset
   } catch (error) {
     _log.warning('Could not open ${asset.name} on the big screen: $error');
     messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
+  }
+}
+
+/// The file name of [asset], cut in its middle when long, over its date and time: the middle of the top bar of the
+/// viewer on a computer
+class DesktopViewerTitle extends StatelessWidget {
+  const DesktopViewerTitle({super.key, required this.asset});
+
+  final BaseAsset asset;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        MiddleEllipsisText(
+          asset.name,
+          key: const Key('desktop_viewer_name'),
+          style: context.textTheme.labelLarge?.copyWith(color: Colors.white),
+        ),
+        ViewerDateTime(asset: asset, oneLine: true),
+      ],
+    );
   }
 }
 

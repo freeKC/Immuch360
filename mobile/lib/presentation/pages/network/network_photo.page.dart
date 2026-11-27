@@ -10,12 +10,15 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/library/share_versions_button.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart' show aiFeaturesEnabledProvider;
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copy.dart';
+import 'package:immich_mobile/desktop/clipboard/viewer_copy.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_conversion.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
 import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
+import 'package:immich_mobile/desktop/window/middle_ellipsis_text.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
@@ -746,7 +749,10 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
           centerTitle: false,
           // On a TV, Back on the app bar only returns to the photo: the Back button leaves the page itself
           leading: tvMode ? remoteBackButton(context) : null,
-          title: Text(_name, maxLines: 1, overflow: TextOverflow.ellipsis),
+          // A long name is cut in its middle on a computer, so that its end and its extension show
+          title: CurrentPlatform.isDesktop
+              ? MiddleEllipsisText(_name, key: const Key('network_photo_title'))
+              : Text(_name, maxLines: 1, overflow: TextOverflow.ellipsis),
           actions: [
             Focus(
               focusNode: _actionsFocus,
@@ -957,7 +963,12 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
               // Immuch360 Desktop: previous and next for the mouse (lib/desktop/window/hover_chevrons.dart)
               ? CurrentPlatform.isDesktop
                     ? withDesktopPageChevrons(
-                        _buildPhoto(photo, turns),
+                        // Copy and Copy name of a right click, Control C (lib/desktop/clipboard)
+                        withDesktopViewerCopy(
+                          copy: (context) => copyEntriesToClipboard(context, ref, [photo.entry]),
+                          name: () => photo.entry.name,
+                          child: _buildPhoto(photo, turns),
+                        ),
                         canNavigate: (step) =>
                             networkFolderNeighbourRoute(widget.sourceId, widget.folder, widget.path, step) != null,
                         onNavigate: _openNeighbour,

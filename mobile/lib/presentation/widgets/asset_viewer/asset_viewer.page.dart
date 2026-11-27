@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copy.dart';
+import 'package:immich_mobile/desktop/clipboard/viewer_copy.dart';
 import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
@@ -948,6 +950,12 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     return immersive ? SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky) : restoreEdgeToEdge();
   }
 
+  /// The asset shown, on the clipboard of a computer
+  Future<void> _copyToClipboard(BuildContext context) {
+    final asset = ref.read(assetViewerProvider).currentAsset;
+    return asset == null ? Future.value() : copyAssetsToClipboard(context, ref, [asset]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final showingControls = ref.watch(assetViewerProvider.select((s) => s.showingControls));
@@ -1089,7 +1097,17 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
         actions: {
           TvPhotoZoomIntent: CallbackAction<TvPhotoZoomIntent>(onInvoke: (intent) => _zoomPhoto(zoomIn: intent.zoomIn)),
         },
-        child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: viewer),
+        child: Focus(
+          focusNode: _rootFocus,
+          autofocus: true,
+          onKeyEvent: _onKey,
+          // Immuch360 Desktop: Copy and Copy name of a right click, Control C (lib/desktop/clipboard)
+          child: withDesktopViewerCopy(
+            copy: _copyToClipboard,
+            name: () => ref.read(assetViewerProvider).currentAsset?.name,
+            child: viewer,
+          ),
+        ),
       ),
     );
   }

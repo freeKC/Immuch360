@@ -14,6 +14,8 @@ import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart'
     show aiFeaturesEnabledProvider, offeredConversionKindsProvider;
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart' show shareConversionOpenerProvider;
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart' show aiSplatScenesOnProvider, shareSplatOpenerProvider;
+import 'package:immich_mobile/desktop/clipboard/clipboard_copy.dart';
+import 'package:immich_mobile/desktop/clipboard/viewer_copy.dart';
 import 'package:immich_mobile/desktop/video/android_mpv.dart';
 import 'package:immich_mobile/desktop/video/av2_gate.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
@@ -23,6 +25,7 @@ import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/mpv_video_view.dart';
 import 'package:immich_mobile/desktop/video/player_resource_options.dart';
 import 'package:immich_mobile/desktop/video/xr/headset_view.dart';
+import 'package:immich_mobile/desktop/window/middle_ellipsis_text.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -2126,12 +2129,15 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
           // On a TV, Back on the app bar only hides it: the Back button leaves the page itself
           leading: tvMode ? remoteBackButton(context) : null,
           // The title of a Plex film rather than its file name, which a screen reader says too
-          title: Text(
-            video?.entry.shownName ?? _name,
-            key: const Key('network_video_title'),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          // A long name is cut in its middle on a computer, so that its end and its extension show
+          title: CurrentPlatform.isDesktop
+              ? MiddleEllipsisText(video?.entry.shownName ?? _name, key: const Key('network_video_title'))
+              : Text(
+                  video?.entry.shownName ?? _name,
+                  key: const Key('network_video_title'),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
           actions: [
             Focus(
               focusNode: _actionsFocus,
@@ -2312,7 +2318,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
               // (lib/desktop/video/av2_gate.dart); a phone says it plays on the computers
               ? Av2ShareGate(
                   file: networkMediaKey(video.entry),
-                  child: _buildPlayer(remote: remote != null),
+                  // Copy and Copy name of a right click, Control C (lib/desktop/clipboard)
+                  child: withDesktopViewerCopy(
+                    copy: (context) => copyEntriesToClipboard(context, ref, [video.entry]),
+                    name: () => video.entry.name,
+                    child: _buildPlayer(remote: remote != null),
+                  ),
                 )
               : snapshot.connectionState != ConnectionState.done
               ? (_waitingForServer
