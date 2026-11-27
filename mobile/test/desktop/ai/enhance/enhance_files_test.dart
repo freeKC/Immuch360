@@ -7,7 +7,9 @@
 // With the Linux launcher and the compiled fake sd-cli of the test job (IMMUCH360_RUN_LAUNCHER, IMMUCH360_FAKE_SD_CLI)
 // the command of the app is also run through the real parser of immuch360-run. With IMMUCH360_ENHANCE_COMPONENTS
 // naming a folder where the linux job of the desktop workflow unpacked the published archives of sd-cli
-// (ai-components-3 and 7) as the app installs them, the published launcher starts the published sd-cli of each level.
+// (ai-components-3 and 7) as the app installs them, the published launcher starts the published sd-cli of each level;
+// with IMMUCH360_ENHANCE_DEVICE too ("Vulkan0", Mesa's software Vulkan in that job), Sharpen of a small picture runs to
+// its end through them.
 
 import 'dart:io';
 import 'dart:typed_data';
