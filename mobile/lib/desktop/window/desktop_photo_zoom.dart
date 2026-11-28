@@ -8,8 +8,11 @@
 //   the 360° viewer, wheelZoomFactor), between the whole picture ("fit") and [desktopZoomBeyondOneToOne] times its
 //   pixels shown one to one, and at least [desktopZoomMinRange] times the fit for a small picture. Out at fit does
 //   nothing. A horizontal wheel move, or Shift and the wheel, pans a zoomed picture and is left to the page otherwise.
-// - A trackpad pinch zooms around the fingers, two fingers pan a zoomed picture (the PhotoView of the asset viewer
-//   reads them itself, as it reads a touch screen); at fit they keep their meaning (the pages turn).
+// - A trackpad pinch zooms around the pointer, two fingers pan a zoomed picture; at fit two fingers that scroll keep
+//   their meaning (the pages turn, the details open, the drag down closes the asset viewer). A pinch is told from a
+//   scroll by its scale (desktop_trackpad_pinch.dart): once it is one, the gesture is the zoom's to its end, its pan is
+//   no move (Windows sends a pan of its own with each pinch), and nothing under or around the picture can take it. A
+//   touchpad without a precision driver sends its pinch as Control and the wheel, which zooms as the wheel does.
 // - A drag with the left button pans a zoomed picture, with a grab cursor, within its edges and without inertia; at
 //   fit a drag keeps its meaning.
 // - A double click goes from fit to the zoom used last on this picture, else to the pixels one to one (or 2.5 times
@@ -22,10 +25,12 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
+import 'package:immich_mobile/desktop/window/desktop_trackpad_pinch.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 import 'package:intl/intl.dart';
 
@@ -406,7 +411,7 @@ class PhotoViewZoomTarget extends ChangeNotifier with DesktopZoomAnimator {
     }
     _releaseLimits();
     _controller = controller;
-    // A trackpad pinch, read by the PhotoView itself, keeps the limits of the wheel
+    // A pinch of a touch screen, read by the PhotoView itself, keeps the limits of the wheel
     controller?.desktopScaleLimits = _scaleLimits;
     _follow();
   }
@@ -597,7 +602,6 @@ class _DesktopZoomViewState extends State<DesktopZoomView> {
         }
         return DesktopPhotoZoom(
           target: widget.controller,
-          trackpad: true,
           mouseDrag: widget.mouseDrag,
           child: ClipRect(
             child: AnimatedBuilder(
@@ -620,7 +624,7 @@ class DesktopPhotoZoom extends StatefulWidget {
     required this.target,
     required this.child,
     this.enabled = true,
-    this.trackpad = false,
+    this.trackpad = true,
     this.mouseDrag = true,
   });
 
@@ -630,8 +634,8 @@ class DesktopPhotoZoom extends StatefulWidget {
   /// Off: the wheel and the clicks go on to [child] (the details of the asset viewer)
   final bool enabled;
 
-  /// Whether the pinch and the two finger pan of a trackpad are read here; the PhotoView of the asset viewer reads
-  /// them itself
+  /// Whether the pinch and the two finger pan of a trackpad are read here (the PhotoView under it leaves them since
+  /// 28 November 2026, see PhotoView.desktopZoom)
   final bool trackpad;
 
   /// Whether a drag with the left button pans the zoomed picture; off where the view reads the drag itself
@@ -650,8 +654,14 @@ class _DesktopPhotoZoomState extends State<DesktopPhotoZoom> with TickerProvider
 
   Offset? _doubleClickAt;
 
-  /// The scale of the last pinch event of a trackpad
-  double _pinchScale = 1;
+  /// The two finger gesture of the touchpad going on: a pinch or a scroll
+  final _pinch = TrackpadPinchLatch();
+
+  /// The pointer of the touchpad gesture this view has taken (its claim won the arena), while it lasts
+  int? _ownedPointer;
+
+  /// Where the mouse pointer was last over the picture (Linux puts a pinch at the last click)
+  Offset? _hoverAt;
 
   bool _zoomed = false;
   bool _indicatorShown = false;
@@ -808,19 +818,59 @@ class _DesktopPhotoZoomState extends State<DesktopPhotoZoom> with TickerProvider
     }
   }
 
-  void _onPanZoomStart(PointerPanZoomStartEvent event) => _pinchScale = 1;
+  bool get _readsTrackpad => widget.enabled && widget.trackpad && widget.target.frame != null;
+
+  void _onPanZoomStart(PointerPanZoomStartEvent event) {
+    _pinch.begin(event);
+    // A zoomed picture: the two fingers are its own from the start, they pan it or zoom it. The claim is in the arena
+    // already (the recognizers of the view under this Listener have the event first).
+    if (_readsTrackpad && desktopZoomed(widget.target)) {
+      _claim?.take(event.pointer);
+    }
+  }
 
   void _onPanZoomUpdate(PointerPanZoomUpdateEvent event) {
-    final target = widget.target;
-    if (!widget.enabled) {
+    final factor = _pinch.update(event);
+    if (!_readsTrackpad) {
       return;
     }
-    if (event.scale > 0 && (event.scale - _pinchScale).abs() > 1e-6) {
-      desktopZoomBy(target, event.scale / _pinchScale, focal: _fromMiddle(event.localPosition));
-      _pinchScale = event.scale;
+    // The report that makes the gesture a pinch takes it, before any drag counts its pan
+    if (_pinch.pinching && _ownedPointer != event.pointer) {
+      _claim?.take(event.pointer);
     }
-    if (event.localPanDelta != Offset.zero) {
+    if (_ownedPointer != event.pointer) {
+      return;
+    }
+    final target = widget.target;
+    if (_pinch.pinching) {
+      if ((factor - 1).abs() > 1e-9) {
+        desktopZoomBy(target, factor, focal: _fromMiddle(_pinchFocal()));
+      }
+    } else if (event.localPanDelta != Offset.zero) {
       desktopZoomPan(target, event.localPanDelta);
+    }
+  }
+
+  void _onPanZoomEnd(PointerPanZoomEndEvent event) {
+    if (event.pointer == _ownedPointer) {
+      _ownedPointer = null;
+    }
+  }
+
+  /// Where a pinch zooms around: where it started, the pointer on Windows and macOS; on Linux, whose pinch starts at
+  /// the last click (the Flutter engine of 3.47, flutter issue 193657), the pointer as last seen over the picture
+  Offset _pinchFocal() {
+    final hover = _hoverAt;
+    return defaultTargetPlatform == TargetPlatform.linux && hover != null ? hover : _pinch.start;
+  }
+
+  TrackpadGestureClaim? _claim;
+
+  void _onClaimAccepted(int pointer) => _ownedPointer = pointer;
+
+  void _onClaimReleased(int pointer) {
+    if (_ownedPointer == pointer) {
+      _ownedPointer = null;
     }
   }
 
@@ -867,11 +917,25 @@ class _DesktopPhotoZoomState extends State<DesktopPhotoZoom> with TickerProvider
       onPointerMove: _onPointerMove,
       onPointerUp: _onPointerEnd,
       onPointerCancel: _onPointerEnd,
+      onPointerHover: (event) => _hoverAt = event.localPosition,
       onPointerPanZoomStart: widget.trackpad ? _onPanZoomStart : null,
       onPointerPanZoomUpdate: widget.trackpad ? _onPanZoomUpdate : null,
+      onPointerPanZoomEnd: widget.trackpad ? _onPanZoomEnd : null,
       child: RawGestureDetector(
         behavior: HitTestBehavior.translucent,
         gestures: {
+          // A pinch, and two fingers on a zoomed picture, are the zoom's: neither the pages, the details, the drag that
+          // closes the viewer nor PhotoView may have them
+          if (widget.trackpad)
+            TrackpadGestureClaim: GestureRecognizerFactoryWithHandlers<TrackpadGestureClaim>(
+              () => TrackpadGestureClaim(debugOwner: this),
+              (recognizer) {
+                _claim = recognizer
+                  ..active = (() => _readsTrackpad)
+                  ..onAccepted = _onClaimAccepted
+                  ..onReleased = _onClaimReleased;
+              },
+            ),
           // A drag that pans is no click: without it a short sideways drag, which no drag of the viewer takes, ended
           // as a tap (the bars of the asset viewer shown or hidden, or the next photo with tapToNavigate)
           _MousePanClaim: GestureRecognizerFactoryWithHandlers<_MousePanClaim>(

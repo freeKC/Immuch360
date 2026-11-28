@@ -53,6 +53,7 @@ import 'package:immich_mobile/desktop/video/spherical_controls.dart';
 import 'package:immich_mobile/desktop/video/xr/headset_view.dart';
 import 'package:immich_mobile/desktop/video/xr/headset_view_service.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
+import 'package:immich_mobile/desktop/window/desktop_trackpad_pinch.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
@@ -279,6 +280,10 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   // The view moves on after a drag, as on the 360° photo viewer, and the arrows turn it while held
   late final Ticker _inertia = createTicker(_onInertiaTick);
   Offset _inertiaVelocity = Offset.zero;
+
+  /// A pinch of the touchpad zooms as the wheel does; the pan Windows sends with it neither turns the view nor leaves
+  /// it turning
+  final _trackpadPinch = TrackpadPinchLatch();
   Duration _lastInertiaTick = Duration.zero;
   late final Ticker _keyTurn = createTicker(_onKeyTurnTick);
   final _heldArrows = <LogicalKeyboardKey, Duration>{};
@@ -1485,6 +1490,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
+    if (_trackpadPinch.pinching) {
+      return;
+    }
     final height = context.size?.height ?? 0;
     _setView(_view.dragged(details.delta, height), moving: true);
   }
@@ -1492,7 +1500,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   void _onPanEnd(DragEndDetails details) {
     _visibility.dragEnded();
     final height = context.size?.height ?? 0;
-    if (height <= 0 || desktopReducedMotion(context)) {
+    if (height <= 0 || desktopReducedMotion(context) || _trackpadPinch.pinching) {
       _setView(_view, moving: false);
       return;
     }
@@ -1525,7 +1533,23 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     _setView(step.view, moving: true);
   }
 
+  void _onPanZoomUpdate(PointerPanZoomUpdateEvent event) {
+    final factor = _trackpadPinch.update(event);
+    if ((factor - 1).abs() > 1e-9) {
+      _inertia.stop();
+      _setView(_view.zoomed(1 / factor), moving: true);
+    }
+  }
+
   void _onPointerSignal(PointerSignalEvent event) {
+    // A pinch sent as a scale (a browser's, an embedder's)
+    if (event is PointerScaleEvent && event.scale > 0) {
+      GestureBinding.instance.pointerSignalResolver.register(event, (_) {
+        _inertia.stop();
+        _setView(_view.zoomed(1 / event.scale), moving: true);
+      });
+      return;
+    }
     final factor = wheelZoomFactor(event);
     if (factor != null) {
       // Claimed, so that nothing around the player scrolls with the same notch
@@ -1726,6 +1750,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
                       _onLayoutSize(constraints.biggest);
                       return Listener(
                         onPointerSignal: _onPointerSignal,
+                        onPointerDown: (_) => _trackpadPinch.reset(),
+                        onPointerPanZoomStart: _trackpadPinch.begin,
+                        onPointerPanZoomUpdate: _onPanZoomUpdate,
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onPanStart: _onPanStart,

@@ -462,8 +462,8 @@ class PhotoView extends StatefulWidget {
   final bool? enablePanAlways;
 
   /// Immuch360 Desktop: the zoom of a computer drives this view (lib/desktop/window/desktop_photo_zoom.dart), which
-  /// then leaves the double click and the mouse to it: no double tap of its own, its pinch and pan for the touch screens
-  /// and the trackpads only, and the fit again its first scale state. Off on the phones, the TV and the Quest.
+  /// then leaves the double click, the mouse and the touchpad to it: no double tap of its own, its pinch and pan for
+  /// the touch screens only, and the fit again its first scale state. Off on the phones, the TV and the Quest.
   final bool desktopZoom;
 
   final int index;

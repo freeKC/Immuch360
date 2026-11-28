@@ -23,6 +23,7 @@ import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
+import 'package:immich_mobile/desktop/window/desktop_trackpad_pinch.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -843,6 +844,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   // Fingers on the screen, and whether they pinched since the first one touched it: no inertia after a pinch
   int _pointers = 0;
   bool _pinched = false;
+  // A pinch of a computer's touchpad: it zooms, and the pan Windows sends with it does not turn the view
+  final _trackpadPinch = TrackpadPinchLatch();
 
   // Double tap zoom
   late final AnimationController _zoom = AnimationController(vsync: this, duration: const Duration(milliseconds: 250))
@@ -1430,6 +1433,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     if (_pointers++ == 0) {
       _pinched = false;
     }
+    _trackpadPinch.reset();
     _inertia.stop();
     _zoom.stop();
   }
@@ -1442,6 +1446,9 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     }
     setState(() {
       _fov = (_fovAtScaleStart / details.scale).clamp(15.0, 115.0);
+      if (_trackpadPinch.pinching) {
+        return;
+      }
       // Rotate by the angle the dragged distance covers on screen, so the image follows the finger
       final degreesPerPixel = _fov / context.size!.height;
       _longitude -= details.focalPointDelta.dx * degreesPerPixel;
@@ -1488,6 +1495,11 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   void _onDoubleTap() => _zoomTo(doubleTapFov(_fov));
 
   void _onPointerSignal(PointerSignalEvent event) {
+    // A pinch sent as a scale (a browser's, an embedder's)
+    if (event is PointerScaleEvent && event.scale > 0) {
+      GestureBinding.instance.pointerSignalResolver.register(event, (_) => _zoomBy(1 / event.scale));
+      return;
+    }
     final factor = wheelZoomFactor(event);
     if (factor != null) {
       // Claimed, so that a scrollable around the viewer does not scroll with the same notch
@@ -1774,6 +1786,8 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                   onPointerCancel: _onPointerUp,
                   // The mouse wheel zooms on a computer (lib/desktop/window/desktop_shortcuts.dart)
                   onPointerSignal: CurrentPlatform.isDesktop ? _onPointerSignal : null,
+                  onPointerPanZoomStart: _trackpadPinch.begin,
+                  onPointerPanZoomUpdate: _trackpadPinch.update,
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onScaleStart: (_) => _fovAtScaleStart = _fov,

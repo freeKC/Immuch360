@@ -49,9 +49,10 @@ class PhotoViewGestureDetector extends StatelessWidget {
   final bool disableScaleGestures;
 
   /// See PhotoView.desktopZoom: the mouse pans and zooms through the desktop zoom, the pinch and the pan of this
-  /// recognizer stay for the touch screens and the trackpads. A mouse drag was taken here by the vertical drag of the
-  /// asset viewer (one logical pixel of slop for a mouse, against a fifth of the touch slop for this recognizer), so a
-  /// zoomed photo never moved under the mouse (release 52).
+  /// recognizer stay for the touch screens. A mouse drag was taken here by the vertical drag of the asset viewer (one
+  /// logical pixel of slop for a mouse, against a fifth of the touch slop for this recognizer), so a zoomed photo
+  /// never moved under the mouse (release 52). The touchpad is the desktop zoom's too (28 November 2026): here its
+  /// pinch lost to the drags of the viewer, which took the pan Windows sends with it, and zoomed nothing.
   final bool desktopZoom;
 
   @override
@@ -100,7 +101,7 @@ class PhotoViewGestureDetector extends StatelessWidget {
         debugOwner: this,
         validateAxis: axis,
         touchSlopFactor: touchSlopFactor,
-        supportedDevices: desktopZoom ? _allButMouse : null,
+        supportedDevices: desktopZoom ? _touchAndStylus : null,
       ),
       (PhotoViewGestureRecognizer instance) {
         instance
@@ -123,8 +124,10 @@ class PhotoViewGestureDetector extends StatelessWidget {
   }
 }
 
-/// Every kind of pointer but a mouse
-final _allButMouse = PointerDeviceKind.values.where((kind) => kind != PointerDeviceKind.mouse).toSet();
+/// Every kind of pointer but a mouse and a touchpad, which the desktop zoom reads
+final _touchAndStylus = PointerDeviceKind.values
+    .where((kind) => kind != PointerDeviceKind.mouse && kind != PointerDeviceKind.trackpad)
+    .toSet();
 
 class PhotoViewGestureRecognizer extends ScaleGestureRecognizer {
   PhotoViewGestureRecognizer({

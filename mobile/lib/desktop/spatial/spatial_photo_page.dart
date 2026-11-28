@@ -41,6 +41,7 @@ import 'package:immich_mobile/desktop/spatial/spatial_viewpoint.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position_sources.dart';
 import 'package:immich_mobile/desktop/video/projection_params.dart';
+import 'package:immich_mobile/desktop/window/desktop_trackpad_pinch.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immuch_head_tracker/immuch_head_tracker.dart';
@@ -202,6 +203,9 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
 
   /// The direction and the field of view of a 3D sphere, turned by a drag and the arrows, zoomed by the wheel
   final _view = ValueNotifier<ViewAngles>(const ViewAngles());
+
+  /// A pinch of the touchpad zooms the sphere; the pan Windows sends with it does not turn it
+  final _trackpadPinch = TrackpadPinchLatch();
   late final Ticker _ticker = createTicker(_onTick);
   bool _showDepth = false;
   bool _disposed = false;
@@ -462,6 +466,13 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
     }
   }
 
+  void _onPanZoomUpdate(PointerPanZoomUpdateEvent event) {
+    final factor = _trackpadPinch.update(event);
+    if ((factor - 1).abs() > 1e-9) {
+      _view.value = _view.value.zoomed(1 / factor);
+    }
+  }
+
   /// The view of a 3D sphere turned by [degrees] of yaw (x) and pitch (y)
   void _turn(Offset degrees) {
     if (_isSphere) {
@@ -470,19 +481,28 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
   }
 
   /// Around the picture of a 3D sphere: a drag turns the view (the picture follows the pointer, as on the 360° photo
-  /// viewer), the wheel zooms; nothing around a flat 3D photo
+  /// viewer), the wheel and a pinch of the touchpad zoom; nothing around a flat 3D photo
   Widget _sphereGestures({required double height, required Widget child}) => !_isSphere
       ? child
       : Listener(
           onPointerSignal: (event) {
             if (event is PointerScrollEvent) {
               _view.value = _view.value.zoomed(event.scrollDelta.dy > 0 ? 1.1 : 1 / 1.1);
+            } else if (event is PointerScaleEvent && event.scale > 0) {
+              _view.value = _view.value.zoomed(1 / event.scale);
             }
           },
+          onPointerDown: (_) => _trackpadPinch.reset(),
+          onPointerPanZoomStart: _trackpadPinch.begin,
+          onPointerPanZoomUpdate: _onPanZoomUpdate,
           child: GestureDetector(
             key: const Key('spatial_photo_sphere_drag'),
             behavior: HitTestBehavior.opaque,
-            onPanUpdate: (details) => _view.value = _view.value.dragged(details.delta, height),
+            onPanUpdate: (details) {
+              if (!_trackpadPinch.pinching) {
+                _view.value = _view.value.dragged(details.delta, height);
+              }
+            },
             child: child,
           ),
         );

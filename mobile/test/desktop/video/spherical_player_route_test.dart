@@ -43,6 +43,7 @@ import 'package:immich_mobile/platform/spherical_video_api.g.dart' show Spherica
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:media_kit_video/sphere.dart';
 
+import '../window/trackpad_pinch_sequences.dart';
 import 'fake_playback_engine.dart';
 
 const _intel = 'ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)';
@@ -398,6 +399,29 @@ void main() {
     expect(channel.views.last.$2, isTrue);
     expect(mpv, mpvBefore, reason: 'no mpv property changes while the view moves');
     expect(channel.setups.length, enablesBefore, reason: 'nor the setup of the plugin');
+    await close(tester);
+  });
+
+  testWidgets('a pinch of the touchpad zooms; the pan Windows sends with it turns nothing and leaves no inertia', (
+    tester,
+  ) async {
+    await pumpLauncher(tester, const SphericalPlayerArgs(url: '/videos/sphere.mp4', title: 'sphere.mp4'));
+    final before = page(tester).view;
+    const at = Offset(1100, 600);
+    await sendPanZoom(tester, at, windowsPinch(2, at));
+    await tester.pumpAndSettle();
+    final after = page(tester).view;
+    expect(after.fov, closeTo(before.fov / 2, 0.01));
+    // The first reports, before the scale says it is a pinch, turn it by their 2 px of pan at most
+    expect(after.yaw, closeTo(before.yaw, 0.5), reason: 'no turn, no inertia');
+    expect(after.pitch, closeTo(before.pitch, 0.5));
+    // Two fingers that scroll still turn it; a scale signal zooms
+    await sendPanZoom(tester, at, scroll(const Offset(-200, 0)));
+    await tester.pumpAndSettle();
+    expect(page(tester).view.yaw, greaterThan(after.yaw));
+    tester.binding.handlePointerEvent(const PointerScaleEvent(position: at, scale: 1.5));
+    await tester.pump();
+    expect(page(tester).view.fov, closeTo(before.fov / 3, 0.01));
     await close(tester);
   });
 

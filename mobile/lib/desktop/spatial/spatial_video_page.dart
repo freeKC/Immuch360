@@ -50,6 +50,7 @@ import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/desktop/video/projection_params.dart' show ViewAngles;
 import 'package:immich_mobile/desktop/video/spherical_controls.dart' show SphericalControlsVisibility;
 import 'package:immich_mobile/desktop/video/spherical_player_route.dart' show sphericalVideoSource;
+import 'package:immich_mobile/desktop/window/desktop_trackpad_pinch.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -294,6 +295,9 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
   late SpatialStereoLayout _layout = widget.args.layout;
   late final SpatialProjection _projection = widget.args.projection;
   ViewAngles _view = const ViewAngles();
+
+  /// The touchpad gesture going on, a pinch or a two finger drag
+  final _trackpadPinch = TrackpadPinchLatch();
 
   PlaybackEngine? _engine;
   int? _handle;
@@ -918,6 +922,17 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
                     onPointerSignal: (event) {
                       if (event is PointerScrollEvent && _projection != SpatialProjection.flat) {
                         _setView(_view.zoomed(event.scrollDelta.dy > 0 ? 1.1 : 1 / 1.1), sharp: true);
+                      } else if (event is PointerScaleEvent && event.scale > 0) {
+                        _setView(_view.zoomed(1 / event.scale), sharp: true);
+                      }
+                    },
+                    // A pinch of the touchpad zooms as the wheel does; the pan Windows sends with it does not turn
+                    onPointerDown: (_) => _trackpadPinch.reset(),
+                    onPointerPanZoomStart: _trackpadPinch.begin,
+                    onPointerPanZoomUpdate: (event) {
+                      final factor = _trackpadPinch.update(event);
+                      if ((factor - 1).abs() > 1e-9) {
+                        _setView(_view.zoomed(1 / factor), sharp: true);
                       }
                     },
                     child: MouseRegion(
@@ -930,7 +945,11 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
                         onPanStart: _projection == SpatialProjection.flat ? null : (_) => _visibility.dragStarted(),
                         onPanUpdate: _projection == SpatialProjection.flat
                             ? null
-                            : (details) => _setView(_view.dragged(details.delta, constraints.maxHeight), sharp: false),
+                            : (details) {
+                                if (!_trackpadPinch.pinching) {
+                                  _setView(_view.dragged(details.delta, constraints.maxHeight), sharp: false);
+                                }
+                              },
                         onPanEnd: _projection == SpatialProjection.flat
                             ? null
                             : (_) {

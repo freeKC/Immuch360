@@ -38,6 +38,7 @@ import 'package:media_kit_video/media_kit_video.dart' as mkv;
 
 import '../../unit/presentation/presentation_context.dart';
 import '../video/fake_playback_engine.dart';
+import '../window/trackpad_pinch_sequences.dart';
 import 'fake_viewer_position_source.dart';
 
 class _Passes implements SpatialPassesChannel {
@@ -482,6 +483,17 @@ void main() {
     await tester.sendEventToBinding(const PointerScrollEvent(position: Offset(800, 450), scrollDelta: Offset(0, -100)));
     await tester.pump();
     expect(page(tester).view.fov, lessThan(fov), reason: 'the wheel zooms in');
+    // A pinch of the touchpad zooms too, and the pan Windows sends with it does not turn the view
+    final turned = page(tester).view;
+    const at = Offset(1100, 600);
+    await sendPanZoom(tester, at, windowsPinch(2, at));
+    expect(page(tester).view.fov, closeTo(turned.fov / 2, 0.01), reason: 'a pinch zooms in');
+    // The first reports, before the scale says it is a pinch, turn it by their 2 px of pan at most
+    expect(page(tester).view.yaw, closeTo(turned.yaw, 0.5), reason: 'and turns nothing');
+    expect(page(tester).view.pitch, closeTo(turned.pitch, 0.5));
+    tester.binding.handlePointerEvent(const PointerScaleEvent(position: at, scale: 0.8));
+    await tester.pump();
+    expect(page(tester).view.fov, closeTo(turned.fov / 2 / 0.8, 0.01), reason: 'a scale signal zooms out');
     // Keys only: the arrows move the viewpoint
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
     for (var i = 0; i < 20; i++) {
