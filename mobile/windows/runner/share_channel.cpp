@@ -83,13 +83,27 @@ ShareChannel::ShareChannel(flutter::BinaryMessenger* messenger, HWND window) {
                                        }));
       });
   auto* sheet = sheet_.get();
-  channel_->SetMethodCallHandler([sheet, channel](const flutter::MethodCall<flutter::EncodableValue>& call,
+  channel_->SetMethodCallHandler([sheet, channel, window](const flutter::MethodCall<flutter::EncodableValue>& call,
                                                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
                                                       result) {
     const std::string& method = call.method_name();
     if (method == "isSupported") {
       HRESULT hr = S_OK;
       result->Success(flutter::EncodableValue(sheet->IsSupported(&hr)));
+      return;
+    }
+    if (method == "foreground") {
+      // For the tests of the desktop workflow: whether the window of the app is in front, and the class of the one
+      // that is (ApplicationFrameWindow for the share window of Windows)
+      HWND front = ::GetForegroundWindow();
+      wchar_t name[256] = {};
+      if (front != nullptr) {
+        ::GetClassNameW(front, name, 255);
+      }
+      result->Success(flutter::EncodableValue(flutter::EncodableMap{
+          {flutter::EncodableValue("isApp"), flutter::EncodableValue(front != nullptr && front == window)},
+          {flutter::EncodableValue("className"), flutter::EncodableValue(Utf8FromUtf16(name))},
+      }));
       return;
     }
     const auto* arguments = std::get_if<flutter::EncodableMap>(call.arguments());

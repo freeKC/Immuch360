@@ -13,6 +13,7 @@
 //   Windows…"; a share asked anyway gets no request from Windows and says the window did not open.
 // Run in the desktop workflow only: it opens the share window of the system.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -23,8 +24,15 @@ import 'package:immich_mobile/desktop/share/system_share_sheet.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
+import 'package:window_manager/window_manager.dart';
 
 const _scenario = String.fromEnvironment('IMMUCH360_SHARE_SCENARIO', defaultValue: 'new');
+
+/// What is in front, as the share window of Windows needs the window of the app there
+Future<String> _front() async {
+  final answer = await desktopShareChannel.invokeMapMethod<String, Object?>('foreground');
+  return 'app in front: ${answer?['isApp']}, front window class: ${answer?['className']}';
+}
 
 /// A file of [size] bytes named [name] in a new folder of the temporary folder, as a download for a share is
 Future<File> _download(String name, {int size = 64 * 1024}) async {
@@ -43,6 +51,13 @@ void main() {
       return;
     }
     await tester.pumpWidget(const MaterialApp(home: Scaffold(body: SizedBox.expand())));
+    // The window of the app in front, as when a user clicks Share in it
+    await windowManager.ensureInitialized();
+    await windowManager.show();
+    await windowManager.focus();
+    await tester.pump(const Duration(milliseconds: 500));
+    // ignore: avoid_print
+    print('Before the share: ${await _front()}');
     final sheet = WindowsShareSheet();
     final supported = await sheet.supported();
     // ignore: avoid_print
@@ -80,7 +95,14 @@ void main() {
         final answeredMs = clock.elapsedMilliseconds;
         // What build 35 did in whenComplete of that answer (AssetMediaRepository.cleanupTempFiles)
         await file.parent.delete(recursive: true);
-        final seen = await observed.timeout(const Duration(seconds: 20));
+        final ({double elapsedMs, int existing}) seen;
+        try {
+          seen = await observed.timeout(const Duration(seconds: 30));
+        } on TimeoutException {
+          fail(
+            'share_plus answered ${answer.status.name} after $answeredMs ms, then no request in 30 s; ${await _front()}',
+          );
+        }
         // ignore: avoid_print
         print(
           'share_plus answered ${answer.status.name} ("${answer.raw}") after $answeredMs ms; the window asked for '
@@ -123,7 +145,11 @@ void main() {
         expect(p.basename(kept.path), 'IMG_0042 été.mp4');
         final share = sheet.share(copies.paths, title: p.basename(kept.path));
         final clock = Stopwatch()..start();
-        await share.opened.timeout(const Duration(seconds: 20));
+        try {
+          await share.opened.timeout(const Duration(seconds: 30));
+        } on TimeoutException {
+          fail('No request of the share window in 30 s; ${await _front()}');
+        }
         // ignore: avoid_print
         print('The window asked for the file after ${clock.elapsedMilliseconds} ms and took it');
         // The window is open: the folder stays even once older than the rule's hour

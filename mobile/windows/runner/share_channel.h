@@ -23,7 +23,8 @@
 //   "completed", "destroyed" once it let them go;
 // - observeNextRequest {paths} (the tests of the desktop workflow): calls
 //   "observed" {elapsedMs, existing} at the next request of a share that is
-//   not of this channel (share_plus's), with how many of [paths] existed then.
+//   not of this channel (share_plus's), with how many of [paths] existed then;
+//   foreground (the same tests): whether the window of the app is in front.
 class ShareChannel {
  public:
   ShareChannel(flutter::BinaryMessenger* messenger, HWND window);

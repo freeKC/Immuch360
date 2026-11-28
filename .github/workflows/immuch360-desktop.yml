@@ -1924,12 +1924,35 @@ jobs:
           flutter test integration_test/desktop_share_test.dart -d windows --reporter expanded
           --dart-define=IMMUCH360_SHARE_SCENARIO=old
 
+      # Run even when the scenario above failed: each tells its own part
       - name: The share of the Share menu, in a built app
+        if: ${{ !cancelled() }}
         working-directory: mobile
         timeout-minutes: 15
         run: >-
           flutter test integration_test/desktop_share_test.dart -d windows --reporter expanded
           --dart-define=IMMUCH360_SHARE_SCENARIO=new
+
+      # What the screen showed when a scenario failed (the share window of Windows, or nothing)
+      - name: The screen after a failure
+        if: failure()
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          New-Item -ItemType Directory -Force share-screen | Out-Null
+          $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bitmap = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height
+          [System.Drawing.Graphics]::FromImage($bitmap).CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+          $bitmap.Save((Join-Path $PWD 'share-screen\screen.png'))
+
+      - name: Upload the screen after a failure
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-share-screen
+          path: share-screen/
+          retention-days: 7
+          if-no-files-found: ignore
 
   macos:
     name: macOS build, ZIP and DMG
