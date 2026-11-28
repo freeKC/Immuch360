@@ -1872,13 +1872,18 @@ jobs:
   # - new: the share of the menu: a missing file fails at once with the reason of Windows and the file's name only;
   #   a fetched file moves into the folder of the copies, the window asks for it and gets it, and the folder stays
   #   while the window is open.
-  # Not on tags: a release does not wait for the share window of a server image
+  # Not on tags: a release does not wait for the share window of a server image. The image of Windows Server 2025
+  # has Visual Studio 2026 only, whose compiler refuses the /await option one plugin builds with unless its
+  # deprecation is silenced (CL, read by cl.exe itself): only this test app is built so, the app ships from the
+  # windows job (Visual Studio 2022)
   windows-share:
     name: Windows share window (Server 2025)
     runs-on: windows-2025
     needs: codegen
     if: github.event_name != 'push' || github.ref == 'refs/heads/desktop'
     timeout-minutes: 60
+    env:
+      CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
     defaults:
       run:
         shell: bash
