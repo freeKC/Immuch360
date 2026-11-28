@@ -27,12 +27,18 @@ class FakeDesktopClipboard implements DesktopClipboard {
   var _token = 100;
   bool refuse = false;
 
+  /// Answers as the macOS runner does for a write a later one overtook
+  bool supersede = false;
+
   int get token => _token;
 
   @override
   Future<int> writeFiles(ClipboardPayload payload) async {
     if (refuse) {
       throw PlatformException(code: 'clipboard', message: 'held by another program');
+    }
+    if (supersede) {
+      throw PlatformException(code: clipboardSupersededCode, message: 'a later copy was asked');
     }
     writes.add(payload);
     return ++_token;

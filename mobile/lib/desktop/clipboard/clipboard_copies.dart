@@ -24,6 +24,16 @@ import 'package:path_provider/path_provider.dart';
 
 final _log = Logger('ClipboardCopies');
 
+/// [text] without any URL: the requests of a share go through the media bridge, whose URLs carry its token, the
+/// source, the folder and the file name, and those of the server carry the asset; none of it goes into the log
+String clipboardLogText(String text) => text.replaceAll(_urlInText, '<url>');
+
+final _urlInText = RegExp(r'[A-Za-z][A-Za-z0-9+.-]*://[^\s,)]*');
+
+/// What a failed fetch says, for the log: the message of an http error without its request URL, then [clipboardLogText]
+String clipboardFetchErrorText(Object error) =>
+    clipboardLogText(error is http.ClientException ? 'ClientException: ${error.message}' : '$error');
+
 /// The folder of the copies under the cache of the app
 const clipboardCopiesFolderName = 'immuch360-clipboard';
 
@@ -99,6 +109,9 @@ enum ClipboardCopyFailure {
 
   /// The system refused the clipboard
   clipboardRefused,
+
+  /// A later copy was asked before this one reached the clipboard: the later one wins, this one writes nothing
+  superseded,
 }
 
 class ClipboardCopyException implements Exception {
@@ -210,7 +223,7 @@ Future<String> _fetchOne(
   } on http.RequestAbortedException {
     throw cancelledError;
   } on Exception catch (error) {
-    throw ClipboardCopyException(ClipboardCopyFailure.fetchFailed, '$error');
+    throw ClipboardCopyException(ClipboardCopyFailure.fetchFailed, clipboardFetchErrorText(error));
   }
   if (response.statusCode != HttpStatus.ok) {
     unawaited(response.stream.drain<void>().catchError((_) {}));
@@ -255,7 +268,7 @@ Future<String> _fetchOne(
     } on http.RequestAbortedException {
       throw cancelledError;
     } on Exception catch (error) {
-      throw ClipboardCopyException(ClipboardCopyFailure.fetchFailed, '$error');
+      throw ClipboardCopyException(ClipboardCopyFailure.fetchFailed, clipboardFetchErrorText(error));
     }
   } finally {
     try {

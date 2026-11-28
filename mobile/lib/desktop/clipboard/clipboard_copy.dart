@@ -10,6 +10,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/clipboard/clipboard_copies.dart';
@@ -52,6 +53,11 @@ class ClipboardCopier {
 
   DesktopClipboard get clipboard => _clipboard;
 
+  /// The copies asked in this run, the latest last: a copy that a later one overtook (the picture of a large photo
+  /// still being made, a fetch still going) writes nothing, so that the clipboard ends up with what was asked last.
+  /// Shared by every copier: there is one clipboard.
+  static int _generation = 0;
+
   static Future<ClipboardPicture?> _pictureOfFile(String path) => clipboardPictureOf(path, File(path).readAsBytes);
 
   /// Puts [sources] on the clipboard, in their order. [cancelled] stops the fetch of remote files; [onProgress] tells
@@ -64,6 +70,7 @@ class ClipboardCopier {
     if (sources.isEmpty) {
       return (files: 0, picture: false);
     }
+    final generation = ++_generation;
     final root = await _root();
     // The copies the clipboard no longer holds go before new ones come
     await cleanClipboardCopies(root, holds: _clipboard.holds, systemTokens: _systemTokens);
@@ -92,9 +99,18 @@ class ClipboardCopier {
       if (cancelledNow) {
         throw const ClipboardCopyException(ClipboardCopyFailure.cancelled);
       }
+      if (generation != _generation) {
+        throw const ClipboardCopyException(ClipboardCopyFailure.superseded);
+      }
       final int token;
       try {
         token = await _clipboard.writeFiles(ClipboardPayload(paths: paths, picture: picture));
+      } on PlatformException catch (error) {
+        // The macOS runner makes the picture off its main thread and drops a write a later one overtook
+        if (error.code == clipboardSupersededCode) {
+          throw const ClipboardCopyException(ClipboardCopyFailure.superseded);
+        }
+        throw ClipboardCopyException(ClipboardCopyFailure.clipboardRefused, error.message ?? error.code);
       } on Exception catch (error) {
         throw ClipboardCopyException(ClipboardCopyFailure.clipboardRefused, '$error');
       }
@@ -120,7 +136,7 @@ class ClipboardCopier {
     try {
       await cleanClipboardCopies(await _root(), holds: _clipboard.holds, systemTokens: _systemTokens);
     } catch (error) {
-      _log.info('The copies of the clipboard were not cleaned up: $error');
+      _log.info('The copies of the clipboard were not cleaned up: ${error.runtimeType}');
     }
   }
 
@@ -244,7 +260,7 @@ Future<void> copyToClipboard(
   try {
     items = await sources();
   } catch (error) {
-    _log.warning('The items to copy could not be found: $error');
+    _log.warning('The items to copy could not be found: ${error.runtimeType}');
     snackbar.error(t.desktop_copy_failed);
     return;
   }
@@ -286,10 +302,15 @@ Future<void> copyToClipboard(
     final result = await copying;
     snackbar.success(t.desktop_copy_done(count: result.files));
   } on ClipboardCopyException catch (error) {
-    if (error.failure != ClipboardCopyFailure.cancelled) {
-      _log.warning('The copy did not reach the clipboard: $error');
+    // A cancel, and a copy a later one overtook, stay silent: the user asked for something else
+    if (error.failure != ClipboardCopyFailure.cancelled && error.failure != ClipboardCopyFailure.superseded) {
+      _log.warning('The copy did not reach the clipboard: ${clipboardLogText('$error')}');
       snackbar.error(t.desktop_copy_failed);
     }
+  } catch (error) {
+    // Anything else (the cache folder not found, a source that cannot be read): the same message, never a path
+    _log.warning('The copy did not reach the clipboard: ${clipboardLogText('${error.runtimeType}')}');
+    snackbar.error(t.desktop_copy_failed);
   } finally {
     if (!cancel.isCompleted) {
       cancel.complete();

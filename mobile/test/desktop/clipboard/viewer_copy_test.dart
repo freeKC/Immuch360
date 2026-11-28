@@ -32,7 +32,7 @@ void main() {
 
   final item = find.byKey(const Key('viewer_item'));
 
-  Future<void> pumpViewer(WidgetTester tester, {bool tvMode = false, bool shell = true}) async {
+  Future<void> pumpViewer(WidgetTester tester, {bool tvMode = false, bool shell = true, bool offer = true}) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -43,6 +43,7 @@ void main() {
             builder: (_) => Focus(
               autofocus: true,
               child: withDesktopViewerCopy(
+                offer: offer,
                 copy: (context) async => copies++,
                 name: () => _name,
                 child: const ColoredBox(
@@ -122,6 +123,18 @@ void main() {
   testWidgets('the remote control layout of a computer has no copy', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;
     await pumpViewer(tester, tvMode: true);
+    await rightClick(tester, item);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('desktop_viewer_copy')), findsNothing);
+    expect(await withShortcut(tester, LogicalKeyboardKey.keyC), isFalse);
+    expect(copies, 0);
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  testWidgets('the viewer of the trash has no copy, as its grid', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    await pumpViewer(tester, offer: false);
+    expect(find.byType(DesktopViewerCopy), findsNothing);
     await rightClick(tester, item);
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('desktop_viewer_copy')), findsNothing);

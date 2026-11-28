@@ -176,6 +176,10 @@ final class ClipboardChannel {
 
   private var channel: FlutterMethodChannel?
 
+  /// The writes asked so far, on the main thread: a write whose picture is still being made when a later one comes is
+  /// dropped, so that the pasteboard ends up with what was copied last
+  private var writes = 0
+
   func attach(to controller: FlutterViewController) {
     channel = FlutterMethodChannel(
       name: "immuch360/clipboard", binaryMessenger: controller.engine.binaryMessenger)
@@ -202,9 +206,15 @@ final class ClipboardChannel {
       return
     }
     let imagePath = paths.count == 1 ? arguments?["imagePath"] as? String : nil
+    writes += 1
+    let write = writes
     DispatchQueue.global(qos: .userInitiated).async {
       let picture = imagePath.flatMap(ClipboardChannel.picture(of:))
       DispatchQueue.main.async {
+        guard write == self.writes else {
+          result(FlutterError(code: "superseded", message: "a later copy was asked", details: nil))
+          return
+        }
         let items: [NSPasteboardItem] = paths.enumerated().map { index, path in
           let item = NSPasteboardItem()
           item.setString(URL(fileURLWithPath: path).absoluteString, forType: .fileURL)

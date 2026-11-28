@@ -31,6 +31,10 @@ final _log = Logger('DesktopClipboard');
 /// The channel of the runners of the three computers
 const desktopClipboardChannel = MethodChannel('immuch360/clipboard');
 
+/// The error code of a writeFiles that a later one overtook in the runner (macOS makes the picture off its main
+/// thread): nothing was written, the later write stands
+const clipboardSupersededCode = 'superseded';
+
 /// The largest picture put on the clipboard, in pixels: a larger photo is scaled down for its picture (its file stays
 /// whole). 40 megapixels keep the photos of most cameras and 8K 360° photos at their size, under 200 MB decoded.
 const clipboardPictureMaxPixels = 40 * 1000 * 1000;

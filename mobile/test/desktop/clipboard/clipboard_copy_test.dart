@@ -148,6 +148,68 @@ void main() {
       expect(root.listSync(), isEmpty);
     });
 
+    test('a copy a later one overtook writes nothing: the clipboard holds what was copied last', () async {
+      final picturing = Completer<ClipboardPicture?>();
+      final slow = ClipboardCopier(
+        clipboard: clipboard,
+        root: () async => root,
+        picture: (path) => picturing.future,
+        systemTokens: true,
+      );
+      final photo = file('a.jpg');
+      final video = file('b.mp4');
+      // The picture of the photo is still being made when the video is copied
+      final first = slow.copy([LocalClipboardSource(photo.path, isVideo: false)]);
+      await pumpEventQueue();
+      expect(await slow.copy([LocalClipboardSource(video.path, isVideo: true)]), (files: 1, picture: false));
+      picturing.complete(ClipboardPicture(png: Uint8List.fromList([1])));
+      await expectLater(
+        first,
+        throwsA(isA<ClipboardCopyException>().having((e) => e.failure, 'failure', ClipboardCopyFailure.superseded)),
+      );
+      expect(clipboard.writes.map((write) => write.paths), [
+        [video.path],
+      ]);
+    });
+
+    test('a write the runner dropped for a later one is overtaken, not refused', () async {
+      clipboard.supersede = true;
+      await expectLater(
+        copier.copy([LocalClipboardSource(file('a.jpg').path, isVideo: false)]),
+        throwsA(isA<ClipboardCopyException>().having((e) => e.failure, 'failure', ClipboardCopyFailure.superseded)),
+      );
+    });
+
+    test('a fetch that breaks says why without its URL: the bridge token, the folder and the name stay out', () async {
+      const url = 'http://127.0.0.1:41234/BRIDGETOKEN123/smb-1/Famille/Secret/IMG_0042.jpg';
+      Future<ClipboardCopyException> failure(ClipboardFetch fetch) async {
+        try {
+          await copier.copy([RemoteClipboardSource(name: 'IMG_0042.jpg', isVideo: false, fetch: fetch)]);
+        } on ClipboardCopyException catch (error) {
+          return error;
+        }
+        fail('the copy went through');
+      }
+
+      final atSend = await failure((abort) async => throw http.ClientException('Connection refused', Uri.parse(url)));
+      final midStream = await failure(
+        (abort) async => http.StreamedResponse(
+          Stream<List<int>>.error(http.ClientException('Connection closed while receiving data', Uri.parse(url))),
+          HttpStatus.ok,
+        ),
+      );
+      for (final error in [atSend, midStream]) {
+        expect(error.failure, ClipboardCopyFailure.fetchFailed);
+        for (final secret in ['BRIDGETOKEN123', 'Famille', 'Secret', 'IMG_0042', '127.0.0.1']) {
+          expect('$error', isNot(contains(secret)));
+        }
+      }
+      expect('$atSend', contains('Connection refused'));
+      expect('$midStream', contains('Connection closed while receiving data'));
+      expect(clipboard.writes, isEmpty);
+      expect(clipboardLogText('at $url, then'), 'at <url>, then');
+    });
+
     test('the copies the clipboard no longer holds go at the next copy, once an hour old', () async {
       final stale = Directory(
         p.join(root.path, '${DateTime.now().subtract(const Duration(hours: 2)).toUtc().microsecondsSinceEpoch}'),

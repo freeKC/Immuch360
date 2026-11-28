@@ -14,14 +14,16 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
-/// [child], the item of a viewer, with Copy and Copy name on a computer; [child] itself elsewhere. [copy] copies the
-/// item shown now, [name] gives its file name (null while there is none).
+/// [child], the item of a viewer, with Copy and Copy name on a computer; [child] itself elsewhere, and where the
+/// viewer does not [offer] them (the viewer of the trash, as its grid). [copy] copies the item shown now, [name] gives
+/// its file name (null while there is none).
 Widget withDesktopViewerCopy({
   Key? key,
   required Future<void> Function(BuildContext context) copy,
   required String? Function() name,
   required Widget child,
-}) => CurrentPlatform.isDesktop ? DesktopViewerCopy(key: key, copy: copy, name: name, child: child) : child;
+  bool offer = true,
+}) => CurrentPlatform.isDesktop && offer ? DesktopViewerCopy(key: key, copy: copy, name: name, child: child) : child;
 
 class DesktopViewerCopy extends ConsumerStatefulWidget {
   const DesktopViewerCopy({super.key, required this.copy, required this.name, required this.child});

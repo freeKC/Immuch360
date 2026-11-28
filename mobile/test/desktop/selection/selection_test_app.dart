@@ -42,6 +42,7 @@ Future<void> pumpSelectionApp(
   List<Override> overrides = const [],
   DesktopWindow? window,
   bool shell = true,
+  GlobalKey<ScaffoldMessengerState>? messenger,
 }) async {
   await tester.pumpWidget(
     EasyLocalization(
@@ -56,6 +57,7 @@ Future<void> pumpSelectionApp(
         overrides: [desktopWindowProvider.overrideWithValue(window ?? FakeSelectionWindow()), ...overrides],
         child: Builder(
           builder: (context) => MaterialApp.router(
+            scaffoldMessengerKey: messenger,
             debugShowCheckedModeBanner: false,
             routerConfig: router.config(),
             localizationsDelegates: context.localizationDelegates,
