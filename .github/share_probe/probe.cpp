@@ -112,7 +112,7 @@ int wmain(int argc, wchar_t** argv) {
         ::TranslateMessage(&msg);
         ::DispatchMessageW(&msg);
       }
-      if (!escaped && ::GetTickCount64() + 3000 > until) {
+      if (!escaped && ::GetTickCount64() + 5000 > until) {
         // Close what the share window left open, from the keyboard as a user would
         HWND front = ::GetForegroundWindow();
         wchar_t title[256] = {};

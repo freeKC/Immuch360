@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022, windows-2025]
+        os: [windows-2025]
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -44,21 +44,39 @@ jobs:
         run: |
           Add-Type -AssemblyName System.Windows.Forms, System.Drawing
           New-Item -ItemType Directory -Force out | Out-Null
-          foreach ($scenario in 'ours', 'plus', 'plusdeleted') {
-            $file = Join-Path $env:RUNNER_TEMP "probe-$scenario.mp4"
-            [IO.File]::WriteAllBytes($file, [byte[]](1..200 | ForEach-Object { $_ % 256 }))
-            Write-Host "=== $scenario"
-            $p = Start-Process -FilePath .\probe.exe -ArgumentList $scenario, "`"$file`"", '9' -PassThru -NoNewWindow `
-              -RedirectStandardOutput "out\$scenario.txt"
-            Start-Sleep -Seconds 4
+          function Shot($name) {
             $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
             $bitmap = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height
             $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
             $graphics.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
-            $bitmap.Save("out\$scenario.png")
-            Get-Process | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object ProcessName, Id, MainWindowTitle | Format-Table | Out-String | Write-Host
-            $p.WaitForExit(20000) | Out-Null
-            Get-Content "out\$scenario.txt"
+            $bitmap.Save((Join-Path $PWD "out\$name.png"))
+            $graphics.Dispose(); $bitmap.Dispose()
+          }
+          $png = [Convert]::FromBase64String('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')
+          $cases = @(
+            @('ours', 'ours-png', 'png', $env:RUNNER_TEMP),
+            @('ours', 'ours-mp4-appdata', 'mp4', $env:LOCALAPPDATA),
+            @('plus', 'plus-png', 'png', $env:RUNNER_TEMP),
+            @('plusdeleted', 'plusdeleted-png', 'png', $env:RUNNER_TEMP)
+          )
+          foreach ($case in $cases) {
+            $scenario, $name, $ext, $dir = $case
+            $folder = Join-Path $dir "immuch360-probe-$name"
+            New-Item -ItemType Directory -Force $folder | Out-Null
+            $file = Join-Path $folder "probe photo.$ext"
+            if ($ext -eq 'png') { [IO.File]::WriteAllBytes($file, $png) } else { [IO.File]::WriteAllBytes($file, [byte[]](1..200 | ForEach-Object { $_ % 256 })) }
+            Write-Host "=== $name"
+            $p = Start-Process -FilePath .\probe.exe -ArgumentList $scenario, "`"$file`"", '14' -PassThru -NoNewWindow `
+              -RedirectStandardOutput "out\$name.txt"
+            Start-Sleep -Milliseconds 1500
+            Shot "$name-1"
+            Start-Sleep -Milliseconds 2500
+            Shot "$name-2"
+            Start-Sleep -Milliseconds 6000
+            Shot "$name-3"
+            $p.WaitForExit(30000) | Out-Null
+            Shot "$name-4"
+            Get-Content "out\$name.txt"
             Write-Host "file still there: $(Test-Path $file)"
           }
 
