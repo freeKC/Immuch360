@@ -55,6 +55,7 @@ import '../../widget_tester_extensions.dart';
 import '../ai/fakes/fake_conversion_engines.dart';
 import '../ai/fakes/fake_stereo_panorama_engine.dart';
 import '../ai/ui/settle_still.dart';
+import '../window/trackpad_pinch_sequences.dart';
 import 'fake_viewer_position_source.dart';
 import 'spatial_ai_fakes.dart';
 
@@ -547,6 +548,27 @@ void main() {
       await advance(tester, 2000);
       expect(painter(tester).viewpoint.value, closeTo(0.5 + 0.35 * 0.2, 1e-3));
       expect(view(), kept, reason: 'left and right move the viewpoint in Keys only');
+    });
+
+    testWidgets('a pinch of the touchpad zooms the sphere; the pan Windows sends with it turns nothing', (
+      tester,
+    ) async {
+      await pumpPage(tester, overrides());
+      final canvas = find.byKey(const Key('spatial_photo_canvas'));
+      ViewAngles view() => painter(tester).view.value;
+      final at = tester.getCenter(canvas) + const Offset(120, 80);
+      await sendPanZoom(tester, at, windowsPinch(2, at));
+      expect(view().fov, closeTo(45, 0.01));
+      // The first reports, before the scale says it is a pinch, turn it by their 2 px of pan at most
+      expect(view().yaw.abs(), lessThan(0.5), reason: 'no turn');
+      expect(view().pitch.abs(), lessThan(0.5));
+      // Two fingers that scroll still turn it, a scale signal zooms
+      await sendPanZoom(tester, at, scroll(const Offset(-100, 0)));
+      expect(view().yaw, greaterThan(0));
+      expect(view().fov, closeTo(45, 0.01));
+      tester.binding.handlePointerEvent(PointerScaleEvent(position: at, scale: 1.5));
+      await tester.pump();
+      expect(view().fov, closeTo(30, 0.01));
     });
 
     testWidgets('a depth that cannot be measured: the left eye in the view, and said so', (tester) async {
