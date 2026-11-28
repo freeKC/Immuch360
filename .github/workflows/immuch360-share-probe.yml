@@ -31,11 +31,13 @@ jobs:
           cl /nologo /EHsc /std:c++17 /W4 /WX /wd4100 /DNOMINMAX /DUNICODE /D_UNICODE /I .github\share_probe .github\share_probe\share_sheet.cpp .github\share_probe\probe.cpp /Fe:probe.exe user32.lib ole32.lib runtimeobject.lib
 
       - name: System
-        shell: pwsh
+        shell: powershell
+        continue-on-error: true
         run: |
           Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OperatingSystemSKU | Format-List
-          Get-AppxPackage -AllUsers -Name '*ShellExperience*','*Share*' -ErrorAction SilentlyContinue | Select-Object Name, Version | Format-Table
-          whoami /groups | Select-String -Pattern 'Mandatory Label'
+          Get-AppxPackage -AllUsers | Where-Object { $_.Name -match 'ShellExperience|Share|StartMenu' } | Select-Object Name, Version | Format-Table | Out-String | Write-Host
+          whoami /groups | Select-String -Pattern 'Mandatory Label' | Out-String | Write-Host
+          Get-Process | Where-Object { $_.ProcessName -match 'explorer|ShellExperience|StartMenu|sihost' } | Select-Object ProcessName, Id, SessionId | Format-Table | Out-String | Write-Host
 
       - name: Scenarios
         shell: pwsh
