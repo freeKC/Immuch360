@@ -111,6 +111,9 @@ bool FlutterWindow::OnCreate() {
   // by this window
   clipboard_channel_ = CreateClipboardChannel(
       flutter_controller_->engine()->messenger(), GetHandle());
+  // The share window of Windows for this window (Share with Windows…)
+  share_channel_ = std::make_unique<ShareChannel>(
+      flutter_controller_->engine()->messenger(), GetHandle());
   session_channel_ =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
           flutter_controller_->engine()->messenger(), kSessionChannel,
@@ -149,6 +152,7 @@ void FlutterWindow::OnDestroy() {
   }
   session_channel_ = nullptr;
   clipboard_channel_ = nullptr;
+  share_channel_ = nullptr;
   if (flutter_controller_) {
     // The engine goes now, on this thread, and may wait for native code that
     // does not return: the window must not stay on screen meanwhile (Windows

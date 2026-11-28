@@ -10,6 +10,7 @@
 
 #include <memory>
 
+#include "share_channel.h"
 #include "win32_window.h"
 
 // A window that does nothing but host a Flutter view.
@@ -54,6 +55,9 @@ class FlutterWindow : public Win32Window {
   // The copy to the clipboard (clipboard_channel.h)
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
       clipboard_channel_;
+
+  // "Share with Windows…" of the Share menu (share_channel.h)
+  std::unique_ptr<ShareChannel> share_channel_;
   HPOWERNOTIFY display_notification_ = nullptr;
   bool session_notification_ = false;
 

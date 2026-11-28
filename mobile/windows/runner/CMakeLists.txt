@@ -13,6 +13,8 @@ add_executable(${BINARY_NAME} WIN32
   "flutter_window.cpp"
   "gpu_probe.cpp"
   "main.cpp"
+  "share_channel.cpp"
+  "share_sheet.cpp"
   "utils.cpp"
   "win32_window.cpp"
   "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
@@ -45,6 +47,9 @@ target_link_libraries(${BINARY_NAME} PRIVATE "shell32.lib")
 # WTSRegisterSessionNotification: the session locked, for the Spatial page's
 # webcam (flutter_window.cpp)
 target_link_libraries(${BINARY_NAME} PRIVATE "wtsapi32.lib")
+# RoGetActivationFactory and the WinRT strings: the share window of Windows
+# (share_sheet.cpp)
+target_link_libraries(${BINARY_NAME} PRIVATE "runtimeobject.lib")
 target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 
 # Run the Flutter tool portions of the build. This must not be removed.
