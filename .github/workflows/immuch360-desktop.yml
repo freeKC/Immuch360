@@ -446,6 +446,7 @@ jobs:
         run: |
           mise exec -- dart format --output=none --set-exit-if-changed lib/desktop lib/main_desktop.dart \
             test/desktop integration_test/desktop_smoke_test.dart integration_test/desktop_clipboard_test.dart \
+            integration_test/desktop_share_test.dart \
             packages/flutter_secure_storage_windows \
             packages/immuch_sbs_codec packages/immuch_head_tracker/lib packages/immuch_head_tracker/hook
 
@@ -1822,6 +1823,17 @@ jobs:
         timeout-minutes: 20
         run: flutter test integration_test/desktop_clipboard_test.dart -d windows --reporter expanded
 
+      # "Share with Windows…" where Windows has no share window (lot share 54, windows/runner/share_channel.cpp):
+      # Windows Server 2022 says DataTransferManager.IsSupported is false, so the Share menu leaves the entry out; a
+      # share asked anyway gets no request from the system and ends as "did not open". Windows Server 2025, which has
+      # the share window, runs the other scenarios in the windows-share job
+      - name: The share window where Windows has none, in a built app
+        working-directory: mobile
+        timeout-minutes: 20
+        run: >-
+          flutter test integration_test/desktop_share_test.dart -d windows --reporter expanded
+          --dart-define=IMMUCH360_SHARE_SCENARIO=unsupported
+
       # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
       # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
       # hosted runners have no graphics card, so what it found is printed, not asked for
@@ -1849,6 +1861,70 @@ jobs:
           path: old-database-start/
           retention-days: 14
           if-no-files-found: ignore
+
+  # "Share with Windows…" of the Share menu (lot share 54) on Windows Server 2025, whose share window asks for the files
+  # as Windows 11 does (Server 2022 has none: the windows job checks that side). Two runs of the built app, one
+  # scenario each, since Windows asks nothing for a second share window of the same app while the first is open (and
+  # the one of a runner stays open: "Try that again", Windows Server has no program to share to):
+  # - old: desktop build 35's order through the real share_plus 10.1.4, which answers before the window asks for the
+  #   files; the file deleted in that answer, as build 35 did, is gone when the window asks (a watcher of the runner
+  #   counts it);
+  # - new: the share of the menu: a missing file fails at once with the reason of Windows and the file's name only;
+  #   a fetched file moves into the folder of the copies, the window asks for it and gets it, and the folder stays
+  #   while the window is open.
+  # Not on tags: a release does not wait for the share window of a server image
+  windows-share:
+    name: Windows share window (Server 2025)
+    runs-on: windows-2025
+    needs: codegen
+    if: github.event_name != 'push' || github.ref == 'refs/heads/desktop'
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: 3.47.2
+          channel: stable
+          cache: true
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Rust toolchain
+        run: |
+          channel=$(sed -n 's/^channel = "\([^"]*\)".*/\1/p' native/crates/native_core_ffi/rust-toolchain.toml)
+          rustup --version
+          rustup toolchain install "$channel" --profile minimal --target x86_64-pc-windows-msvc
+          echo "RUSTUP_TOOLCHAIN=$channel" >> "$GITHUB_ENV"
+
+      - name: Flutter dependencies
+        working-directory: mobile
+        run: |
+          tar -xf generated-dart.tar && rm generated-dart.tar
+          flutter pub get --enforce-lockfile
+
+      - name: Build 35's order through share_plus, in a built app
+        working-directory: mobile
+        timeout-minutes: 30
+        run: >-
+          flutter test integration_test/desktop_share_test.dart -d windows --reporter expanded
+          --dart-define=IMMUCH360_SHARE_SCENARIO=old
+
+      - name: The share of the Share menu, in a built app
+        working-directory: mobile
+        timeout-minutes: 15
+        run: >-
+          flutter test integration_test/desktop_share_test.dart -d windows --reporter expanded
+          --dart-define=IMMUCH360_SHARE_SCENARIO=new
 
   macos:
     name: macOS build, ZIP and DMG
