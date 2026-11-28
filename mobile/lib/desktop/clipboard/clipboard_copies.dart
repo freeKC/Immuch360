@@ -14,7 +14,8 @@
 // The share window of Windows and the share menu of macOS (lib/desktop/share) take their files from the same folder:
 // the files fetched for a share are moved into a folder of their own ([keepShareCopies]), never deleted while the
 // window of this run may read them, then marked when it is done with them ([releaseShareCopies]); the folder goes once
-// [clipboardCopyMinAge] after that end, since the program chosen (a mail, a nearby device) may still be reading.
+// [clipboardCopyMinAge] after that end, at the next copy or start, since the program chosen (a mail, a nearby device)
+// may still be reading.
 
 import 'dart:async';
 import 'dart:convert';
@@ -402,8 +403,8 @@ Future<({Directory folder, List<String> paths})> keepShareCopies(
   }
 }
 
-/// The share of the files of [folder] is over: the folder goes [clipboardCopyMinAge] after [now], at a later copy,
-/// share or start
+/// The share of the files of [folder] is over: the folder goes [clipboardCopyMinAge] after [now], at a later copy or
+/// start (a share does not clean up)
 Future<void> releaseShareCopies(Directory folder, {DateTime Function() now = DateTime.now}) async {
   try {
     await File(

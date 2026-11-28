@@ -6,8 +6,8 @@
 // - Share with Windows… / Share with macOS…: the share window of the system (system_share_sheet.dart), shown only
 //   where the system says it has one; Linux has none;
 // - Create a share link: the link page of the Immich server, for items of the server, as its own action;
-// - Select quality: original or preview for the files of Save and of the share window (the long press of the button
-//   asks it too, as on a phone).
+// - Select quality: original or preview for the files of Save and of the share window, as its line says; Copy always
+//   takes the originals (the long press of the button asks it too, as on a phone).
 // The files fetched from the server for the share window are kept until the window and the program chosen in it are
 // done with them, in the folder of the copies of the clipboard (clipboard_copies.dart), which cleans them up later.
 
@@ -118,7 +118,9 @@ Offset _menuPoint(BuildContext context, Size screen) {
   DesktopShareWay.shareLink => (title: t.desktop_share_link, line: t.desktop_share_link_line),
   DesktopShareWay.quality => (
     title: t.select_quality,
-    line: fileType == ShareAssetType.preview ? t.share_preview : t.share_original,
+    line: t.desktop_share_quality_line(
+      quality: fileType == ShareAssetType.preview ? t.share_preview : t.share_original,
+    ),
   ),
 };
 
@@ -342,11 +344,17 @@ Future<void> _shareFiles(
   );
 }
 
+/// How long a share window of this run keeps its files at most: Windows tells the end only when it drops the data
+/// package, which may be late or never; the folder then goes an hour later, as after any end (clipboard_copies.dart)
+const systemShareMaxOpen = Duration(hours: 1);
+
 /// Hands [fetched] to [sheet]: the files fetched from the server move into a folder of the copies of the clipboard
-/// first, where they stay until the window and the program chosen in it let them go and an hour more
-/// (clipboard_copies.dart); a failure is shown with the reason the system gave, and logged without any folder or URL;
-/// a window closed without a choice says nothing. Returns once the window is done with the files.
-Future<SystemShareEnd?> shareWithSystemSheet(
+/// first, where they stay until the window and the program chosen in it let them go ([systemShareMaxOpen] at most)
+/// and an hour more (clipboard_copies.dart); a failure is shown with the reason the system gave, and logged without
+/// any folder or URL; a window closed without a choice says nothing. Returns once the window took the files or failed,
+/// so the Share button is free again while the window is open: null when it failed, else the end of the share, which
+/// lets the files go by itself.
+Future<Future<SystemShareEnd>?> shareWithSystemSheet(
   SystemShareSheet sheet,
   List<ShareFetchedFile> fetched, {
   required Future<Directory> Function() root,
@@ -398,14 +406,27 @@ Future<SystemShareEnd?> shareWithSystemSheet(
     return null;
   }
   _log.info('The share window took ${paths.length} files');
-  final end = await share.finished;
-  _log.info(
-    end == SystemShareEnd.shared
-        ? 'The share window gave the files to ${share.target ?? 'a program'}'
-        : 'The share window was closed without a choice',
-  );
-  if (kept != null) {
-    await releaseShareCopies(kept);
+  final ended = _shareEnded(share, kept);
+  unawaited(ended);
+  return ended;
+}
+
+/// Waits for the end of [share] ([systemShareMaxOpen] at most), then lets the files of [kept] go
+Future<SystemShareEnd> _shareEnded(SystemShare share, Directory? kept) async {
+  var end = SystemShareEnd.dismissed;
+  try {
+    end = await share.finished.timeout(systemShareMaxOpen);
+    _log.info(
+      end == SystemShareEnd.shared
+          ? 'The share window gave the files to ${share.target ?? 'a program'}'
+          : 'The share window was closed without a choice',
+    );
+  } on TimeoutException {
+    _log.info('The share window told no end in ${systemShareMaxOpen.inMinutes} minutes: its files are let go');
+  } finally {
+    if (kept != null) {
+      await releaseShareCopies(kept);
+    }
   }
   return end;
 }

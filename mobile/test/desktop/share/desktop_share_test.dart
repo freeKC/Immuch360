@@ -265,7 +265,7 @@ void main() {
         t.desktop_share_link,
         t.desktop_share_link_line,
         t.select_quality,
-        t.share_original,
+        t.desktop_share_quality_line(quality: t.share_original),
       ]) {
         expect(find.text(text), findsOneWidget, reason: text);
       }
@@ -378,10 +378,55 @@ void main() {
 
       sheet.finished.complete(SystemShareEnd.dismissed);
       await finish(tester, done());
+      await until(tester, () => !shareCopiesOpen(kept.parent));
       await settle(tester);
       expect(find.byType(SnackBar), findsNothing, reason: 'a window closed without a choice says nothing');
-      expect(shareCopiesOpen(kept.parent), isFalse);
       expect(File(p.join(kept.parent.path, shareCopyMarker)).existsSync(), isTrue);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Share is free again once the window took the files, which stay until the window is done', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final context = await pumpPage(tester);
+      media.answer = [fetchedFile('IMG_0042.mp4')];
+      final done = openMenu(tester, context);
+      await settle(tester);
+      await tester.tap(entry(DesktopShareWay.systemSheet));
+      await until(tester, () => sheet.asked.isNotEmpty);
+      final kept = File(sheet.asked.single.paths.single);
+      sheet.opened.complete();
+      // Windows tells the end only when it drops the data package, late or never: the button must not wait for it
+      await finish(tester, done());
+      expect(shareCopiesOpen(kept.parent), isTrue, reason: 'the window may still read them');
+      expect(kept.existsSync(), isTrue);
+
+      sheet.finished.complete(SystemShareEnd.shared);
+      await until(tester, () => !shareCopiesOpen(kept.parent));
+      expect(File(p.join(kept.parent.path, shareCopyMarker)).existsSync(), isTrue);
+      expect(kept.existsSync(), isTrue, reason: 'an hour more for the program chosen');
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a window that never tells its end lets its files go after systemShareMaxOpen', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final context = await pumpPage(tester);
+      media.answer = [fetchedFile('IMG_0042.mp4')];
+      final done = openMenu(tester, context);
+      await settle(tester);
+      await tester.tap(entry(DesktopShareWay.systemSheet));
+      await until(tester, () => sheet.asked.isNotEmpty);
+      final kept = File(sheet.asked.single.paths.single);
+      sheet.opened.complete();
+      await finish(tester, done());
+      await tester.pump(systemShareMaxOpen - const Duration(minutes: 1));
+      expect(shareCopiesOpen(kept.parent), isTrue);
+      await tester.pump(const Duration(minutes: 2));
+      await until(tester, () => !shareCopiesOpen(kept.parent));
+      expect(File(p.join(kept.parent.path, shareCopyMarker)).existsSync(), isTrue);
+      expect(logs.map((record) => record.message), contains(contains('told no end')));
+      expect(find.byType(SnackBar), findsNothing);
       debugDefaultTargetPlatformOverride = null;
     });
 
@@ -485,7 +530,11 @@ void main() {
       await settle(tester);
       await tester.tap(find.byKey(const Key('desktop_share_preview')));
       await settle(tester);
-      expect(find.text(t.share_preview), findsOneWidget, reason: 'the menu again, with the quality picked');
+      expect(
+        find.text(t.desktop_share_quality_line(quality: t.share_preview)),
+        findsOneWidget,
+        reason: 'the menu again, with the quality picked, saying Copy does not follow it',
+      );
       await tester.tap(entry(DesktopShareWay.saveToFolder));
       await settle(tester);
       await finish(tester, done());

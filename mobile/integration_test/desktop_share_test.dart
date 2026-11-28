@@ -114,7 +114,7 @@ void main() {
           '${seen.existing} of 1 file still there (another DataTransferManager object: $changed)',
         );
         expect(answer.status, ShareResultStatus.unavailable, reason: 'share_plus answers before the window asks');
-        expect(requestMs, greaterThan(answeredMs), reason: 'the window asks after that answer');
+        expect(requestMs, greaterThan(deletedMs), reason: 'the window asks after the deletion of build 35');
         expect(seen.existing, 0, reason: 'the file build 35 fetched was gone when the window asked for it');
 
       case 'new':

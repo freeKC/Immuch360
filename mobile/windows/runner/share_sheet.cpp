@@ -26,9 +26,10 @@ using Microsoft::WRL::Wrappers::HStringReference;
 
 namespace {
 
-// The longest a file may take to open as a StorageFile: a share of a network
-// folder that no longer answers fails rather than freezing the app
-constexpr ULONGLONG kOpenFileTimeoutMs = 10000;
+// The longest the files of one share may take to open as StorageFiles, all
+// of them together: a share of a network folder that no longer answers fails
+// once rather than freezing the app for each of its files
+constexpr ULONGLONG kOpenFilesTimeoutMs = 10000;
 
 // The task posted to the window of the messages (ShareSheet::Post)
 constexpr UINT kTaskMessage = WM_APP + 0x5e;
@@ -108,9 +109,11 @@ class StorageItemList : public WRL::RuntimeClass<ItemIterable> {
   std::shared_ptr<const StorageItems> items_;
 };
 
-// The file at [path] as a storage item, waited for here: StorageFile has only
-// an asynchronous open, which completes on a thread of the pool
-HRESULT OpenStorageItem(const std::wstring& path, WRL::ComPtr<WindowsStorage::IStorageItem>* item) {
+// The file at [path] as a storage item, waited for here until [deadline] (a
+// GetTickCount64 time): StorageFile has only an asynchronous open, which
+// completes on a thread of the pool
+HRESULT OpenStorageItem(const std::wstring& path, ULONGLONG deadline,
+                        WRL::ComPtr<WindowsStorage::IStorageItem>* item) {
   WRL::ComPtr<WindowsStorage::IStorageFileStatics> statics;
   HRESULT hr = WindowsFoundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(),
                                                        &statics);
@@ -128,10 +131,9 @@ HRESULT OpenStorageItem(const std::wstring& path, WRL::ComPtr<WindowsStorage::IS
   if (FAILED(hr)) {
     return hr;
   }
-  const ULONGLONG started = ::GetTickCount64();
   AsyncStatus status = AsyncStatus::Started;
   while (SUCCEEDED(hr = info->get_Status(&status)) && status == AsyncStatus::Started) {
-    if (::GetTickCount64() - started > kOpenFileTimeoutMs) {
+    if (::GetTickCount64() > deadline) {
       info->Cancel();
       return HRESULT_FROM_WIN32(ERROR_TIMEOUT);
     }
@@ -456,9 +458,10 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
     // As share_plus 10.1.4: each path opened now, the ones that fail left out
     auto items = std::make_shared<StorageItems>();
     HRESULT first_error = S_OK;
+    const ULONGLONG deadline = ::GetTickCount64() + kOpenFilesTimeoutMs;
     for (const auto& path : paths) {
       WRL::ComPtr<WindowsStorage::IStorageItem> item;
-      HRESULT opened = OpenStorageItem(path, &item);
+      HRESULT opened = OpenStorageItem(path, deadline, &item);
       if (SUCCEEDED(opened)) {
         items->push_back(item);
       } else if (SUCCEEDED(first_error)) {
@@ -521,9 +524,10 @@ int64_t ShareSheet::Show(const std::vector<std::wstring>& paths, const std::wstr
     return 0;
   }
   auto items = std::make_shared<StorageItems>();
+  const ULONGLONG deadline = ::GetTickCount64() + kOpenFilesTimeoutMs;
   for (size_t index = 0; index < paths.size(); index++) {
     WRL::ComPtr<WindowsStorage::IStorageItem> item;
-    hr = OpenStorageItem(paths[index], &item);
+    hr = OpenStorageItem(paths[index], deadline, &item);
     if (FAILED(hr)) {
       *out = Failure{"file", hr, static_cast<int>(index)};
       return 0;
