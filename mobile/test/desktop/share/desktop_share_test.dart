@@ -190,7 +190,7 @@ void main() {
     unawaited(future.then((_) => done = true, onError: (Object error) => failure = error));
     await until(tester, () => done || failure != null);
     if (failure != null) {
-      throw failure!;
+      fail('The share failed: $failure');
     }
   }
 
