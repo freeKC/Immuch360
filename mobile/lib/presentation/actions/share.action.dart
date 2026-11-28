@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart' show StackRouter, StackRouterScope;
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/share/desktop_share.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -10,7 +12,9 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
+import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/repositories/asset_media.repository.dart';
+import 'package:immich_mobile/routing/router.dart';
 
 final _stateProvider = Provider.family.autoDispose<List<BaseAsset>?, ActionSource>((ref, source) {
   final assets = ref.watch(assetsActionProvider(source));
@@ -28,11 +32,50 @@ class ShareAction extends AssetActionBuilder {
       return null;
     }
 
+    // A computer: a menu naming each way to share (lib/desktop/share/desktop_share.dart)
+    if (CurrentPlatform.isDesktop) {
+      return _desktop(context, ref, assets);
+    }
+
     return .new(
       icon: CurrentPlatform.isAndroid ? Icons.share_rounded : Icons.ios_share_rounded,
       label: context.t.share,
       onAction: () => _share(context, ref, assets, ref.read(appConfigProvider).share.fileType),
       onSecondaryAction: () => _promptQualityAndShare(context, ref, assets),
+    );
+  }
+
+  ActionItem _desktop(BuildContext context, WidgetRef ref, List<BaseAsset> assets) {
+    // The items of the server a share link can be made of, as the Share link action offers it (never in the locked folder)
+    final remoteIds = ref.watch(inLockedViewProvider)
+        ? const <String>[]
+        : [
+            for (final asset in assets)
+              if (asset is RemoteAsset) asset.id,
+          ];
+    // The router of the page that pressed Share, read then: that button may be gone once the menu closes
+    Future<void> Function()? shareLink(StackRouter? router) => remoteIds.isEmpty || router == null
+        ? null
+        : () async => unawaited(router.push(SharedLinkEditRoute(assetsList: remoteIds)));
+    Future<void> open(ShareAssetType fileType) => openDesktopShareMenu(
+      context,
+      DesktopShareServices.of(ref),
+      assets,
+      fileType: fileType,
+      shareLink: shareLink(StackRouterScope.of(context)?.controller),
+    );
+    return .new(
+      icon: Icons.ios_share_rounded,
+      label: context.t.share,
+      onAction: () => open(ref.read(appConfigProvider).share.fileType),
+      onSecondaryAction: () async {
+        final services = DesktopShareServices.of(ref);
+        final link = shareLink(StackRouterScope.of(context)?.controller);
+        final fileType = await askDesktopShareQuality(context, assets);
+        if (fileType != null && context.mounted) {
+          await openDesktopShareMenu(context, services, assets, fileType: fileType, shareLink: link);
+        }
+      },
     );
   }
 

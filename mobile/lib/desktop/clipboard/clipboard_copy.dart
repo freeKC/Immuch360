@@ -207,20 +207,31 @@ ClipboardSource clipboardSourceOfEntry(NetworkEntry entry, NetworkConnections co
     );
 
 /// Copies [assets] (the selection of a grid, the asset of the viewer)
-Future<void> copyAssetsToClipboard(BuildContext context, WidgetRef ref, List<BaseAsset> assets) {
-  final storage = ref.read(storageRepositoryProvider);
-  final copier = ref.read(desktopClipboardCopierProvider);
-  return copyToClipboard(context, copier, () async {
-    final sources = <ClipboardSource>[];
-    for (final asset in assets) {
-      final source = await clipboardSourceOfAsset(asset, localFile: storage.getFileForAsset);
-      if (source != null) {
-        sources.add(source);
-      }
+Future<void> copyAssetsToClipboard(BuildContext context, WidgetRef ref, List<BaseAsset> assets) =>
+    copyAssetsToClipboardWith(
+      context,
+      ref.read(desktopClipboardCopierProvider),
+      assets,
+      localFile: ref.read(storageRepositoryProvider).getFileForAsset,
+    );
+
+/// Copies [assets] with [copier], [localFile] finding the file of this computer of an asset (the Share menu, whose
+/// button may be gone by then)
+Future<void> copyAssetsToClipboardWith(
+  BuildContext context,
+  ClipboardCopier copier,
+  List<BaseAsset> assets, {
+  required Future<File?> Function(String localId) localFile,
+}) => copyToClipboard(context, copier, () async {
+  final sources = <ClipboardSource>[];
+  for (final asset in assets) {
+    final source = await clipboardSourceOfAsset(asset, localFile: localFile);
+    if (source != null) {
+      sources.add(source);
     }
-    return sources;
-  });
-}
+  }
+  return sources;
+});
 
 /// Copies [entries], files of a share or of a media server
 Future<void> copyEntriesToClipboard(BuildContext context, WidgetRef ref, List<NetworkEntry> entries) {

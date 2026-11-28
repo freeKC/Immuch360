@@ -253,7 +253,7 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
         const DesktopMakeSplatButton(source: ActionSource.timeline, menuItem: true),
       ],
       ?entry(const DownloadAction(source: ActionSource.timeline), 'desktop_selection_download'),
-      // "Save to a folder" on Linux, the share sheet of the system elsewhere
+      // The Share menu of a computer: Copy, Save to a folder, the share window of the system, a share link
       ?entry(const ShareAction(source: ActionSource.timeline), 'desktop_selection_share'),
     ];
   }
