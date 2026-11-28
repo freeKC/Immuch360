@@ -54,6 +54,7 @@ jobs:
           }
           $png = [Convert]::FromBase64String('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')
           $cases = @(
+            @('twice', 'twice-png', 'png', $env:RUNNER_TEMP),
             @('ours', 'ours-png', 'png', $env:RUNNER_TEMP),
             @('ours', 'ours-mp4-appdata', 'mp4', $env:LOCALAPPDATA),
             @('plus', 'plus-png', 'png', $env:RUNNER_TEMP),

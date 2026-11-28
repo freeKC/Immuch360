@@ -83,7 +83,23 @@ int wmain(int argc, wchar_t** argv) {
     const bool supported = sheet.IsSupported(&supported_hr);
     Line("isSupported", std::string(supported ? "true" : "false") + " " + Hex(supported_hr));
 
-    if (scenario == L"ours") {
+    if (scenario == L"twice") {
+      // Two shares in a row in one process, the first window still open: does the second window ask for its files?
+      ShareSheet::Failure failure;
+      const int64_t first = sheet.Show({file}, L"first", &failure);
+      Line("shownFirst", std::to_string(first) + " " + failure.step + " " + Hex(failure.hr));
+      const ULONGLONG wait_until = ::GetTickCount64() + 4000;
+      MSG pending_msg;
+      while (::GetTickCount64() < wait_until) {
+        while (::PeekMessageW(&pending_msg, nullptr, 0, 0, PM_REMOVE)) {
+          ::TranslateMessage(&pending_msg);
+          ::DispatchMessageW(&pending_msg);
+        }
+        ::MsgWaitForMultipleObjects(0, nullptr, FALSE, 50, QS_ALLINPUT);
+      }
+      const int64_t second = sheet.Show({file}, L"second", &failure);
+      Line("shownSecond", std::to_string(second) + " " + failure.step + " " + Hex(failure.hr));
+    } else if (scenario == L"ours") {
       ShareSheet::Failure failure;
       const int64_t share = sheet.Show({file}, L"probe.txt", &failure);
       if (share == 0) {
