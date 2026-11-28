@@ -4,7 +4,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
 import 'package:immich_mobile/desktop/window/desktop_trackpad_pinch.dart';
+import 'package:logging/logging.dart';
 
 import 'trackpad_pinch_sequences.dart';
 
@@ -117,6 +119,52 @@ void main() {
       await sendPanZoom(tester, at, scroll(const Offset(0, -100)));
       expect(dragged, greaterThan(0), reason: 'a scroll is the drag\'s');
       expect(taken, 1);
+    });
+  });
+
+  group('the log', () {
+    testWidgets('the first gestures and every pinch at info, the plain scrolls after them at fine', (tester) async {
+      tester.view.physicalSize = const Size(800, 600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      resetDesktopTouchpadGestureLog();
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      addTearDown(() => Logger.root.level = level);
+      final lines = <LogRecord>[];
+      final listening = Logger.root.onRecord
+          .where((record) => record.loggerName == 'DesktopPhotoZoom')
+          .listen(lines.add);
+      addTearDown(listening.cancel);
+      final controller = DesktopZoomController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: DesktopZoomView(
+            controller: controller,
+            pixelSize: const Size(4000, 2000),
+            child: const ColoredBox(color: Colors.blue),
+          ),
+        ),
+      );
+      const at = Offset(400, 300);
+      // Flicking through photos at fit: the first ones tell what the touchpad sends, the others are no news
+      for (var i = 0; i < desktopTouchpadGesturesLogged + 2; i++) {
+        await sendPanZoom(tester, at, scroll(const Offset(-200, 0)));
+      }
+      await sendPanZoom(tester, at, windowsPinch(2, at));
+      expect(controller.scale, greaterThan(1.9));
+      // A zoomed photo panned by two fingers
+      for (var i = 0; i < 3; i++) {
+        await sendPanZoom(tester, at, scroll(const Offset(0, -40)));
+      }
+      final info = lines.where((record) => record.level == Level.INFO).toList();
+      final fine = lines.where((record) => record.level == Level.FINE).toList();
+      expect(lines, hasLength(desktopTouchpadGesturesLogged + 6), reason: 'still one line a gesture');
+      expect(info, hasLength(desktopTouchpadGesturesLogged + 1));
+      expect(info.last.message, contains('taken by the zoom: pinch'));
+      expect(fine, hasLength(5));
+      expect(fine.every((record) => record.message.contains(': scroll,')), isTrue);
     });
   });
 }

@@ -43,6 +43,10 @@ class TrackpadPinchLatch {
   /// The pointer of the gesture going on, or of the one that ended last
   int? get pointer => _pointer;
 
+  /// Whether the scale of the gesture moved at all, a pinch or one that stayed under the slop (a plain scroll keeps
+  /// a scale of exactly 1)
+  bool get scaled => _pinching || _largest != 1;
+
   void begin(PointerPanZoomStartEvent event) => _restart(event.pointer, event.localPosition, event.position);
 
   void _restart(int pointer, Offset local, Offset inWindow) {

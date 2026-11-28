@@ -37,6 +37,17 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('DesktopPhotoZoom');
 
+/// How many touchpad gestures over a photo go to the log at info at the start of each run of the app, whatever they
+/// are; after them only the gestures whose scale moved do (a pinch, or one that almost was), the plain two finger
+/// scrolls at fine, so that flicking through hundreds of photos does not push the other lines out of the log
+const desktopTouchpadGesturesLogged = 10;
+
+int _touchpadGesturesSeen = 0;
+
+/// Starts the count of [desktopTouchpadGesturesLogged] again, as a new run of the app would
+@visibleForTesting
+void resetDesktopTouchpadGestureLog() => _touchpadGesturesSeen = 0;
+
 /// How far past the pixels one to one the zoom goes: 4 times, 400 %
 const desktopZoomBeyondOneToOne = 4.0;
 
@@ -859,9 +870,13 @@ class _DesktopPhotoZoomState extends State<DesktopPhotoZoom> with TickerProvider
     if (taken) {
       _ownedPointer = null;
     }
-    // One line a gesture, to read what the touchpad of a computer really sends (the pan Windows adds to a pinch)
+    // One line a gesture, to read what the touchpad of a computer really sends (the pan Windows adds to a pinch): at
+    // info for the first gestures of the run and for any whose scale moved, at fine for the plain scrolls after them
     if (event.pointer == _pinch.pointer) {
-      _log.info(
+      final told = _pinch.scaled || _touchpadGesturesSeen < desktopTouchpadGesturesLogged;
+      _touchpadGesturesSeen++;
+      _log.log(
+        told ? Level.INFO : Level.FINE,
         'Touchpad gesture on a photo, ${taken ? 'taken by the zoom' : 'left to the view'}: ${_pinch.describe()}',
       );
     }
