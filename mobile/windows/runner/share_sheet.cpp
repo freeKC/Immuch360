@@ -246,9 +246,9 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
     });
   }
 
-  // The DataTransferManager of the window, asked again at each share: share_plus asks it at each of its shares too,
-  // and the window's requests go to the one asked last when Windows gives a new one each time. Our handlers move to
-  // the new one when it is another object; [changed] tells it (the tests of the workflow).
+  // The DataTransferManager of the window, asked again at each share as share_plus does at each of its own: Windows
+  // gave the same object each time on the runners, but should it give another one, the handlers move to it; [changed]
+  // tells it (the tests of the workflow).
   HRESULT EnsureManager(std::string* step, bool* changed = nullptr) {
     if (changed != nullptr) {
       *changed = false;
@@ -324,9 +324,10 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
     return S_OK;
   }
 
-  // The handler of this object asked last: share_plus (the logs, the settings file, a shared link) adds one handler
-  // per share and never removes it, and those run at every later request of the same window, each filling the data
-  // package with its own old files. Last, this one replaces the whole package with its own (put_Data).
+  // The handler of this object added last: Windows calls only the DataRequested handler added last to the window
+  // (the probe of lot share 54: with two, the one added first never heard the request), and share_plus (the logs,
+  // the settings file, a shared link) adds one per share and never removes it. Added again before each share, this
+  // one is called, and it replaces the whole package with its own all the same (put_Data).
   void Reregister() {
     if (!manager || !requested_handler || !registered) {
       return;
