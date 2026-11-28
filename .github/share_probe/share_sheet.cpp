@@ -196,6 +196,9 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
 
   WRL::ComPtr<IDataTransferManagerInterop> interop;
   WRL::ComPtr<DataTransfer::IDataTransferManager> manager;
+  WRL::ComPtr<WindowsFoundation::ITypedEventHandler<DataTransfer::DataTransferManager*,
+                                                    DataTransfer::DataRequestedEventArgs*>>
+      requested_handler;
   EventRegistrationToken requested_token{};
   EventRegistrationToken target_token{};
   bool registered = false;
@@ -207,6 +210,12 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
   std::wstring pending_title;
   // The share whose data the window took last, which a program chosen is for
   int64_t requested = 0;
+
+  // ObserveNextRequest
+  bool observe_pending = false;
+  std::vector<std::wstring> observe_paths;
+  std::function<void(double, int)> observe_on_request;
+  ULONGLONG observe_started = 0;
 
   // ShowLikeSharePlus
   bool plus_pending = false;
@@ -258,6 +267,7 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
           auto state = weak.lock();
           return state ? state->OnDataRequested(args) : S_OK;
         });
+    requested_handler = on_requested;
     hr = manager->add_DataRequested(on_requested.Get(), &requested_token);
     if (FAILED(hr)) {
       manager.Reset();
@@ -285,6 +295,17 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
     return S_OK;
   }
 
+  // The handler of this object asked last: share_plus (the logs, the settings file, a shared link) adds one handler
+  // per share and never removes it, and those run at every later request of the same window, each filling the data
+  // package with its own old files. Last, this one replaces the whole package with its own (put_Data).
+  void Reregister() {
+    if (!manager || !requested_handler) {
+      return;
+    }
+    manager->remove_DataRequested(requested_token);
+    manager->add_DataRequested(requested_handler.Get(), &requested_token);
+  }
+
   HRESULT OnDataRequested(DataTransfer::IDataRequestedEventArgs* args) {
     if (args == nullptr) {
       return E_POINTER;
@@ -298,8 +319,23 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
       return OnDataRequestedLikeSharePlus(request.Get());
     }
     if (pending == 0) {
-      // A request with no share asked: Windows shows that there is nothing to share
-      return request->FailWithDisplayText(HStringReference(L"Nothing to share").Get());
+      // Not a share of this object (another handler of the same window, share_plus for the logs): left to it, and
+      // seen by an observer of the tests
+      if (observe_pending) {
+        observe_pending = false;
+        int existing = 0;
+        for (const auto& path : observe_paths) {
+          if (::GetFileAttributesW(path.c_str()) != INVALID_FILE_ATTRIBUTES) {
+            existing++;
+          }
+        }
+        const double elapsed = static_cast<double>(::GetTickCount64() - observe_started);
+        auto on_observed = std::move(observe_on_request);
+        if (on_observed) {
+          Post([on_observed, elapsed, existing]() { on_observed(elapsed, existing); });
+        }
+      }
+      return S_OK;
     }
     const int64_t share = pending;
     auto items = std::move(pending_items);
@@ -307,10 +343,24 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
     pending = 0;
     pending_items.reset();
 
+    // A package of its own, whatever another handler of the window put in the one of the request
+    WRL::ComPtr<IInspectable> instance;
+    hr = ::RoActivateInstance(HStringReference(RuntimeClass_Windows_ApplicationModel_DataTransfer_DataPackage).Get(),
+                              &instance);
     WRL::ComPtr<DataTransfer::IDataPackage> data;
-    hr = request->get_Data(&data);
+    if (SUCCEEDED(hr)) {
+      hr = instance.As(&data);
+    }
+    if (SUCCEEDED(hr)) {
+      hr = request->put_Data(data.Get());
+    }
     if (FAILED(hr)) {
-      return hr;
+      // The package of the request then
+      data.Reset();
+      hr = request->get_Data(&data);
+      if (FAILED(hr)) {
+        return hr;
+      }
     }
     WRL::ComPtr<DataTransfer::IDataPackagePropertySet> properties;
     if (SUCCEEDED(data->get_Properties(&properties))) {
@@ -450,6 +500,7 @@ int64_t ShareSheet::Show(const std::vector<std::wstring>& paths, const std::wstr
     }
     items->push_back(item);
   }
+  state_->Reregister();
   const int64_t share = ++state_->last_share;
   state_->plus_pending = false;
   state_->pending = share;
@@ -484,21 +535,30 @@ HRESULT ShareSheet::ShowLikeSharePlus(const std::vector<std::wstring>& paths,
   return hr;
 }
 
+HRESULT ShareSheet::ObserveNextRequest(const std::vector<std::wstring>& paths,
+                                       std::function<void(double elapsed_ms, int existing)> on_request) {
+  std::string step;
+  HRESULT hr = state_->EnsureManager(&step);
+  if (FAILED(hr)) {
+    return hr;
+  }
+  state_->observe_pending = true;
+  state_->observe_paths = paths;
+  state_->observe_on_request = std::move(on_request);
+  state_->observe_started = ::GetTickCount64();
+  return S_OK;
+}
+
 void ShareSheet::Post(std::function<void()> task) { state_->Post(std::move(task)); }
 
 std::wstring ShareSheet::MessageOf(HRESULT hr) {
+  // In the language of the user, as Windows words it for them
   wchar_t* buffer = nullptr;
   const DWORD length = ::FormatMessageW(
       FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
-      static_cast<DWORD>(hr), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), reinterpret_cast<wchar_t*>(&buffer), 0,
-      nullptr);
+      static_cast<DWORD>(hr), 0, reinterpret_cast<wchar_t*>(&buffer), 0, nullptr);
   if (length == 0 || buffer == nullptr) {
-    // No English text on this system: its own language then
-    if (::FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                         nullptr, static_cast<DWORD>(hr), 0, reinterpret_cast<wchar_t*>(&buffer), 0, nullptr) == 0 ||
-        buffer == nullptr) {
-      return std::wstring();
-    }
+    return std::wstring();
   }
   std::wstring message(buffer);
   ::LocalFree(buffer);

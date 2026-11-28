@@ -54,26 +54,9 @@ jobs:
           }
           $png = [Convert]::FromBase64String('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')
           $cases = @(
-            @('twice', 'twice-png', 'png', $env:RUNNER_TEMP),
             @('ours', 'ours-png', 'png', $env:RUNNER_TEMP),
-            @('ours', 'ours-mp4-appdata', 'mp4', $env:LOCALAPPDATA),
-            @('plus', 'plus-png', 'png', $env:RUNNER_TEMP),
             @('plusdeleted', 'plusdeleted-png', 'png', $env:RUNNER_TEMP)
           )
-          # Explorer's own Share of a file, for comparison: what the share window of this runner shows for a packaged caller
-          $folder = Join-Path $env:RUNNER_TEMP 'immuch360-probe-explorer'
-          New-Item -ItemType Directory -Force $folder | Out-Null
-          $file = Join-Path $folder 'explorer photo.png'
-          [IO.File]::WriteAllBytes($file, $png)
-          $item = (New-Object -ComObject Shell.Application).Namespace($folder).ParseName('explorer photo.png')
-          Write-Host "=== explorer verbs: $(($item.Verbs() | ForEach-Object { $_.Name }) -join ' | ')"
-          try { $item.InvokeVerb('Windows.ModernShare'); Write-Host 'ModernShare invoked' } catch { Write-Host "ModernShare: $_" }
-          Start-Sleep -Milliseconds 4000
-          Shot 'explorer-1'
-          Start-Sleep -Milliseconds 4000
-          Shot 'explorer-2'
-          Get-Process | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object ProcessName, Id, MainWindowTitle | Format-Table | Out-String | Write-Host
-          Stop-Process -Name ShareHost -ErrorAction SilentlyContinue
           foreach ($case in $cases) {
             $scenario, $name, $ext, $dir = $case
             $folder = Join-Path $dir "immuch360-probe-$name"

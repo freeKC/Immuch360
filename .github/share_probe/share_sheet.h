@@ -63,10 +63,17 @@ class ShareSheet {
   HRESULT ShowLikeSharePlus(const std::vector<std::wstring>& paths,
                             std::function<void(int opened, HRESULT first_error)> on_request);
 
+  // For the tests of the desktop workflow: at the next request of the share
+  // window that is not a share of this object (share_plus's), [on_request]
+  // tells how long after this call it came and how many of [paths] still
+  // existed then. Returns the HRESULT of reaching the DataTransferManager.
+  HRESULT ObserveNextRequest(const std::vector<std::wstring>& paths,
+                             std::function<void(double elapsed_ms, int existing)> on_request);
+
   // Runs [task] later on the thread of this object (from any thread)
   void Post(std::function<void()> task);
 
-  // The message an HRESULT stands for, in English when the system has it
+  // The message an HRESULT stands for, in the language of the user
   static std::wstring MessageOf(HRESULT hr);
 
  private:
