@@ -54,8 +54,9 @@ jobs:
           }
           $png = [Convert]::FromBase64String('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')
           $cases = @(
-            @('ours', 'ours-png', 'png', $env:RUNNER_TEMP),
-            @('plusdeleted', 'plusdeleted-png', 'png', $env:RUNNER_TEMP)
+            @('two', 'two-png', 'png', $env:RUNNER_TEMP),
+            @('twoafter', 'twoafter-png', 'png', $env:RUNNER_TEMP),
+            @('ours', 'ours-png', 'png', $env:RUNNER_TEMP)
           )
           foreach ($case in $cases) {
             $scenario, $name, $ext, $dir = $case

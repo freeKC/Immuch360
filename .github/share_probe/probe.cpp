@@ -83,7 +83,39 @@ int wmain(int argc, wchar_t** argv) {
     const bool supported = sheet.IsSupported(&supported_hr);
     Line("isSupported", std::string(supported ? "true" : "false") + " " + Hex(supported_hr));
 
-    if (scenario == L"twice") {
+    if (scenario == L"two" || scenario == L"twoafter") {
+      // Two objects on the same window, as the runner's channel and share_plus are: which one hears the request?
+      ShareSheet other(window, [](int64_t, const std::string&, const std::wstring&) {});
+      if (scenario == L"two") {
+        HRESULT hr = sheet.ObserveNextRequest({file}, [](double ms, int existing) {
+          Line("observedA", std::to_string(ms) + " ms, existing " + std::to_string(existing));
+        });
+        Line("observeA", Hex(hr));
+        hr = other.ShowLikeSharePlus({file}, [](int opened, HRESULT first_error) {
+          Line("plusRequestedB", "opened " + std::to_string(opened) + " " + Hex(first_error));
+        });
+        Line("plusShownB", Hex(hr));
+      } else {
+        HRESULT hr = other.ShowLikeSharePlus({file}, [](int opened, HRESULT first_error) {
+          Line("plusRequestedB", "opened " + std::to_string(opened) + " " + Hex(first_error));
+        });
+        Line("plusShownB", Hex(hr));
+        bool changed = false;
+        hr = sheet.ObserveNextRequest({file}, [](double ms, int existing) {
+          Line("observedA", std::to_string(ms) + " ms, existing " + std::to_string(existing));
+        }, &changed);
+        Line("observeA", Hex(hr) + (changed ? " changed" : " same"));
+      }
+      const ULONGLONG wait_until = ::GetTickCount64() + 6000;
+      MSG pending_msg;
+      while (::GetTickCount64() < wait_until) {
+        while (::PeekMessageW(&pending_msg, nullptr, 0, 0, PM_REMOVE)) {
+          ::TranslateMessage(&pending_msg);
+          ::DispatchMessageW(&pending_msg);
+        }
+        ::MsgWaitForMultipleObjects(0, nullptr, FALSE, 50, QS_ALLINPUT);
+      }
+    } else if (scenario == L"twice") {
       // Two shares in a row in one process, the first window still open: does the second window ask for its files?
       ShareSheet::Failure failure;
       const int64_t first = sheet.Show({file}, L"first", &failure);
