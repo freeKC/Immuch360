@@ -1101,8 +1101,10 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
           focusNode: _rootFocus,
           autofocus: true,
           onKeyEvent: _onKey,
-          // Immuch360 Desktop: Copy and Copy name of a right click, Control C (lib/desktop/clipboard)
+          // Immuch360 Desktop: Copy and Copy name of a right click, Control C (lib/desktop/clipboard); not in the trash,
+          // as its grid
           child: withDesktopViewerCopy(
+            offer: ref.read(timelineServiceProvider).origin != TimelineOrigin.trash,
             copy: _copyToClipboard,
             name: () => ref.read(assetViewerProvider).currentAsset?.name,
             child: viewer,
