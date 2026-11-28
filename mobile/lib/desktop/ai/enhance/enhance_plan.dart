@@ -13,10 +13,23 @@
 //    16 GB is refused, and less than 5.5 GB free is a warning;
 //  - the memory free of the computer: the engine refused SeedVR2 runs three times on the 16 GB laptop when 1 to 2 GB
 //    were free ("RAM graph capacity exceeded"), so the dialog says "close other programs" below the need of the level
-//    (1.5 GB for Sharpen, 3 GB for Rebuild details), and the engine turns such a refusal into the same words;
+//    (1.5 GB for Sharpen, [rebuildFreeMemoryOf] for Rebuild details), and the engine turns such a refusal into the
+//    same words;
+//  - Rebuild details follows the rule of stable-diffusion.cpp itself (release 54, after a run of 4 min 37 s refused 25
+//    MiB short on the owner's laptop on 27 November 2026): before every graph it allocates, twice a tile, the engine
+//    asks that its request fit in what Windows says available (the least of the physical memory available and the
+//    commit left, MemoryFacts.sdCppAvailable) less 1 GiB it always keeps back (model_manager.cpp,
+//    ensure_host_capacity, at 0d71f963). The largest request of the program is the scheduler of the DiT on a tile of
+//    512 px: 363 834 672 bytes, the figure of that refusal. sd-cli itself then holds up to 1.53 to 1.56 GB (its peak
+//    working set in the probe, 3 MP and 12 MP, about 4 bytes a pixel of the photo above 1.5 GiB), which the memory
+//    read before it starts does not count yet. So the need when the run starts is that headroom, that request, what
+//    sd-cli will hold, and 512 MiB for the other programs during the run (a choice, not a measure): 3.4 GiB for the
+//    14 MP photo of that day;
 //  - those needs were measured up to 12 MP; above, the buffers of the app grow with the photo (the float sums of the
 //    blend, the colour fix, the copies between isolates: about 40 bytes a pixel), so each need takes 40 bytes for
-//    every pixel above 12 MP, 1.5 GB more at 50 MP (enhanceExtraMemoryOf);
+//    every pixel above 12 MP, 1.5 GB more at 50 MP (enhanceExtraMemoryOf); Rebuild details takes the larger of its
+//    rule above and that need (a 360° photo keeps its seam copy while sd-cli runs its poles; above 23 MP the old need
+//    is the larger, not measured);
 //  - an Intel Mac: Sharpen and Rebuild details need the Metal build of stable-diffusion.cpp, made for Apple chips only,
 //    and its ONNX Runtime 1.23.2 never ran VOSR: nothing is offered there;
 //  - a Mac with an Apple chip (release 53; not tried on a Mac yet, see below): the GPU shares the memory of the
@@ -38,7 +51,8 @@
 // Times (wall time of the whole run, loading included):
 //  - Sharpen: 28.3 s for 3 MP, 110.5 s for 12 MP, so 2 s and 9.1 s per megapixel;
 //  - Rebuild details: 35.0 s for 20 tiles, 93.9 s for 63, so 7.6 s and 1.37 s per tile of 512 px; about 20 s more the
-//    first time, while the Vulkan shaders compile;
+//    first time, while the Vulkan shaders compile; and from release 54 about 12.9 s for each run of sd-cli after the
+//    first (a photo of more than 24 tiles, seedvr2_dgl.dart): its start and the read of the DiT, not timed apart yet;
 //  - Natural: 16 s per tile on 22 threads of ONNX Runtime (16.4 s for 3 MP, 15.5 s for 12 MP) and 9 s of loading, the
 //    time per tile in proportion to the threads (a laptop with half the cores, about twice as long).
 // Another card or processor is not measured: the dialog says "on this computer, about" and the panel learns the real
@@ -49,6 +63,7 @@ import 'dart:math' as math;
 import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
+import 'package:immich_mobile/desktop/ai/enhance/seedvr2_dgl.dart' show seedVr2Batches;
 import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show aiEnhanceMacRebuildOffered;
@@ -59,10 +74,43 @@ const _gib = 1024 * _mib;
 /// The largest photo every level takes, in pixels
 const enhanceMaxPixels = 50 * 1000 * 1000;
 
-/// The memory free each level needs on the computer (see the top of this file)
+/// The memory free each level needs on the computer (see the top of this file; Rebuild details: [rebuildFreeMemoryOf])
 const sharpenFreeMemory = 3 * _gib ~/ 2;
-const rebuildFreeMemory = 3 * _gib;
 const naturalFreeMemory = 11 * _gib ~/ 2;
+
+/// What stable-diffusion.cpp keeps back of the memory available before each allocation it checks
+const sdCppRamHeadroom = _gib;
+
+/// The largest graph request of the program of Rebuild details: the scheduler of the DiT on a tile of 512 px, in the
+/// refusal of 27 November 2026 ("Requested 363834672 bytes")
+const rebuildGraphRequest = 363834672;
+
+/// What sd-cli holds while it runs Rebuild details: 1.5 GiB, and 4 bytes a pixel of the photo (peak working sets of
+/// 1 529 MiB at 3 MP and 1 561 MiB at 12 MP in the probe)
+const rebuildSdCliBase = 3 * _gib ~/ 2;
+const rebuildSdCliBytesPerPixel = 4;
+
+/// What the other programs may take while the run goes on: a choice of release 54, not a measure
+const rebuildDriftMargin = _gib ~/ 2;
+
+/// The need of Rebuild details before release 54: 3 GiB and the buffers of the app above 12 MP (enhanceExtraMemoryOf)
+const rebuildFreeMemoryBefore54 = 3 * _gib;
+
+/// The memory available Rebuild details needs when its run starts for a photo of [pixels] (null: 12 MP), by the rule
+/// of stable-diffusion.cpp (see the top of this file); never less than the need before release 54, whose 40 bytes a
+/// pixel above 12 MP stay counted: a 360° photo holds its seam copy while sd-cli runs its poles, and above 23 MP
+/// that need is the larger one, not measured yet
+int rebuildFreeMemoryOf(int? pixels) => math.max(
+  sdCppRamHeadroom +
+      rebuildGraphRequest +
+      rebuildSdCliBase +
+      rebuildSdCliBytesPerPixel * (pixels ?? enhanceMeasuredPixels) +
+      rebuildDriftMargin,
+  rebuildFreeMemoryBefore54 + enhanceExtraMemoryOf(pixels),
+);
+
+/// What sd-cli must find available at a tile of the DiT, read while it runs: the headroom it keeps and the request
+const rebuildTileMemory = sdCppRamHeadroom + rebuildGraphRequest;
 
 /// The memory of a computer Natural runs on: 16 GB, which Windows reports as a little less
 const naturalPhysicalMemory = 15 * _gib;
@@ -196,13 +244,11 @@ int enhanceExtraMemoryOf(int? pixels) =>
     pixels == null ? 0 : enhanceBytesPerPixel * math.max(0, pixels - enhanceMeasuredPixels);
 
 /// The memory free [level] needs on the computer for a photo of [pixels]
-int enhanceFreeMemoryOf(EnhanceLevel level, {int? pixels}) =>
-    enhanceExtraMemoryOf(pixels) +
-    switch (level) {
-      EnhanceLevel.sharpen => sharpenFreeMemory,
-      EnhanceLevel.rebuild => rebuildFreeMemory,
-      EnhanceLevel.natural => naturalFreeMemory,
-    };
+int enhanceFreeMemoryOf(EnhanceLevel level, {int? pixels}) => switch (level) {
+  EnhanceLevel.sharpen => sharpenFreeMemory + enhanceExtraMemoryOf(pixels),
+  EnhanceLevel.rebuild => rebuildFreeMemoryOf(pixels),
+  EnhanceLevel.natural => naturalFreeMemory + enhanceExtraMemoryOf(pixels),
+};
 
 /// What a job of [level] may take of the memory of the computer for a photo of [pixels]
 int enhanceJobMemoryOf(EnhanceLevel level, {int? pixels}) =>
@@ -311,7 +357,8 @@ Duration enhanceEstimate(EnhanceLevel level, int width, int height, {int process
   final tiles = planTiles(width, height).length;
   final seconds = switch (level) {
     EnhanceLevel.sharpen => 2 + 9.1 * megapixels,
-    EnhanceLevel.rebuild => 7.6 + 1.37 * tiles,
+    // Each run after the first starts sd-cli and reads the DiT again (seedVr2Batches): 6.5 s and 6.4 s in the probe
+    EnhanceLevel.rebuild => 7.6 + 1.37 * tiles + 12.9 * (seedVr2Batches(tiles).length - 1),
     EnhanceLevel.natural => 9 + tiles * 16.0 * 22 / math.max(1, processors - 2),
   };
   return Duration(milliseconds: (seconds * 1000).round());

@@ -114,7 +114,7 @@ class DesktopEnhanceDialogFacts implements EnhanceDialogFacts {
       return EnhanceMachine(
         platform: platform,
         physicalMemory: read.physical ?? facts.physicalMemory,
-        freeMemory: read.available,
+        freeMemory: read.sdCppAvailable,
         processors: facts.processors,
         metal: platform == AiPlatform.macosArm64 ? metal.read() : null,
       );
@@ -125,7 +125,7 @@ class DesktopEnhanceDialogFacts implements EnhanceDialogFacts {
     return EnhanceMachine(
       platform: aiPlatformOf(facts.abi),
       physicalMemory: read.physical ?? facts.physicalMemory,
-      freeMemory: read.available,
+      freeMemory: read.sdCppAvailable,
       processors: facts.processors,
       card: card,
     );

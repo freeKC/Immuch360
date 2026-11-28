@@ -131,6 +131,9 @@ class _Backend implements EnhanceBackend {
   bool get fellBack => false;
 
   @override
+  EnhanceTileProgress? get tileProgress => null;
+
+  @override
   Future<Uint8List> enhance(
     SbsDecoded picture, {
     required String workFolder,

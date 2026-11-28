@@ -95,8 +95,9 @@ enum ConversionKind {
 
   /// Whether its engine tells the time left of the whole job (ImmersiveProgress.remaining), which the time left then
   /// is, rather than what the timings of the steps leave: the time of a splat scene follows its images, its pairs and
-  /// its pixels, not a time per step
-  bool get tellsWholeTimeLeft => this == splatScene;
+  /// its pixels, not a time per step; that of Rebuild details its tiles, which its backend times as they run, and
+  /// none while it loads its models (the panel said "1 s left" there for minutes on 27 November 2026, release 54)
+  bool get tellsWholeTimeLeft => this == splatScene || this == enhanceRebuild;
 
   /// The steps of a job of this kind, made from a video ([fromVideo]) or not: a splat scene of photos has no frames
   /// to take, one of a video no photos to prepare (ImmersiveStage.splatOf); the other kinds have their [stages]
@@ -586,6 +587,7 @@ class ConversionJob {
     this.placed,
     this.keptFolder,
     this.segments,
+    this.tilePhase,
     this.video,
     this.videoProgress,
     this.videoDone,
@@ -710,6 +712,10 @@ class ConversionJob {
   /// same result" while it generates. Null while it runs whole, and again when sd-cli goes back to one segment.
   final int? segments;
 
+  /// An enhanced photo through Rebuild details: the phase of its tiles while it runs (ImmersiveProgress.tilePhase),
+  /// [step] the tile under way and [steps] the tiles of the photo
+  final ImmersiveTilePhase? tilePhase;
+
   /// Whether the job ended for the memory of the graphics card in a way Keep waiting answers: it left the queue after
   /// waiting for it (gpuMemoryShort), or its generator ran out of it and said what it read (gpuOutOfMemory with a
   /// GeneratorMemoryRead, lot 13c). Keep waiting puts it back to wait as long as it takes, in place of Retry.
@@ -757,6 +763,7 @@ class ConversionJob {
     SplatPlaced? placed,
     String? keptFolder,
     int? Function()? segments,
+    ImmersiveTilePhase? Function()? tilePhase,
     VideoJobProgress? Function()? videoProgress,
     VideoJobResult? videoDone,
     bool? yielding,
@@ -799,6 +806,7 @@ class ConversionJob {
     placed: placed ?? this.placed,
     keptFolder: keptFolder ?? this.keptFolder,
     segments: segments == null ? this.segments : segments(),
+    tilePhase: tilePhase == null ? this.tilePhase : tilePhase(),
     video: video,
     videoProgress: videoProgress == null ? this.videoProgress : videoProgress(),
     videoDone: videoDone ?? this.videoDone,

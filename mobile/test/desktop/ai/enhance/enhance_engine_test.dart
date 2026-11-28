@@ -23,11 +23,18 @@ const _fixtures = 'test/fixtures/ai_immersive/codec';
 
 /// A model that adds [add] to every channel, tile after tile, and remembers what it was given
 class _FakeBackend implements EnhanceBackend {
-  _FakeBackend({this.add = 40, this.failure, this.cancelAt});
+  _FakeBackend({this.add = 40, this.failure, this.cancelAt, this.tiling, this.unitsAfter});
 
   final int add;
   final BackendException? failure;
   final NativeCancelFlag? cancelAt;
+
+  /// The tiles told at each step, as Rebuild details tells them; null: none, as Sharpen
+  final List<EnhanceTileProgress>? tiling;
+
+  /// A step told once its tiles are no longer told, in work units rather than tiles (done, all), as Rebuild details
+  /// did between two of its runs
+  final (int, int)? unitsAfter;
   SbsDecoded? given;
   String? folder;
 
@@ -41,6 +48,9 @@ class _FakeBackend implements EnhanceBackend {
   bool fellBack = false;
 
   @override
+  EnhanceTileProgress? tileProgress;
+
+  @override
   Future<Uint8List> enhance(
     SbsDecoded picture, {
     required String workFolder,
@@ -51,8 +61,20 @@ class _FakeBackend implements EnhanceBackend {
     given = picture;
     folder = workFolder;
     expect(Directory(workFolder).existsSync(), isTrue);
-    for (var tile = 1; tile <= 3; tile++) {
-      onStep(tile, 3);
+    final told = tiling;
+    if (told != null) {
+      for (final (index, tiles) in told.indexed) {
+        tileProgress = tiles;
+        onStep(index, told.length);
+      }
+      tileProgress = null;
+      if (unitsAfter case (final done, final all)) {
+        onStep(done, all);
+      }
+    } else {
+      for (var tile = 1; tile <= 3; tile++) {
+        onStep(tile, 3);
+      }
     }
     cancelAt?.cancel();
     if (failure case final error?) {
@@ -69,12 +91,14 @@ class _FakeBackend implements EnhanceBackend {
 }
 
 class _Memory implements MemoryProbe {
-  const _Memory(this.available);
+  const _Memory(this.available, {this.commit});
+
+  final int? commit;
 
   final int? available;
 
   @override
-  MemoryFacts read() => MemoryFacts(physical: 16 << 30, available: available);
+  MemoryFacts read() => MemoryFacts(physical: 16 << 30, available: available, commitAvailable: commit);
 }
 
 void main() {
@@ -97,11 +121,11 @@ void main() {
     );
   }
 
-  EnhanceEngine engineWith(EnhanceBackend backend, {int? available = 8 << 30}) => EnhanceEngine(
+  EnhanceEngine engineWith(EnhanceBackend backend, {int? available = 8 << 30, int? commit}) => EnhanceEngine(
     backend: backend,
     workFolder: (id) => Directory(p.join(temp.path, 'work-$id'))..createSync(),
     codecs: SbsCodecChoice.dart,
-    memory: _Memory(available),
+    memory: _Memory(available, commit: commit),
   );
 
   test(
@@ -202,6 +226,76 @@ void main() {
     ).run(jobOf('orientation_1.jpg', level: EnhanceLevel.rebuild), cancel: NativeCancelFlag());
     expect(result.error, ImmersiveErrorCode.outOfMemory);
     expect(result.message, startsWith(enhanceMemoryMessage));
+  });
+
+  test(
+    'the refusal carries the memory available and the need of the photo, read as stable-diffusion.cpp does',
+    () async {
+      // The physical memory is there, the commit is not: sd-cli counts the least of the two (backend_fit.cpp)
+      final result = await engineWith(
+        _FakeBackend(),
+        available: 8 << 30,
+        commit: 2 << 30,
+      ).run(jobOf('orientation_1.jpg', level: EnhanceLevel.rebuild), cancel: NativeCancelFlag());
+      expect(result.error, ImmersiveErrorCode.outOfMemory);
+      final figures = enhanceMemoryFiguresOf(result.message)!;
+      expect(figures.available, 2 << 30);
+      expect(figures.need, greaterThan(3 << 30));
+      expect(enhanceMemoryFiguresOf('${enhanceMemoryRanShortMessage(26070320)}: [E] RAM graph'), (
+        available: null,
+        need: null,
+        short: 26070320,
+      ));
+      expect(enhanceMemoryFiguresOf('enhance: the graphics card lacks the integer dot product'), isNull);
+      expect(enhanceMemoryFiguresOf(enhanceMemoryMessage), isNull);
+    },
+  );
+
+  test('tiles told with their phase: no time left while the models load, the backend\'s own once it has one', () async {
+    final heard = <ImmersiveProgress>[];
+    final tiling = <EnhanceTileProgress>[
+      (phase: ImmersiveTilePhase.encode, tile: 1, tiles: 30, left: null),
+      (phase: ImmersiveTilePhase.sample, tile: 2, tiles: 30, left: null),
+      (phase: ImmersiveTilePhase.decode, tile: 2, tiles: 30, left: const Duration(seconds: 40)),
+    ];
+    final result = await engineWith(_FakeBackend(tiling: tiling)).run(
+      jobOf('orientation_1.jpg', level: EnhanceLevel.rebuild),
+      cancel: NativeCancelFlag(),
+      onProgress: heard.add,
+    );
+    expect(result.isDone, isTrue, reason: result.message);
+    final loading = heard.where((progress) => progress.stage == ImmersiveStage.loadingModels);
+    expect(loading, isNotEmpty);
+    expect(loading.every((progress) => progress.remaining == null), isTrue);
+    final tiles = heard.where((progress) => progress.tilePhase != null).toList();
+    expect(tiles.map((progress) => progress.tilePhase), [
+      ImmersiveTilePhase.encode,
+      ImmersiveTilePhase.sample,
+      ImmersiveTilePhase.decode,
+    ]);
+    expect(tiles.map((progress) => progress.remaining), [null, null, const Duration(seconds: 40)]);
+    expect(tiles.map((progress) => (progress.step, progress.steps)), [(1, 30), (2, 30), (2, 30)]);
+    expect(tiles.map((progress) => progress.perMille), [80, 80 + 780 ~/ 3, 80 + 780 * 2 ~/ 3]);
+  });
+
+  test('a step told without its tile after tiles were told is not shown as a step count', () async {
+    final heard = <ImmersiveProgress>[];
+    final tiling = <EnhanceTileProgress>[
+      (phase: ImmersiveTilePhase.encode, tile: 1, tiles: 77, left: null),
+      (phase: ImmersiveTilePhase.decode, tile: 3, tiles: 77, left: const Duration(seconds: 90)),
+    ];
+    final result = await engineWith(_FakeBackend(tiling: tiling, unitsAfter: (1027, 13153))).run(
+      jobOf('orientation_1.jpg', level: EnhanceLevel.rebuild),
+      cancel: NativeCancelFlag(),
+      onProgress: heard.add,
+    );
+    expect(result.isDone, isTrue, reason: result.message);
+    final generating = heard.where((progress) => progress.stage == ImmersiveStage.generating).toList();
+    expect(generating, isNotEmpty);
+    for (final progress in generating) {
+      expect(progress.tilePhase, isNotNull, reason: 'step ${progress.step} of ${progress.steps}');
+      expect(progress.steps, 77);
+    }
   });
 
   test('a failure of the model, a cancel and an unreadable photo end the job without a file', () async {

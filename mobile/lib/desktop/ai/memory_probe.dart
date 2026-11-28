@@ -5,7 +5,8 @@
 // it ends with "not enough memory" instead.
 //
 // Read from the system without a plugin, as native_sha1.dart and library_scanner.dart do:
-//  - Windows: GlobalMemoryStatusEx of kernel32 (ullTotalPhys, and ullAvailPhys, which counts the standby list);
+//  - Windows: GlobalMemoryStatusEx of kernel32 (ullTotalPhys, and ullAvailPhys, which counts the standby list; and
+//    ullAvailPageFile, the commit a program may still take, which stable-diffusion.cpp counts too: [sdCppAvailable]);
 //  - Linux: /proc/meminfo (MemTotal, and MemAvailable, the kernel's own estimate, page cache included);
 //  - macOS: sysctl hw.memsize for the physical memory. macOS keeps most of its memory busy with caches and compresses
 //    the rest, and gives no simple "available" figure: none is read there, and a job is not checked against it.
@@ -26,7 +27,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 /// What the memory of a computer is, in bytes
 class MemoryFacts {
-  const MemoryFacts({this.physical, this.available});
+  const MemoryFacts({this.physical, this.available, this.commitAvailable});
 
   /// The physical memory, as the system counts it; null when it could not be read
   final int? physical;
@@ -34,8 +35,20 @@ class MemoryFacts {
   /// What a program can take now without the system swapping; null where the system does not say it simply (macOS)
   final int? available;
 
+  /// Windows: the commit a program may still take (ullAvailPageFile); null elsewhere or when it could not be read
+  final int? commitAvailable;
+
+  /// The memory stable-diffusion.cpp counts as available before each allocation it checks (backend_fit.cpp,
+  /// available_ram_bytes at 0d71f963): the least of the physical memory available and the commit left on Windows,
+  /// MemAvailable on Linux; null when the system does not say it simply (macOS, where the app reads none)
+  int? get sdCppAvailable {
+    final physical = available;
+    final commit = commitAvailable;
+    return physical == null || commit == null ? physical : (commit < physical ? commit : physical);
+  }
+
   @override
-  String toString() => 'MemoryFacts(physical: $physical, available: $available)';
+  String toString() => 'MemoryFacts(physical: $physical, available: $available, commit: $commitAvailable)';
 }
 
 /// Reads the memory of this computer; a fake stands for it in the tests. Plain objects, sent to the worker isolate of
@@ -82,6 +95,7 @@ MemoryFacts parseProcMeminfo(String text) {
 const _memoryStatusLength = 64;
 const _totalPhysOffset = 8;
 const _availPhysOffset = 16;
+const _availPageFileOffset = 32;
 
 typedef _GlobalMemoryStatusExNative = Int32 Function(Pointer<Uint8>);
 typedef _GlobalMemoryStatusEx = int Function(Pointer<Uint8>);
@@ -100,6 +114,7 @@ MemoryFacts _windows() {
     return MemoryFacts(
       physical: (status + _totalPhysOffset).cast<Uint64>().value,
       available: (status + _availPhysOffset).cast<Uint64>().value,
+      commitAvailable: (status + _availPageFileOffset).cast<Uint64>().value,
     );
   });
 }
@@ -267,6 +282,7 @@ int jobMemoryStillNeeded(ImmersiveKind kind, ImmersiveStage? stage) =>
 /// [besideNeeds] ([jobMemoryStillNeeded]), the memory being [facts]: always when the system does not say what is
 /// available (macOS), as the gate
 bool fitsBeside(int need, MemoryFacts facts, {int besideNeeds = 0}) {
-  final available = facts.available;
+  // The commit left counts too on Windows, as stable-diffusion.cpp counts it (release 54)
+  final available = facts.sdCppAvailable;
   return available == null || available - besideNeeds >= need + secondLaneReserve;
 }

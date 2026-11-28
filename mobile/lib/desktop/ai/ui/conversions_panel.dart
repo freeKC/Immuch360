@@ -66,7 +66,7 @@ import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/desktop_enhance.dart' show enhanceNotInThisVersion;
 import 'package:immich_mobile/desktop/ai/enhance/enhance_compare.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart'
-    show enhanceNoIntDotMessage, enhanceNoMetalMessage;
+    show enhanceMemoryFiguresOf, enhanceNoIntDotMessage, enhanceNoMetalMessage;
 import 'package:immich_mobile/desktop/ai/enhance/enhance_remote_compare.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
@@ -250,7 +250,16 @@ String conversionFailureText(
   ImmersiveErrorCode.unsupportedFormat => t.ai_immersive_unavailable_format,
   ImmersiveErrorCode.outOfMemory when kind == ConversionKind.splatScene => t.ai_immersive_failed_splat_memory,
   // "Enhance (AI)": the engine, or its own check before it, found the memory free short (enhance_engine.dart)
-  ImmersiveErrorCode.outOfMemory when kind?.isEnhance ?? false => t.ai_enhance_failed_memory,
+  ImmersiveErrorCode.outOfMemory when kind?.isEnhance ?? false => switch (enhanceMemoryFiguresOf(message)) {
+    (available: final free?, need: final need?, short: _) => t.ai_enhance_memory_short(
+      free: formatBytes(free),
+      need: formatBytes(need),
+    ),
+    (available: _, need: _, short: final short?) when short > 0 => t.ai_enhance_memory_ran_short(
+      short: formatBytes(short),
+    ),
+    _ => t.ai_enhance_failed_memory,
+  },
   ImmersiveErrorCode.tooLarge when kind?.isEnhance ?? false => t.ai_enhance_refused_too_large,
   ImmersiveErrorCode.componentsMissing when message == enhanceNotInThisVersion => t.ai_enhance_refused_not_yet,
   ImmersiveErrorCode.gpuUnavailable when message?.startsWith(enhanceNoIntDotMessage) ?? false =>
@@ -365,8 +374,15 @@ String conversionJobLabel(Translations t, ConversionJob job, ConversionJobInfo? 
 /// matches_importer for a video of more than 200 frames; until lot SPF1 the frames of a video were matched one after
 /// the other).
 String? conversionStageText(Translations t, ConversionJob job) => switch (job.state) {
-  // "Enhance (AI)": its model runs tile after tile, then the colour fix and the strength
-  ConversionState.generating when job.kind.isEnhance => t.ai_enhance_stage_tiles,
+  // "Enhance (AI)": its model runs tile after tile, Rebuild details in three phases, then the colour fix and the
+  // strength
+  ConversionState.loadingModels when job.kind.isEnhance => t.ai_enhance_stage_loading,
+  ConversionState.generating when job.kind.isEnhance => switch ((job.tilePhase, job.step, job.steps)) {
+    (ImmersiveTilePhase.encode, final step?, final steps?) => t.ai_enhance_stage_encode(index: step, total: steps),
+    (ImmersiveTilePhase.sample, final step?, final steps?) => t.ai_enhance_stage_sample(index: step, total: steps),
+    (ImmersiveTilePhase.decode, final step?, final steps?) => t.ai_enhance_stage_decode(index: step, total: steps),
+    _ => t.ai_enhance_stage_tiles,
+  },
   ConversionState.pasteBack when job.kind.isEnhance => t.ai_enhance_stage_finish,
   ConversionState.geometry => t.ai_immersive_stage_geometry,
   ConversionState.layers => t.ai_immersive_stage_layers,
@@ -434,15 +450,21 @@ const _countedInStageText = {
 };
 
 /// "step 12 of 28, about 3 min left" while a generation tells its steps, else "About 20 s left"; [left] is what is
-/// left of the job now, null when nothing tells it
+/// left of the job now, null when nothing tells it. A time told that ran out ([left] zero) says no time: "step 12 of
+/// 28" alone, or nothing, never "1 s left" held until the engine tells again (27 November 2026, release 54)
 String? conversionProgressText(Translations t, ConversionJob job, Duration? left) {
   if (left == null) {
     return null;
   }
-  final time = aiDurationText(t, left);
   final (step, steps) = (job.step, job.steps);
-  // The regions of the hidden areas and the images of a splat scene are counted in the words of their step
-  if (step != null && steps != null && !_countedInStageText.contains(job.state)) {
+  // The regions of the hidden areas, the images of a splat scene and the tiles of Rebuild details are counted in the
+  // words of their step
+  final counted = step != null && steps != null && !_countedInStageText.contains(job.state) && job.tilePhase == null;
+  if (left <= Duration.zero) {
+    return counted ? t.ai_immersive_step_count(step: step, steps: steps) : null;
+  }
+  final time = aiDurationText(t, left);
+  if (counted) {
     return t.ai_immersive_step_progress(step: step, steps: steps, time: time);
   }
   return t.ai_immersive_time_left(time: time);
@@ -817,7 +839,9 @@ class _JobRowState extends ConsumerState<_JobRow> {
     }
   }
 
-  /// What is left of the job now
+  /// What is left of the job now; zero once the time told has run out, which conversionProgressText says without a
+  /// time, rather than "1 s left" held until the engine tells again (a Rebuild details showed it for minutes on 27
+  /// November 2026)
   Duration? get _left {
     final told = _told;
     final at = _toldAt;
@@ -825,7 +849,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
       return null;
     }
     final left = told - ref.read(conversionClockProvider)().difference(at);
-    return left.isNegative ? Duration.zero : left;
+    return left > Duration.zero ? left : Duration.zero;
   }
 
   @override

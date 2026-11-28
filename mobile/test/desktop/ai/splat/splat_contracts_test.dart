@@ -296,7 +296,8 @@ void main() {
           for (final kind in ConversionKind.values)
             if (kind.tellsWholeTimeLeft) kind,
         ],
-        [ConversionKind.splatScene],
+        // And Rebuild details (release 54): its backend times its tiles, and nothing is told while it loads
+        [ConversionKind.splatScene, ConversionKind.enhanceRebuild],
       );
       expect(
         conversionTimeLeft(

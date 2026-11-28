@@ -1,12 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show aiEnhanceMacRebuildOffered;
 
-const _gib = 1024 * 1024 * 1024;
+const _mib = 1024 * 1024;
+const _gib = 1024 * _mib;
 
 /// The laptop of the probe: 16 GB, 24 threads, the RTX 4060 Laptop with 8 GB
 const _laptop = EnhanceMachine(
@@ -145,7 +147,8 @@ void main() {
           enhanceVerdict(level, _laptop, width: width, height: height).estimate!;
       expect(of(EnhanceLevel.sharpen, 4000, 3000).inSeconds, closeTo(110, 8));
       expect(of(EnhanceLevel.sharpen, 2000, 1500).inSeconds, closeTo(28, 4));
-      expect(of(EnhanceLevel.rebuild, 4000, 3000).inSeconds, closeTo(94, 6));
+      // 63 tiles in three runs of sd-cli (seedVr2Batches): the 93.9 s of one run and two starts more
+      expect(of(EnhanceLevel.rebuild, 4000, 3000).inSeconds, closeTo(120, 6));
       expect(of(EnhanceLevel.rebuild, 2000, 1500).inSeconds, closeTo(35, 4));
       expect(of(EnhanceLevel.natural, 4000, 3000).inSeconds, closeTo(990, 30));
       expect(of(EnhanceLevel.natural, 2000, 1500).inSeconds, closeTo(340, 15));
@@ -252,17 +255,65 @@ void main() {
   test('the memory a photo needs grows above the 12 MP the probe measured', () {
     for (final level in EnhanceLevel.values) {
       expect(enhanceJobMemoryOf(level, pixels: 12000000), enhanceJobMemoryOf(level));
-      expect(enhanceFreeMemoryOf(level, pixels: 3000000), enhanceFreeMemoryOf(level));
+      if (level != EnhanceLevel.rebuild) {
+        expect(enhanceFreeMemoryOf(level, pixels: 3000000), enhanceFreeMemoryOf(level));
+      }
       // The float sums of the blend and the colour fix of 50 MP, about 1.5 GB more
       expect(enhanceJobMemoryOf(level, pixels: 50000000) - enhanceJobMemoryOf(level), 40 * 38000000);
     }
     expect(enhanceJobMemoryOf(EnhanceLevel.sharpen, pixels: 50000000), greaterThan(3 * _gib));
     // The dialog says to close other programs for a large photo sooner than for a small one
-    final free = _with(free: 4 * _gib);
+    final free = _with(free: 3584 * _mib);
     expect(enhanceVerdict(EnhanceLevel.rebuild, free, width: 4000, height: 3000).warnings, isEmpty);
     final large = enhanceVerdict(EnhanceLevel.rebuild, free, width: 8000, height: 6000);
     expect(large.warnings, contains(EnhanceWarning.closeOtherPrograms));
-    expect(large.memoryNeeded, rebuildFreeMemory + 40 * 36000000);
+    expect(large.memoryNeeded, rebuildFreeMemoryOf(48000000));
+  });
+
+  group('Rebuild details follows the memory rule of stable-diffusion.cpp', () {
+    test('its need: the headroom of 1 GiB, the graph of the DiT, what sd-cli holds, and a margin', () {
+      expect(sdCppRamHeadroom, _gib);
+      expect(rebuildGraphRequest, 363834672);
+      expect(rebuildFreeMemoryOf(12000000), _gib + 363834672 + 3 * _gib ~/ 2 + 4 * 12000000 + _gib ~/ 2);
+      // What sd-cli held at its peak in the probe fits in its share: 1 529 MiB at 3 MP, 1 561 MiB at 12 MP
+      expect(rebuildSdCliBase + rebuildSdCliBytesPerPixel * 3145728, greaterThanOrEqualTo(1529 * _mib));
+      expect(rebuildSdCliBase + rebuildSdCliBytesPerPixel * 12000000, greaterThanOrEqualTo(1561 * _mib));
+      expect(enhanceFreeMemoryOf(EnhanceLevel.rebuild, pixels: 12000000), rebuildFreeMemoryOf(12000000));
+    });
+
+    test('a large photo never needs less than before release 54: the buffers of the app above 12 MP stay counted', () {
+      // 50 MP: 3 GiB and 40 bytes a pixel above 12 MP (4 522 MiB) is more than the rule of sd.cpp (3 610 MiB)
+      expect(rebuildFreeMemoryOf(50000000), 3 * _gib + 40 * 38000000);
+      expect(rebuildFreeMemoryOf(50000000) >> 20, 4521);
+      // The two cross near 23.4 MP; below, the rule of sd.cpp
+      expect(rebuildFreeMemoryOf(20000000), _gib + 363834672 + 3 * _gib ~/ 2 + 4 * 20000000 + _gib ~/ 2);
+    });
+
+    test('the photo of 27 November 2026 (4592 x 3056) would have been refused at the start with 3150 MiB', () {
+      // The engine's own gate let it start with at least 3150 MiB available (3 GiB and 40 bytes a pixel above 12 MP);
+      // sd-cli refused it 4 min 37 s later with 1346 MiB available, 25 MiB short
+      final need = rebuildFreeMemoryOf(4592 * 3056);
+      expect(need >> 20, inInclusiveRange(3460, 3480));
+      expect(need, greaterThan(3150 * _mib));
+      final verdict = enhanceVerdict(EnhanceLevel.rebuild, _with(free: 3150 * _mib), width: 4592, height: 3056);
+      expect(verdict.warnings, contains(EnhanceWarning.closeOtherPrograms));
+      expect(verdict.memoryNeeded, need);
+      // What sd-cli asked at that tile, and what it found: Windows said 1 411 506 176 bytes available
+      const available = 337764352 + 1024 * 1024 * 1024;
+      expect(available < rebuildTileMemory, isTrue);
+      expect(rebuildTileMemory - available, 26070320);
+    });
+
+    test('a photo of more than 24 tiles costs a start of sd-cli and a read of the DiT more for each run', () {
+      final one = enhanceEstimate(EnhanceLevel.rebuild, 2048, 1536);
+      expect(one.inMilliseconds, ((7.6 + 1.37 * planTiles(2048, 1536).length) * 1000).round());
+      final tiles = planTiles(4592, 3056).length;
+      expect(tiles, 77);
+      expect(
+        enhanceEstimate(EnhanceLevel.rebuild, 4592, 3056).inMilliseconds,
+        ((7.6 + 1.37 * 77 + 12.9 * 2) * 1000).round(),
+      );
+    });
   });
 
   test('a 360 photo needs the memory of all its work pixels: the seam copy and the faces of the poles', () {

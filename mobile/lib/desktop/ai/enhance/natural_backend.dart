@@ -85,6 +85,9 @@ class OrtNaturalBackend implements EnhanceBackend {
   bool get fellBack => notes.any((note) => note.endsWith(vosrOnProcessorNote) || note.endsWith(vosrFellBackNote));
 
   @override
+  EnhanceTileProgress? get tileProgress => null;
+
+  @override
   Future<Uint8List> enhance(
     SbsDecoded picture, {
     required String workFolder,

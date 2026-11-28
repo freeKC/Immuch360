@@ -773,6 +773,10 @@ class SplatPlaced {
 /// progress once they are known, so that the panel warns of a scene that may be incomplete while it trains. The
 /// generation of a panorama tells the [segments] its generator cut its work into, the card being short of memory
 /// (GeneratorProgress.segments), so that the panel says why it runs slower.
+/// The phase of the tiles of an enhanced photo through Rebuild details (seedvr2_dgl.dart): each tile read by the VAE,
+/// its details made by the DiT, then written back
+enum ImmersiveTilePhase { encode, sample, decode }
+
 class ImmersiveProgress {
   const ImmersiveProgress(
     this.stage,
@@ -782,6 +786,7 @@ class ImmersiveProgress {
     this.remaining,
     this.placed,
     this.segments,
+    this.tilePhase,
   });
 
   final ImmersiveStage stage;
@@ -796,6 +801,10 @@ class ImmersiveProgress {
   /// The pieces the generator runs in, null when it runs its work whole
   final int? segments;
 
+  /// An enhanced photo through Rebuild details: the phase of its tiles, [step] the tile of the photo under way and
+  /// [steps] its tiles; null for the other kinds and levels
+  final ImmersiveTilePhase? tilePhase;
+
   @override
   bool operator ==(Object other) =>
       other is ImmersiveProgress &&
@@ -805,10 +814,11 @@ class ImmersiveProgress {
       other.steps == steps &&
       other.remaining == remaining &&
       other.placed == placed &&
-      other.segments == segments;
+      other.segments == segments &&
+      other.tilePhase == tilePhase;
 
   @override
-  int get hashCode => Object.hash(stage, perMille, step, steps, remaining, placed, segments);
+  int get hashCode => Object.hash(stage, perMille, step, steps, remaining, placed, segments, tilePhase);
 
   @override
   String toString() => 'ImmersiveProgress($stage, $perMille${steps == null ? '' : ', $step of $steps'})';
