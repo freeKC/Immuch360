@@ -1786,8 +1786,9 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                   onPointerCancel: _onPointerUp,
                   // The mouse wheel zooms on a computer (lib/desktop/window/desktop_shortcuts.dart)
                   onPointerSignal: CurrentPlatform.isDesktop ? _onPointerSignal : null,
-                  onPointerPanZoomStart: _trackpadPinch.begin,
-                  onPointerPanZoomUpdate: _trackpadPinch.update,
+                  // A pinch of a computer's touchpad (desktop_trackpad_pinch.dart); a phone or a tablet keeps its own
+                  onPointerPanZoomStart: CurrentPlatform.isDesktop ? _trackpadPinch.begin : null,
+                  onPointerPanZoomUpdate: CurrentPlatform.isDesktop ? _trackpadPinch.update : null,
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onScaleStart: (_) => _fovAtScaleStart = _fov,
