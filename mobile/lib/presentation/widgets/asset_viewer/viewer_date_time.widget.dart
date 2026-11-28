@@ -8,13 +8,15 @@ import 'package:immich_mobile/utils/timezone.dart';
 
 /// The date of [asset] over its time, in white, as the viewer shows them: in the middle of its top bar, and on a TV at
 /// the bottom left of a photo, aligned on the left ([alignLeft]) with [shadows] to stand out over the photo (see
-/// ViewerBottomBar). The date and time the photo was taken when its EXIF tells them, else its creation date.
+/// ViewerBottomBar). The date and time the photo was taken when its EXIF tells them, else its creation date. [oneLine]
+/// puts them on one line, under the file name of a computer's viewer.
 class ViewerDateTime extends ConsumerWidget {
-  const ViewerDateTime({super.key, required this.asset, this.alignLeft = false, this.shadows});
+  const ViewerDateTime({super.key, required this.asset, this.alignLeft = false, this.shadows, this.oneLine = false});
 
   final BaseAsset asset;
   final bool alignLeft;
   final List<Shadow>? shadows;
+  final bool oneLine;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,6 +28,14 @@ class ViewerDateTime extends ConsumerWidget {
     final dateFormatted = dateTime.formatDate();
     final timeFormatted = dateTime.formatTime(alwaysUse24HourFormat: alwaysUse24HourFormat);
 
+    if (oneLine) {
+      return Text(
+        '$dateFormatted · $timeFormatted',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: context.textTheme.labelMedium?.copyWith(color: Colors.white70, shadows: shadows),
+      );
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: alignLeft ? CrossAxisAlignment.start : CrossAxisAlignment.center,

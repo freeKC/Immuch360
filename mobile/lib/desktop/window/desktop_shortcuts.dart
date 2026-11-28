@@ -104,6 +104,10 @@ enum DesktopWindowKey {
   /// Control A, Command A on macOS, never while typing: selects the whole grid shown (lib/desktop/selection)
   selectAll,
 
+  /// Control C, Command C on macOS, never while typing: copies the item of the viewer shown, or the selection of the
+  /// grid shown, to the clipboard of the system (lib/desktop/clipboard)
+  copy,
+
   /// H alone, never while typing: View in headset with the layout the player marks, or its end
   /// (lib/desktop/video/xr); no viewer or player of the app uses H
   toggleHeadsetView,
@@ -133,6 +137,13 @@ DesktopWindowKey? desktopWindowKeyOf(KeyEvent event, {bool? typing}) {
     final selectAll = CurrentPlatform.isMacOS ? meta && !control : control && !meta;
     if (selectAll) {
       return DesktopWindowKey.selectAll;
+    }
+  }
+  if (key == LogicalKeyboardKey.keyC && !alt && !keyboard.isShiftPressed && !(typing ?? isTypingText())) {
+    // A text field keeps its own copy
+    final copy = CurrentPlatform.isMacOS ? meta && !control : control && !meta;
+    if (copy) {
+      return DesktopWindowKey.copy;
     }
   }
   if (CurrentPlatform.isMacOS && meta) {

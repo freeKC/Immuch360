@@ -18,6 +18,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copies.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copy.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
@@ -43,6 +45,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../presentation/pages/network/network_viewer_fakes.dart';
 import '../../service.mocks.dart';
+import '../clipboard/recording_copier.dart';
 import 'selection_test_app.dart';
 
 /// An image that never comes: the thumbnails stay blank
@@ -305,6 +308,30 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    testWidgets('Copy, in the menu and by Control C, copies the picked files in the order of the grid', (tester) async {
+      final copier = RecordingCopier();
+      await pumpBrowser(tester, overrides: [desktopClipboardCopierProvider.overrideWithValue(copier)]);
+      await clickWith(tester, [LogicalKeyboardKey.controlLeft], tileOf('d.jpg'));
+      await clickWith(tester, [LogicalKeyboardKey.controlLeft], tileOf('a.jpg'));
+
+      await rightClick(tester, tileOf('a.jpg'));
+      await tester.pumpAndSettle();
+      final copy = find.byKey(const Key('desktop_selection_copy'));
+      expect(find.descendant(of: copy, matching: find.text(t.desktop_copy)), findsOneWidget);
+      await tester.tap(copy);
+      await tester.pumpAndSettle();
+      List<String> names(List<ClipboardSource> sources) => [
+        for (final source in sources) (source as RemoteClipboardSource).name,
+      ];
+      expect(names(copier.copies.single), ['a.jpg', 'd.jpg'], reason: 'fetched first, in the order of the grid');
+      expect(picked(tester).paths, {'/a.jpg', '/d.jpg'}, reason: 'a copy keeps the selection');
+
+      expect(await withShortcut(tester, LogicalKeyboardKey.keyC), isTrue);
+      await tester.pumpAndSettle();
+      expect(names(copier.copies.last), ['a.jpg', 'd.jpg']);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('a right click on a file not picked picks it alone, with Control it joins', (tester) async {
       await pumpBrowser(tester);
       await clickWith(tester, [LogicalKeyboardKey.controlLeft], tileOf('a.jpg'));
@@ -338,6 +365,18 @@ void main() {
         isNull,
       );
       expect(find.byKey(const Key('desktop_selection_upload')), findsNothing);
+      expect(
+        tester
+            .widget<MenuItemButton>(
+              find.descendant(
+                of: find.byKey(const Key('desktop_selection_copy')),
+                matching: find.byType(MenuItemButton),
+              ),
+            )
+            .onPressed,
+        isNotNull,
+        reason: 'a copy needs no server',
+      );
       debugDefaultTargetPlatformOverride = null;
     });
 
@@ -349,6 +388,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(picked(tester).isActive, isFalse);
       expect(find.byKey(const Key('desktop_selection_upload')), findsNothing);
+      expect(find.byKey(const Key('desktop_selection_copy')), findsNothing);
 
       await clickWith(tester, [LogicalKeyboardKey.controlLeft], tileOf('a.jpg'));
       expect(find.text('photo nas /a.jpg'), findsOneWidget, reason: 'Control click opens, as a click');

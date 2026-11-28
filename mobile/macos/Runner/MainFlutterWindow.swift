@@ -1,5 +1,6 @@
 import Cocoa
 import FlutterMacOS
+import ImageIO
 import Network
 
 class MainFlutterWindow: NSWindow {
@@ -13,6 +14,7 @@ class MainFlutterWindow: NSWindow {
     OpenFilesChannel.shared.attach(to: flutterViewController)
     NetworkCostChannel.shared.attach(to: flutterViewController)
     SessionPresenceChannel.shared.attach(to: flutterViewController)
+    ClipboardChannel.shared.attach(to: flutterViewController)
 
     super.awakeFromNib()
   }
@@ -157,5 +159,102 @@ final class NetworkCostChannel {
       }
     }
     self.channel = channel
+  }
+}
+
+/// The copy of photos and videos to the general pasteboard (lib/desktop/clipboard/desktop_clipboard.dart), on the
+/// channel the Windows and Linux runners use. writeFiles puts one item per file with its file URL, which the Finder,
+/// Mail, Messages and the chat programs take as the file itself; for a single photo the item also holds its picture,
+/// as public.png and public.tiff, made here from the file by ImageIO (HEIC included, turned as its EXIF says, at most
+/// 8192 pixels a side), off the main thread. It answers the change count of the pasteboard after the write; holds tells
+/// whether the pasteboard still has it, nothing having been copied since.
+final class ClipboardChannel {
+  static let shared = ClipboardChannel()
+
+  /// The longest side of the picture of a photo on the pasteboard
+  static let maxPictureSide = 8192
+
+  private var channel: FlutterMethodChannel?
+
+  /// The writes asked so far, on the main thread: a write whose picture is still being made when a later one comes is
+  /// dropped, so that the pasteboard ends up with what was copied last
+  private var writes = 0
+
+  func attach(to controller: FlutterViewController) {
+    channel = FlutterMethodChannel(
+      name: "immuch360/clipboard", binaryMessenger: controller.engine.binaryMessenger)
+    channel?.setMethodCallHandler { [weak self] call, result in
+      let arguments = call.arguments as? [String: Any]
+      switch call.method {
+      case "writeFiles":
+        self?.writeFiles(arguments, result: result)
+      case "holds":
+        guard let token = (arguments?["token"] as? NSNumber)?.intValue else {
+          result(FlutterError(code: "clipboard", message: "no token", details: nil))
+          return
+        }
+        result(token == NSPasteboard.general.changeCount)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+  }
+
+  private func writeFiles(_ arguments: [String: Any]?, result: @escaping FlutterResult) {
+    guard let paths = arguments?["paths"] as? [String], !paths.isEmpty else {
+      result(FlutterError(code: "clipboard", message: "no paths", details: nil))
+      return
+    }
+    let imagePath = paths.count == 1 ? arguments?["imagePath"] as? String : nil
+    writes += 1
+    let write = writes
+    DispatchQueue.global(qos: .userInitiated).async {
+      let picture = imagePath.flatMap(ClipboardChannel.picture(of:))
+      DispatchQueue.main.async {
+        guard write == self.writes else {
+          result(FlutterError(code: "superseded", message: "a later copy was asked", details: nil))
+          return
+        }
+        let items: [NSPasteboardItem] = paths.enumerated().map { index, path in
+          let item = NSPasteboardItem()
+          item.setString(URL(fileURLWithPath: path).absoluteString, forType: .fileURL)
+          if index == 0, let picture = picture {
+            item.setData(picture.png, forType: .png)
+            item.setData(picture.tiff, forType: .tiff)
+          }
+          return item
+        }
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        guard pasteboard.writeObjects(items) else {
+          result(FlutterError(code: "clipboard", message: "the pasteboard refused the files", details: nil))
+          return
+        }
+        result(pasteboard.changeCount)
+      }
+    }
+  }
+
+  /// The picture of the photo at [path] as PNG and TIFF, turned upright; nil when ImageIO does not read it
+  private static func picture(of path: String) -> (png: Data, tiff: Data)? {
+    guard let source = CGImageSourceCreateWithURL(URL(fileURLWithPath: path) as CFURL, nil) else {
+      return nil
+    }
+    let options: [CFString: Any] = [
+      kCGImageSourceCreateThumbnailFromImageAlways: true,
+      kCGImageSourceCreateThumbnailWithTransform: true,
+      kCGImageSourceShouldCacheImmediately: true,
+      kCGImageSourceThumbnailMaxPixelSize: maxPictureSide,
+    ]
+    guard let image = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
+      return nil
+    }
+    let bitmap = NSBitmapImageRep(cgImage: image)
+    guard let png = bitmap.representation(using: .png, properties: [:]),
+      let tiff = bitmap.tiffRepresentation(using: .lzw, factor: 0)
+    else {
+      return nil
+    }
+    return (png, tiff)
   }
 }

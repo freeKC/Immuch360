@@ -9,8 +9,10 @@ import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copy.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
+import 'package:immich_mobile/desktop/share/desktop_share.dart';
 import 'package:immich_mobile/desktop/spatial/head_tracker_licenses.dart';
 import 'package:immich_mobile/desktop/splat/splat_window_licenses.dart';
 import 'package:immich_mobile/desktop/video/av2_licenses.dart';
@@ -51,6 +53,10 @@ Future<void> startDesktop(List<String> args) async {
   unawaited(cleanUpAiCopiesAtStart());
   // The work folders of the splat scenes a failure left, once a day old (lot SPF2)
   unawaited(cleanUpSplatWorkAtStart());
+  // The files fetched for the clipboard that it no longer holds, once the channel of the runner answers
+  cleanUpClipboardCopiesAtStart();
+  // Where the mouse went down last, for the place of the Share menu
+  trackDesktopSharePointer();
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();

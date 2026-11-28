@@ -29,6 +29,7 @@ import 'package:immich_mobile/desktop/spatial/spatial_settings.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_video_page.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position_sources.dart';
+import 'package:immich_mobile/desktop/video/desktop_player.dart' show DesktopAudioTrack;
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
 import 'package:immich_mobile/desktop/video/projection_params.dart' show ViewAngles;
 import 'package:immich_mobile/domain/models/settings_key.dart';
@@ -293,6 +294,9 @@ void main() {
   testWidgets('the video plays with its sound, M mutes it and M again gives it back', (tester) async {
     await pumpPage(tester, sources: {ViewerPositionKind.mouse: MousePositionSource.new});
     final engine = players.made.first;
+    // A file with its sound: no "No sound" mark, whose icon is the one of a muted sound
+    engine.audioTracks.value = const [DesktopAudioTrack(id: '1', language: 'fre', channels: 2)];
+    await tester.pump();
     expect(engine.calls, contains('play'));
     // The adapter starts silent: without the page's volume the sound button showed on while nothing played (D2)
     expect(engine.volume, 1, reason: 'the page plays with sound, as the viewer');
@@ -304,6 +308,21 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
     await tester.pump();
     expect(engine.volume, 1);
+    await close(tester);
+  });
+
+  testWidgets('a video without any audio track says "No sound" beside the sound button; one with a track does not', (
+    tester,
+  ) async {
+    await pumpPage(tester, sources: {ViewerPositionKind.mouse: MousePositionSource.new});
+    final engine = players.made.first;
+    expect(engine.hasVideo.value, isTrue, reason: 'the file is open');
+    await tester.pump();
+    expect(find.byKey(const Key('desktop_no_sound')), findsOneWidget);
+    expect(find.byKey(const Key('spatial_video_mute')), findsOneWidget);
+    engine.audioTracks.value = const [DesktopAudioTrack(id: '1', language: 'fre', channels: 2)];
+    await tester.pump();
+    expect(find.byKey(const Key('desktop_no_sound')), findsNothing);
     await close(tester);
   });
 

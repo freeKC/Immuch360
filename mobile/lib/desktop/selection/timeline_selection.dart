@@ -2,7 +2,8 @@
 // on its tiles, Control A and Escape, written into multiSelectProvider. Each page that scopes timelineServiceProvider
 // has a selection of its own, so everything here reads through the WidgetRef of the timeline, never the root
 // container. The bottom sheet of the page keeps all of its actions; the menu of a right click offers the main ones for
-// the whole selection, "Upload to Immich" first.
+// the whole selection, "Upload to Immich" first, and Copy, which Control C does too: the files of the selection on the
+// clipboard of the system (lib/desktop/clipboard), but in the trash and on the page that picks the photos of an album.
 //
 // Control A loads the assets of the timeline by chunks and changes the selection once, so that thousands of photos
 // do not copy the selection thousands of times; in the search results it takes the results loaded so far. A Shift
@@ -19,6 +20,7 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
+import 'package:immich_mobile/desktop/clipboard/clipboard_copy.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
@@ -202,15 +204,22 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
 
   @override
   Widget build(BuildContext context) {
+    final origin = ref.watch(timelineServiceProvider).origin;
+    final picking = ref.watch(multiSelectProvider.select((state) => state.forceEnable));
     return DesktopSelectionScope<BaseAsset>(
       selectable: _selectable,
       selection: multiSelectProvider,
       // The read only mode and the remote control layout select nothing, as the long press there
       enabled: !ref.watch(viewOnlyProvider),
       menu: _menu,
+      copy: picking || origin == TimelineOrigin.trash ? null : _copy,
       child: widget.child,
     );
   }
+
+  /// The files of the selection on the clipboard, in the order they were selected
+  static Future<void> _copy(BuildContext context, WidgetRef ref) =>
+      copyAssetsToClipboard(context, ref, ref.read(multiSelectProvider).selectedAssets.toList());
 
   /// The main actions for the whole selection, each absent when it does not apply (no server, nothing of this computer
   /// to send, the AI features off). Built with the context of the scope, which outlives the menu.
@@ -244,7 +253,7 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
         const DesktopMakeSplatButton(source: ActionSource.timeline, menuItem: true),
       ],
       ?entry(const DownloadAction(source: ActionSource.timeline), 'desktop_selection_download'),
-      // "Save to a folder" on Linux, the share sheet of the system elsewhere
+      // The Share menu of a computer: Copy, Save to a folder, the share window of the system, a share link
       ?entry(const ShareAction(source: ActionSource.timeline), 'desktop_selection_share'),
     ];
   }
