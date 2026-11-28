@@ -33,6 +33,9 @@ import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/desktop_trackpad_pinch.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('DesktopPhotoZoom');
 
 /// How far past the pixels one to one the zoom goes: 4 times, 400 %
 const desktopZoomBeyondOneToOne = 4.0;
@@ -852,8 +855,15 @@ class _DesktopPhotoZoomState extends State<DesktopPhotoZoom> with TickerProvider
   }
 
   void _onPanZoomEnd(PointerPanZoomEndEvent event) {
-    if (event.pointer == _ownedPointer) {
+    final taken = event.pointer == _ownedPointer;
+    if (taken) {
       _ownedPointer = null;
+    }
+    // One line a gesture, to read what the touchpad of a computer really sends (the pan Windows adds to a pinch)
+    if (event.pointer == _pinch.pointer) {
+      _log.info(
+        'Touchpad gesture on a photo, ${taken ? 'taken by the zoom' : 'left to the view'}: ${_pinch.describe()}',
+      );
     }
   }
 

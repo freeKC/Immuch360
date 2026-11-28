@@ -27,6 +27,11 @@ class TrackpadPinchLatch {
   double _scale = 1;
   bool _pinching = false;
   Offset _start = Offset.zero;
+  Offset _startInWindow = Offset.zero;
+  int _reports = 0;
+  double _largest = 1;
+  Offset _panAtLargest = Offset.zero;
+  Offset? _panAtLatch;
 
   /// Whether the gesture going on, or the one that ended last, is a pinch: its pans are no drag, and it leaves no
   /// inertia; a new gesture or a pointer that goes down ([reset]) starts again
@@ -38,28 +43,38 @@ class TrackpadPinchLatch {
   /// The pointer of the gesture going on, or of the one that ended last
   int? get pointer => _pointer;
 
-  void begin(PointerPanZoomStartEvent event) {
-    _pointer = event.pointer;
+  void begin(PointerPanZoomStartEvent event) => _restart(event.pointer, event.localPosition, event.position);
+
+  void _restart(int pointer, Offset local, Offset inWindow) {
+    _pointer = pointer;
     _scale = 1;
     _pinching = false;
-    _start = event.localPosition;
+    _start = local;
+    _startInWindow = inWindow;
+    _reports = 0;
+    _largest = 1;
+    _panAtLargest = Offset.zero;
+    _panAtLatch = null;
   }
 
   /// The zoom [event] adds to the previous report, once the gesture is a pinch (above 1 zooms in); 1 otherwise. The
   /// first report past the slop gives the whole scale since the start, so that nothing of the pinch is lost.
   double update(PointerPanZoomUpdateEvent event) {
     if (event.pointer != _pointer) {
-      _pointer = event.pointer;
-      _scale = 1;
-      _pinching = false;
-      _start = event.localPosition;
+      _restart(event.pointer, event.localPosition, event.position);
     }
     final scale = event.scale;
     if (!scale.isFinite || scale <= 0) {
       return 1;
     }
+    _reports++;
+    if ((scale - 1).abs() > (_largest - 1).abs()) {
+      _largest = scale;
+      _panAtLargest = event.pan;
+    }
     if (!_pinching && (scale - 1).abs() > desktopPinchSlop) {
       _pinching = true;
+      _panAtLatch = event.pan;
     }
     if (!_pinching) {
       return 1;
@@ -73,6 +88,17 @@ class TrackpadPinchLatch {
   void reset() {
     _pinching = false;
     _scale = 1;
+  }
+
+  /// The gesture as a line of the log, to see what a system really sends: its reports, the largest scale, the pan
+  /// that came with it, and the pan a content scaled around the pointer would have (DirectManipulation's), logical
+  /// pixels of the window
+  String describe() {
+    String point(Offset offset) => '(${offset.dx.toStringAsFixed(1)}, ${offset.dy.toStringAsFixed(1)})';
+    final latch = _panAtLatch;
+    return '${_pinching ? 'pinch' : 'scroll'}, $_reports reports from ${point(_startInWindow)}, largest scale '
+        '${_largest.toStringAsFixed(3)} with a pan of ${point(_panAtLargest)} (around the pointer: '
+        '${point(_startInWindow * (1 - _largest))})${latch == null ? '' : ', pan when it became a pinch ${point(latch)}'}';
   }
 }
 
