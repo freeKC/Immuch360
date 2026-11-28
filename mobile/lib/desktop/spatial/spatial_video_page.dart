@@ -40,6 +40,7 @@ import 'package:immich_mobile/desktop/spatial/spatial_photo_page.dart'
 import 'package:immich_mobile/desktop/spatial/spatial_viewpoint.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position_sources.dart';
+import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart' show DesktopNoSoundMark;
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart'
@@ -1163,6 +1164,8 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
                   ),
                 ),
                 Text(_time(duration > position ? duration : position), style: const TextStyle(color: Colors.white)),
+                // A file without any audio track says so beside the sound button, which would look broken otherwise
+                DesktopNoSoundMark(noAudio: _controller.noAudio),
                 IconButton(
                   key: const Key('spatial_video_mute'),
                   icon: Icon(_muted ? Icons.volume_off_rounded : Icons.volume_up_rounded, color: Colors.white),
