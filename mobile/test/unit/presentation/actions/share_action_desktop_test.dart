@@ -101,7 +101,8 @@ void main() {
     await tester.tap(find.byKey(const Key('desktop_share_preview')));
     await settle(tester);
     expect(find.byKey(const Key('desktop_share_quality')), findsOneWidget);
-    expect(find.text(StaticTranslations.instance.share_preview), findsOneWidget);
+    final t = StaticTranslations.instance;
+    expect(find.text(t.desktop_share_quality_line(quality: t.share_preview)), findsOneWidget);
     Navigator.of(tester.element(find.byKey(const Key('desktop_share_copy')))).pop();
     await settle(tester);
     await asked;
