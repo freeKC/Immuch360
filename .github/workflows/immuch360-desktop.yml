@@ -1809,6 +1809,15 @@ jobs:
           IMMUCH360_GPU_PROBE_REAL: build/windows/x64/runner/Release/immuch360.exe
         run: flutter test test/desktop/ai/gpu/gpu_probe_real_test.dart
 
+      # The pinch of a touchpad on a photo in a built app (28 November 2026): the packets the Windows engine sends for
+      # a pinch of a precision touchpad (none can be injected on a runner), through the engine's own entry, then real
+      # input by SendInput, Control and three notches of the wheel, as a touchpad without a precision driver pinches;
+      # the zoom read back each time. A session that takes no input skips the second check and says so
+      - name: The pinch of a touchpad and Control with the wheel on a photo in a built app
+        working-directory: mobile
+        timeout-minutes: 20
+        run: flutter test integration_test/desktop_trackpad_pinch_test.dart -d windows --reporter expanded
+
       # The app of the ZIP started on a database an older build left behind: the tables and indexes of schema 35 at
       # user_version 34, as a build at 34 leaves a database a build at 35 had migrated (desktop builds 6 to 8 failed
       # every start on it with "duplicate column name: group_date"). It must bring the database to 35 and keep running
