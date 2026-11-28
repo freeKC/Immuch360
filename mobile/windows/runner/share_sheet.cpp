@@ -196,6 +196,9 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
 
   WRL::ComPtr<IDataTransferManagerInterop> interop;
   WRL::ComPtr<DataTransfer::IDataTransferManager> manager;
+  WRL::ComPtr<WindowsFoundation::ITypedEventHandler<DataTransfer::DataTransferManager*,
+                                                    DataTransfer::DataRequestedEventArgs*>>
+      requested_handler;
   EventRegistrationToken requested_token{};
   EventRegistrationToken target_token{};
   bool registered = false;
@@ -264,6 +267,7 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
           auto state = weak.lock();
           return state ? state->OnDataRequested(args) : S_OK;
         });
+    requested_handler = on_requested;
     hr = manager->add_DataRequested(on_requested.Get(), &requested_token);
     if (FAILED(hr)) {
       manager.Reset();
@@ -289,6 +293,17 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
     manager->add_TargetApplicationChosen(on_target.Get(), &target_token);
     registered = true;
     return S_OK;
+  }
+
+  // The handler of this object asked last: share_plus (the logs, the settings file, a shared link) adds one handler
+  // per share and never removes it, and those run at every later request of the same window, each filling the data
+  // package with its own old files. Last, this one replaces the whole package with its own (put_Data).
+  void Reregister() {
+    if (!manager || !requested_handler) {
+      return;
+    }
+    manager->remove_DataRequested(requested_token);
+    manager->add_DataRequested(requested_handler.Get(), &requested_token);
   }
 
   HRESULT OnDataRequested(DataTransfer::IDataRequestedEventArgs* args) {
@@ -328,10 +343,24 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
     pending = 0;
     pending_items.reset();
 
+    // A package of its own, whatever another handler of the window put in the one of the request
+    WRL::ComPtr<IInspectable> instance;
+    hr = ::RoActivateInstance(HStringReference(RuntimeClass_Windows_ApplicationModel_DataTransfer_DataPackage).Get(),
+                              &instance);
     WRL::ComPtr<DataTransfer::IDataPackage> data;
-    hr = request->get_Data(&data);
+    if (SUCCEEDED(hr)) {
+      hr = instance.As(&data);
+    }
+    if (SUCCEEDED(hr)) {
+      hr = request->put_Data(data.Get());
+    }
     if (FAILED(hr)) {
-      return hr;
+      // The package of the request then
+      data.Reset();
+      hr = request->get_Data(&data);
+      if (FAILED(hr)) {
+        return hr;
+      }
     }
     WRL::ComPtr<DataTransfer::IDataPackagePropertySet> properties;
     if (SUCCEEDED(data->get_Properties(&properties))) {
@@ -471,6 +500,7 @@ int64_t ShareSheet::Show(const std::vector<std::wstring>& paths, const std::wstr
     }
     items->push_back(item);
   }
+  state_->Reregister();
   const int64_t share = ++state_->last_share;
   state_->plus_pending = false;
   state_->pending = share;
