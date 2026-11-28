@@ -199,6 +199,9 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
   WRL::ComPtr<WindowsFoundation::ITypedEventHandler<DataTransfer::DataTransferManager*,
                                                     DataTransfer::DataRequestedEventArgs*>>
       requested_handler;
+  WRL::ComPtr<WindowsFoundation::ITypedEventHandler<DataTransfer::DataTransferManager*,
+                                                    DataTransfer::TargetApplicationChosenEventArgs*>>
+      target_handler;
   EventRegistrationToken requested_token{};
   EventRegistrationToken target_token{};
   bool registered = false;
@@ -243,54 +246,80 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
     });
   }
 
-  HRESULT EnsureManager(std::string* step) {
-    if (manager) {
-      return S_OK;
+  // The DataTransferManager of the window, asked again at each share: share_plus asks it at each of its shares too,
+  // and the window's requests go to the one asked last when Windows gives a new one each time. Our handlers move to
+  // the new one when it is another object; [changed] tells it (the tests of the workflow).
+  HRESULT EnsureManager(std::string* step, bool* changed = nullptr) {
+    if (changed != nullptr) {
+      *changed = false;
     }
-    *step = "activation";
-    HRESULT hr = ::RoGetActivationFactory(
-        HStringReference(RuntimeClass_Windows_ApplicationModel_DataTransfer_DataTransferManager).Get(),
-        IID_PPV_ARGS(&interop));
-    if (FAILED(hr)) {
-      return hr;
+    HRESULT hr = S_OK;
+    if (!interop) {
+      *step = "activation";
+      hr = ::RoGetActivationFactory(
+          HStringReference(RuntimeClass_Windows_ApplicationModel_DataTransfer_DataTransferManager).Get(),
+          IID_PPV_ARGS(&interop));
+      if (FAILED(hr)) {
+        interop.Reset();
+        return hr;
+      }
     }
     *step = "window";
-    hr = interop->GetForWindow(window, IID_PPV_ARGS(&manager));
+    WRL::ComPtr<DataTransfer::IDataTransferManager> current;
+    hr = interop->GetForWindow(window, IID_PPV_ARGS(&current));
     if (FAILED(hr)) {
-      manager.Reset();
       return hr;
     }
+    if (manager) {
+      WRL::ComPtr<IUnknown> before;
+      WRL::ComPtr<IUnknown> now;
+      if (SUCCEEDED(manager.As(&before)) && SUCCEEDED(current.As(&now)) && before.Get() == now.Get()) {
+        return S_OK;
+      }
+      if (registered) {
+        manager->remove_DataRequested(requested_token);
+        manager->remove_TargetApplicationChosen(target_token);
+        registered = false;
+      }
+      if (changed != nullptr) {
+        *changed = true;
+      }
+    }
+    manager = current;
     std::weak_ptr<State> weak = weak_from_this();
-    auto on_requested = WRL::Callback<WindowsFoundation::ITypedEventHandler<DataTransfer::DataTransferManager*,
-                                                                            DataTransfer::DataRequestedEventArgs*>>(
-        [weak](auto&&, DataTransfer::IDataRequestedEventArgs* args) -> HRESULT {
-          auto state = weak.lock();
-          return state ? state->OnDataRequested(args) : S_OK;
-        });
-    requested_handler = on_requested;
-    hr = manager->add_DataRequested(on_requested.Get(), &requested_token);
+    if (!requested_handler) {
+      requested_handler = WRL::Callback<WindowsFoundation::ITypedEventHandler<DataTransfer::DataTransferManager*,
+                                                                              DataTransfer::DataRequestedEventArgs*>>(
+          [weak](auto&&, DataTransfer::IDataRequestedEventArgs* args) -> HRESULT {
+            auto state = weak.lock();
+            return state ? state->OnDataRequested(args) : S_OK;
+          });
+    }
+    if (!target_handler) {
+      target_handler = WRL::Callback<WindowsFoundation::ITypedEventHandler<
+          DataTransfer::DataTransferManager*, DataTransfer::TargetApplicationChosenEventArgs*>>(
+          [weak](auto&&, DataTransfer::ITargetApplicationChosenEventArgs* args) -> HRESULT {
+            auto state = weak.lock();
+            if (!state || args == nullptr) {
+              return S_OK;
+            }
+            HSTRING name = nullptr;
+            std::wstring chosen;
+            if (SUCCEEDED(args->get_ApplicationName(&name))) {
+              chosen = StringOf(name);
+              ::WindowsDeleteString(name);
+            }
+            state->Emit(state->requested, "target", chosen);
+            return S_OK;
+          });
+    }
+    hr = manager->add_DataRequested(requested_handler.Get(), &requested_token);
     if (FAILED(hr)) {
       manager.Reset();
       return hr;
     }
-    auto on_target = WRL::Callback<WindowsFoundation::ITypedEventHandler<
-        DataTransfer::DataTransferManager*, DataTransfer::TargetApplicationChosenEventArgs*>>(
-        [weak](auto&&, DataTransfer::ITargetApplicationChosenEventArgs* args) -> HRESULT {
-          auto state = weak.lock();
-          if (!state || args == nullptr) {
-            return S_OK;
-          }
-          HSTRING name = nullptr;
-          std::wstring chosen;
-          if (SUCCEEDED(args->get_ApplicationName(&name))) {
-            chosen = StringOf(name);
-            ::WindowsDeleteString(name);
-          }
-          state->Emit(state->requested, "target", chosen);
-          return S_OK;
-        });
     // Without this event the share still works: only the name of the program is not known
-    manager->add_TargetApplicationChosen(on_target.Get(), &target_token);
+    manager->add_TargetApplicationChosen(target_handler.Get(), &target_token);
     registered = true;
     return S_OK;
   }
@@ -299,7 +328,7 @@ struct ShareSheet::State : std::enable_shared_from_this<ShareSheet::State> {
   // per share and never removes it, and those run at every later request of the same window, each filling the data
   // package with its own old files. Last, this one replaces the whole package with its own (put_Data).
   void Reregister() {
-    if (!manager || !requested_handler) {
+    if (!manager || !requested_handler || !registered) {
       return;
     }
     manager->remove_DataRequested(requested_token);
@@ -536,9 +565,11 @@ HRESULT ShareSheet::ShowLikeSharePlus(const std::vector<std::wstring>& paths,
 }
 
 HRESULT ShareSheet::ObserveNextRequest(const std::vector<std::wstring>& paths,
-                                       std::function<void(double elapsed_ms, int existing)> on_request) {
+                                       std::function<void(double elapsed_ms, int existing)> on_request,
+                                       bool* manager_changed) {
   std::string step;
-  HRESULT hr = state_->EnsureManager(&step);
+  HRESULT hr = state_->EnsureManager(&step, manager_changed);
+  state_->Reregister();
   if (FAILED(hr)) {
     return hr;
   }

@@ -67,8 +67,11 @@ class ShareSheet {
   // window that is not a share of this object (share_plus's), [on_request]
   // tells how long after this call it came and how many of [paths] still
   // existed then. Returns the HRESULT of reaching the DataTransferManager.
+  // [manager_changed] tells whether the DataTransferManager Windows gave
+  // this time is another object than the one of the last share.
   HRESULT ObserveNextRequest(const std::vector<std::wstring>& paths,
-                             std::function<void(double elapsed_ms, int existing)> on_request);
+                             std::function<void(double elapsed_ms, int existing)> on_request,
+                             bool* manager_changed = nullptr);
 
   // Runs [task] later on the thread of this object (from any thread)
   void Post(std::function<void()> task);

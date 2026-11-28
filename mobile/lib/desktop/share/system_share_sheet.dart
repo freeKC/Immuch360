@@ -128,10 +128,11 @@ class WindowsShareSheet implements SystemShareSheet {
 
   /// For the tests of the desktop workflow: the next request of the share window that is not one of this app's (one
   /// of share_plus) comes on [observedShareRequests], with how many of [paths] still existed then
+  /// Answers whether Windows gave another DataTransferManager than at the last share of the app.
   @visibleForTesting
-  Future<void> observeNextRequest(List<String> paths) async {
+  Future<bool> observeNextRequest(List<String> paths) async {
     _listen();
-    await _channel.invokeMethod<void>('observeNextRequest', {'paths': paths});
+    return await _channel.invokeMethod<bool>('observeNextRequest', {'paths': paths}) ?? false;
   }
 
   @override

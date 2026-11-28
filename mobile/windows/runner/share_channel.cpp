@@ -128,7 +128,8 @@ ShareChannel::ShareChannel(flutter::BinaryMessenger* messenger, HWND window) {
       const int64_t share = sheet->Show(paths, title, &failure);
       if (share == 0) {
         const std::string code = HexOf(failure.hr);
-        result->Error(failure.step, code + " " + Utf8FromUtf16(ShareSheet::MessageOf(failure.hr)),
+        const std::string text = Utf8FromUtf16(ShareSheet::MessageOf(failure.hr));
+        result->Error(failure.step, text.empty() ? code : text,
                       flutter::EncodableValue(flutter::EncodableMap{
                           {flutter::EncodableValue("hresult"), flutter::EncodableValue(code)},
                           {flutter::EncodableValue("index"), flutter::EncodableValue(failure.index)},
@@ -143,17 +144,19 @@ ShareChannel::ShareChannel(flutter::BinaryMessenger* messenger, HWND window) {
         result->Error("arguments", "observeNextRequest takes paths, a list of files");
         return;
       }
+      bool changed = false;
       const HRESULT hr = sheet->ObserveNextRequest(paths, [channel](double elapsed_ms, int existing) {
         channel->InvokeMethod("observed", std::make_unique<flutter::EncodableValue>(flutter::EncodableMap{
                                               {flutter::EncodableValue("elapsedMs"), flutter::EncodableValue(elapsed_ms)},
                                               {flutter::EncodableValue("existing"), flutter::EncodableValue(existing)},
                                           }));
-      });
+      }, &changed);
       if (FAILED(hr)) {
-        result->Error("window", HexOf(hr) + " " + Utf8FromUtf16(ShareSheet::MessageOf(hr)));
+        result->Error("window", Utf8FromUtf16(ShareSheet::MessageOf(hr)), flutter::EncodableValue(HexOf(hr)));
         return;
       }
-      result->Success();
+      // Whether Windows gave another DataTransferManager than at the last share of this channel
+      result->Success(flutter::EncodableValue(changed));
       return;
     }
     result->NotImplemented();

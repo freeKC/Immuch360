@@ -88,28 +88,33 @@ void main() {
       case 'old':
         expect(supported, isTrue, reason: 'the scenario of Windows Server 2025');
         final file = await _download('IMG_0042.mp4');
-        await sheet.observeNextRequest([file.path]);
-        final observed = observedShareRequests.stream.first;
         final clock = Stopwatch()..start();
         final answer = await Share.shareXFiles([XFile(file.path)]);
         final answeredMs = clock.elapsedMilliseconds;
+        // The watcher of the runner on the DataTransferManager share_plus has just asked for, before the window asks
+        final changed = await sheet.observeNextRequest([file.path]);
+        final observed = observedShareRequests.stream.first;
         // What build 35 did in whenComplete of that answer (AssetMediaRepository.cleanupTempFiles)
         await file.parent.delete(recursive: true);
+        final deletedMs = clock.elapsedMilliseconds;
         final ({double elapsedMs, int existing}) seen;
         try {
           seen = await observed.timeout(const Duration(seconds: 30));
         } on TimeoutException {
           fail(
-            'share_plus answered ${answer.status.name} after $answeredMs ms, then no request in 30 s; ${await _front()}',
+            'share_plus answered ${answer.status.name} after $answeredMs ms, then no request in 30 s (another '
+            'DataTransferManager than share_plus\'s: $changed); ${await _front()}',
           );
         }
+        final requestMs = answeredMs + seen.elapsedMs;
         // ignore: avoid_print
         print(
-          'share_plus answered ${answer.status.name} ("${answer.raw}") after $answeredMs ms; the window asked for '
-          'the files ${seen.elapsedMs.round()} ms after the share was asked, ${seen.existing} of 1 file still there',
+          'share_plus answered ${answer.status.name} ("${answer.raw}") after $answeredMs ms; build 35\'s deletion done '
+          'at $deletedMs ms; the window asked for the files at about ${requestMs.round()} ms, '
+          '${seen.existing} of 1 file still there (another DataTransferManager object: $changed)',
         );
         expect(answer.status, ShareResultStatus.unavailable, reason: 'share_plus answers before the window asks');
-        expect(seen.elapsedMs, greaterThan(answeredMs), reason: 'the window asks after that answer');
+        expect(requestMs, greaterThan(answeredMs), reason: 'the window asks after that answer');
         expect(seen.existing, 0, reason: 'the file build 35 fetched was gone when the window asked for it');
 
       case 'new':
