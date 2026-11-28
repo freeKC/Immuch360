@@ -28,6 +28,10 @@ import 'package:share_plus/share_plus.dart';
 /// directory to delete afterwards, null when [file] is a gallery original.
 typedef _ShareFile = ({File file, FileSystemEntity? tempEntity, String displayName});
 
+/// A file fetched for a share: [temporary] is what to delete afterwards (the download's folder), null for an original
+/// of this device, which stays
+typedef ShareFetchedFile = ({File file, FileSystemEntity? temporary});
+
 final assetMediaRepositoryProvider = Provider(
   (ref) => AssetMediaRepository(ref.watch(nativeSyncApiProvider), ref.watch(storageRepositoryProvider)),
 );
@@ -325,12 +329,16 @@ class AssetMediaRepository {
     }
   }
 
-  Future<int> shareAssets(
-    List<BaseAsset> assets,
-    BuildContext context, {
+  /// Fetches the files of [assets] for a share, as [shareAssets] does: the files, in order, each with the temporary
+  /// file or folder to delete afterwards (null for an original of this device), or null when nothing could be fetched,
+  /// the share was cancelled through [cancelCompleter], [mounted] answered false, or the names could not be given.
+  /// Whatever was fetched is deleted then. The share of a computer (lib/desktop/share) hands the files elsewhere.
+  Future<List<ShareFetchedFile>?> fetchShareFiles(
+    List<BaseAsset> assets, {
     ShareAssetType fileType = ShareAssetType.original,
     Completer<void>? cancelCompleter,
     void Function(double progress)? onAssetDownloadProgress,
+    bool Function()? mounted,
   }) async {
     final shareFiles = <_ShareFile>[];
     final tempFiles = <FileSystemEntity>[];
@@ -353,7 +361,7 @@ class AssetMediaRepository {
     for (final asset in assets) {
       if (_isCancelled(cancelCompleter)) {
         await cleanupTempFiles(tempFiles);
-        return 0;
+        return null;
       }
 
       final effectiveFileType = asset.isVideo ? ShareAssetType.original : fileType;
@@ -380,7 +388,7 @@ class AssetMediaRepository {
       }
       if (_isCancelled(cancelCompleter)) {
         await cleanupTempFiles(tempFiles);
-        return 0;
+        return null;
       }
 
       if (shareFile == null) {
@@ -396,12 +404,14 @@ class AssetMediaRepository {
 
     if (shareFiles.isEmpty) {
       _log.warning("No asset can be retrieved for share");
-      return 0;
+      return null;
     }
 
-    if (_isCancelled(cancelCompleter) || !context.mounted) {
+    bool stopped() => _isCancelled(cancelCompleter) || !(mounted?.call() ?? true);
+
+    if (stopped()) {
       await cleanupTempFiles(tempFiles);
-      return 0;
+      return null;
     }
 
     try {
@@ -409,15 +419,41 @@ class AssetMediaRepository {
     } catch (e, s) {
       _log.warning("Failed to prepare files for sharing", e, s);
       await cleanupTempFiles(tempFiles);
-      return 0;
+      return null;
     }
-    if (_isCancelled(cancelCompleter) || !context.mounted) {
+    if (stopped()) {
       await cleanupTempFiles(tempFiles);
+      return null;
+    }
+    return [for (final shareFile in shareFiles) (file: shareFile.file, temporary: shareFile.tempEntity)];
+  }
+
+  /// Deletes what [fetchShareFiles] fetched for a share once it is over, and the records of their downloads
+  Future<void> releaseShareFiles(List<ShareFetchedFile> files) =>
+      cleanupTempFiles([for (final file in files) ?file.temporary]);
+
+  Future<int> shareAssets(
+    List<BaseAsset> assets,
+    BuildContext context, {
+    ShareAssetType fileType = ShareAssetType.original,
+    Completer<void>? cancelCompleter,
+    void Function(double progress)? onAssetDownloadProgress,
+  }) async {
+    final fetched = await fetchShareFiles(
+      assets,
+      fileType: fileType,
+      cancelCompleter: cancelCompleter,
+      onAssetDownloadProgress: onAssetDownloadProgress,
+      mounted: () => context.mounted,
+    );
+    if (fetched == null || !context.mounted) {
       return 0;
     }
-    final downloadedXFiles = shareFiles.map((shareFile) => XFile(shareFile.file.path)).toList();
+    final tempFiles = [for (final file in fetched) ?file.temporary];
+    final downloadedXFiles = fetched.map((shareFile) => XFile(shareFile.file.path)).toList();
 
-    // Linux has no share sheet for files: they are saved into a folder instead (lib/desktop/files)
+    // Linux has no share sheet for files: they are saved into a folder instead (lib/desktop/files). A computer reaches
+    // this only without its Share menu (lib/desktop/share), which every Share button of a computer opens.
     if (CurrentPlatform.isLinux) {
       unawaited(
         saveFilesToFolder([

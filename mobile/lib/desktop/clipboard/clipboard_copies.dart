@@ -10,6 +10,11 @@
 //   that served it quit), or has no marker (a copy cancelled or failed, whose files are deleted at once anyway);
 // - any folder [clipboardCopyMaxAge] old is deleted, whatever the clipboard holds.
 // The minimum age leaves a chat program or a mail the time to read a file pasted just before another copy.
+//
+// The share window of Windows and the share menu of macOS (lib/desktop/share) take their files from the same folder:
+// the files fetched for a share are moved into a folder of their own ([keepShareCopies]), never deleted while the
+// window of this run may read them, then marked when it is done with them ([releaseShareCopies]); the folder goes once
+// [clipboardCopyMinAge] after that end, since the program chosen (a mail, a nearby device) may still be reading.
 
 import 'dart:async';
 import 'dart:convert';
@@ -39,6 +44,12 @@ const clipboardCopiesFolderName = 'immuch360-clipboard';
 
 /// The marker of a folder whose files went on the clipboard
 const clipboardCopyMarker = '.clipboard.json';
+
+/// The marker of a folder whose files went to the share window of the system, with the time it was done with them
+const shareCopyMarker = '.share.json';
+
+/// The folders whose files a share window of this run may still read: never deleted meanwhile
+final Set<String> _sharesOpen = {};
 
 /// How long the files of a copy are kept at least, see the top of this file
 const clipboardCopyMinAge = Duration(hours: 1);
@@ -321,7 +332,10 @@ Future<int> cleanClipboardCopies(
     if (keep != null && p.equals(folder.path, keep.path)) {
       continue;
     }
-    final made = _madeAt(folder);
+    if (_sharesOpen.contains(p.normalize(folder.path))) {
+      continue;
+    }
+    final made = await _shareEndedAt(folder) ?? _madeAt(folder);
     if (made == null) {
       continue;
     }
@@ -345,6 +359,66 @@ DateTime? _madeAt(Directory folder) {
   final stamp = int.tryParse(name.split('_').first);
   return stamp == null ? null : DateTime.fromMicrosecondsSinceEpoch(stamp, isUtc: true);
 }
+
+/// When the share window was done with the files of [folder], null for a folder of the clipboard or a share whose
+/// end was never told (the app quit meanwhile: its age then counts from the fetch)
+Future<DateTime?> _shareEndedAt(Directory folder) async {
+  final marker = File(p.join(folder.path, shareCopyMarker));
+  if (!marker.existsSync()) {
+    return null;
+  }
+  try {
+    final decoded = jsonDecode(await marker.readAsString());
+    final ended = decoded is Map ? decoded['ended'] : null;
+    return ended is int ? DateTime.fromMicrosecondsSinceEpoch(ended, isUtc: true) : null;
+  } on FileSystemException {
+    return null;
+  } on FormatException {
+    return null;
+  }
+}
+
+/// Moves [files], fetched for a share into folders that go afterwards, into a new folder of [root] under their own
+/// names (the first free "name (n)" when two have the same); the folder, kept while the share is open, and the new
+/// paths in order. A file that cannot be moved is copied. Throws a [FileSystemException]; the folder then goes.
+Future<({Directory folder, List<String> paths})> keepShareCopies(
+  List<File> files,
+  Directory root, {
+  DateTime Function() now = DateTime.now,
+}) async {
+  final folder = await _newFolder(root, now());
+  _sharesOpen.add(p.normalize(folder.path));
+  try {
+    final paths = <String>[];
+    for (final file in files) {
+      final kept = await moveIntoFolder(file, folder, safeFileName(p.basename(file.path)));
+      paths.add(kept.path);
+    }
+    return (folder: folder, paths: paths);
+  } catch (_) {
+    _sharesOpen.remove(p.normalize(folder.path));
+    await _deleteQuietly(folder);
+    rethrow;
+  }
+}
+
+/// The share of the files of [folder] is over: the folder goes [clipboardCopyMinAge] after [now], at a later copy,
+/// share or start
+Future<void> releaseShareCopies(Directory folder, {DateTime Function() now = DateTime.now}) async {
+  try {
+    await File(
+      p.join(folder.path, shareCopyMarker),
+    ).writeAsString(jsonEncode({'ended': now().toUtc().microsecondsSinceEpoch, 'run': clipboardRun}));
+  } on FileSystemException catch (error) {
+    // Without its marker the folder goes once an hour after the fetch
+    _log.info('A share folder has no end marker: ${error.message}');
+  } finally {
+    _sharesOpen.remove(p.normalize(folder.path));
+  }
+}
+
+/// Whether a share window of this run may still read the files of [folder]
+bool shareCopiesOpen(Directory folder) => _sharesOpen.contains(p.normalize(folder.path));
 
 Future<bool> _stillHeld(
   Directory folder,
